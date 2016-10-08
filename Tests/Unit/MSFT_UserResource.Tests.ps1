@@ -3,7 +3,7 @@
 param ()
 
 Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                               -ChildPath 'CommonTestHelper.psm1') `
+                               -ChildPath 'TestHelpers\CommonTestHelper.psm1') `
                                -Force
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
@@ -13,8 +13,8 @@ $script:testEnvironment = Enter-DscResourceTestEnvironment `
 
 try {
 
-    Import-Module -Name (Join-Path -Path $PSScriptRoot `
-                                   -ChildPath 'MSFT_UserResource.TestHelper.psm1') `
+    Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
+                                   -ChildPath 'TestHelpers\MSFT_UserResource.TestHelper.psm1') `
                                    -Force
 
     InModuleScope 'MSFT_UserResource' {

@@ -9,7 +9,7 @@
 param ()
 
 Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                               -ChildPath 'CommonTestHelper.psm1') `
+                               -ChildPath 'TestHelpers\CommonTestHelper.psm1') `
                                -Force
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
