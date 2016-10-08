@@ -73,7 +73,7 @@ VariablesToExport = '*'
 AliasesToExport = @()
 
 # DSC resources to export from this module
-DscResourcesToExport = 'WindowsOptionalFeature'
+DscResourcesToExport = 'Group', 'Service', 'User', 'WindowsOptionalFeature', 'WindowsPackageCab'
 
 # List of all modules packaged with this module
 # ModuleList = @()
