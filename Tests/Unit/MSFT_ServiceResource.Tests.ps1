@@ -25,11 +25,12 @@ try
     # This is needed so that the ServiceControllerStatus enum is recognized as a valid type
     Add-Type -AssemblyName 'System.ServiceProcess'
 
-    Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                               -ChildPath 'TestHelpers\MSFT_ServiceResource.TestHelper.psm1') `
-                               -Force
-
     InModuleScope 'MSFT_ServiceResource' {
+
+        Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
+                            -ChildPath 'TestHelpers\MSFT_ServiceResource.TestHelper.psm1') `
+                            -Force
+
         $script:DscResourceName = 'MSFT_ServiceResource'
 
         $script:testServiceName = 'DscTestService'

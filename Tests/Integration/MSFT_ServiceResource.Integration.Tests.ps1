@@ -8,12 +8,12 @@ $script:DscResourceName = 'MSFT_ServiceResource'
 
 Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers') -ChildPath 'CommonTestHelper.psm1')
 
-Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'DscResource.Tests') -ChildPath 'TestHelper.psm1')
-
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceModuleName 'PSDscResources' `
     -DscResourceName 'MSFT_ServiceResource' `
     -TestType 'Integration'
+
+Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'DscResource.Tests') -ChildPath 'TestHelper.psm1')
 
 try
 {
