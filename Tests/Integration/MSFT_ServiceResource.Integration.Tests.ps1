@@ -1,9 +1,9 @@
 
 $script:DscResourceName = 'MSFT_ServiceResource'
 
-Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                               -ChildPath 'CommonTestHelper.psm1') `
-                               -Force
+Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers') -ChildPath 'CommonTestHelper.psm1')
+
+Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'DscResource.Tests') -ChildPath 'TestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceModuleName 'PSDscResources' `
@@ -13,12 +13,12 @@ $script:testEnvironment = Enter-DscResourceTestEnvironment `
 try
 {
     $script:testServiceName = 'DscTestService'
-    $script:testServiceCodePath = Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'DscTestService.cs'
+    $script:testServiceCodePath = Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers\DscTestService.cs'
     $script:testServiceDisplayName = 'DSC test service display name'
     $script:testServiceDescription = 'This is a DSC test service used for integration testing MSFT_ServiceResource'
     $script:testServiceDependsOn = 'winrm'
     $script:testServiceExecutablePath = Join-Path -Path $ENV:Temp -ChildPath 'DscTestService.exe'
-    $script:testServiceNewCodePath = Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'DscTestService.cs'
+    $script:testServiceNewCodePath = Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers\DscTestService.cs'
     $script:testServiceNewDisplayName = 'New: DSC test service display name'
     $script:testServiceNewDescription = 'New: This is a DSC test service used for integration testing MSFT_ServiceResource'
     $script:testServiceNewDependsOn = 'spooler'
@@ -31,7 +31,7 @@ try
     if ($PSVersionTable.PSEdition -ieq 'Core') { $script:testServiceNewDependsOn = 'winrm' }
 
     Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                               -ChildPath 'MSFT_ServiceResource.TestHelper.psm1') `
+                               -ChildPath 'TestHelpers\MSFT_ServiceResource.TestHelper.psm1') `
                                -Force
 
     Stop-Service $script:testServiceName -ErrorAction SilentlyContinue
