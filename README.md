@@ -1,6 +1,6 @@
 # PSDscResources
 
-PSDscResources is the new home of the in-box resources from PSDesiredStateCongfiguration.
+PSDscResources is the new home of the in-box resources from PSDesiredStateConfiguration.
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
@@ -10,10 +10,12 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 
 ## Resources
 * [WindowsOptionalFeature](#windows-optional-feature): Provides a mechanism to enable or disable optional features on a target node.
+* [WindowsPackageCab](#windows-package-cab): Provides a mechanism to install or uninstall a package from a windows cabinet (cab) file on a target node.
 
 ### Resources that work on Nano Server
 
 * [WindowsOptionalFeature](#windows-optional-feature)
+* [WindowsPackageCab](#windows-package-cab)
 
 ### WindowsOptionalFeature
 Provides a mechanism to enable or disable optional features on a target node.
@@ -42,6 +44,30 @@ This resource works on Nano Server.
 #### Examples
 
 * [Enable the specified windows optional feature and output logs to the specified path](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsOptionalFeature.ps1)
+
+### WindowsPackageCab
+Provides a mechanism to install or uninstall a package from a windows cabinet (cab) file on a target node.
+This resource works on Nano Server.
+
+#### Requirements
+
+* Target machine must have access to the DISM PowerShell module
+
+#### Parameters
+
+* **[String] Name** _(Key)_: The name of the package to install or uninstall.
+* **[String] Ensure** _(Required)_: Specifies whether the package should be installed or uninstalled. To install the package, set this property to Present. To uninstall the package, set the property to Absent. { *Present* | Absent }.
+* **[String] SourcePath** _(Required)_: The path to the cab file to install or uninstall the package from.
+* **[String] LogPath** _(Write)_: The path to a file to log the operation to. There is no default value, but if not set, the log will appear at %WINDIR%\Logs\Dism\dism.log.
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+* [Install a cab file with the given name from the given path](https://github.com/PowerShell/xPSDesiredStateConfiguration/blob/dev/Examples/Sample_xWindowsPackageCab.ps1)
+
 
 ### Unreleased
 
