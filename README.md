@@ -71,11 +71,11 @@ None
 Provides a mechanism to configure and manage Windows services.
 This resource works on Nano Server.
 
-### Requirements
+#### Requirements
 
 None
 
-### Parameters
+#### Parameters
 
 * **[String] Name** _(Key)_: Indicates the service name. Note that sometimes this is different from the display name. You can get a list of the services and their current state with the Get-Service cmdlet.
 * **[String] Ensure** _(Write)_: Indicates whether the service is present or absent. Defaults to Present. { *Present* | Absent }.
@@ -95,7 +95,7 @@ None
 
 None
 
-### Examples
+#### Examples
 
 * [Create a service](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Service_CreateService.ps1)
 * [Delete a service](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Service_DeleteService.ps1)
@@ -189,6 +189,7 @@ None
 
 * [Install a cab file with the given name from the given path](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsPackageCab.ps1)
 
+## Versions
 
 ### Unreleased
 
