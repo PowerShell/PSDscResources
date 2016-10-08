@@ -1,3 +1,8 @@
+if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -lt 1)
+{
+    Write-Warning -Message 'Cannot run PSDscResources integration tests on PowerShell versions lower than 5.1'
+    return
+}
 
 $script:DscResourceName = 'MSFT_ServiceResource'
 
