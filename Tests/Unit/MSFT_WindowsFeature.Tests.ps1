@@ -5,16 +5,15 @@ param ()
 Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
                                -ChildPath (Join-Path -Path 'TestHelpers' `
                                                      -ChildPath 'CommonTestHelper.psm1')) `
-                                                     -Force
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DSCResourceModuleName 'PSDscResources' `
     -DSCResourceName 'MSFT_WindowsFeature' `
     -TestType Unit
 
-try {
+try
+{
     InModuleScope 'MSFT_WindowsFeature' {
-
         $testUserName = 'TestUserName12345'
         $testUserPassword = 'StrongOne7.'
         $testSecurePassword = ConvertTo-SecureString -String $testUserPassword -AsPlainText -Force
@@ -25,7 +24,6 @@ try {
         $testSubFeatureName1 = 'SubTest1'
         $testSubFeatureName2 = 'SubTest2'
         $testSubFeatureName3 = 'SubTest3'
-
 
         $mockWindowsFeatures = @{
             Test1 = @{ 
@@ -218,9 +216,9 @@ try {
                     $getTargetResourceResult.IncludeAllSubFeature | Should Be $false
 
                     Assert-MockCalled -CommandName Invoke-Command -Times 1 -Exactly -Scope It
-
                 }
             }
+
             Context 'Windows Feature exists with sub features' {
 
                 It 'Should return the correct hashtable when all subfeatures are installed' {
