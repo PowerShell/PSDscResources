@@ -1,11 +1,34 @@
 ﻿<#
-    Create a custom configuration by passing in whatever values you need. 
-    $Name is the only parameter that is required which indicates which
-    Windows Feature you want to install (or uninstall if you set Ensure to Absent).
-    LogPath and Credential are not included here, but if you would like to specify
-    a custom log path or need a credential just pass in the desired values and add
-    LogPath = $LogPath and/or Credential = $Credential to the configuration here
-#>      
+    .SYNOPSIS
+        Creates a custom configuration for installing or uninstalling a Windows role or feature.
+
+    .PARAMETER Name
+        The name of the role or feature to install or uninstall.
+        Default is 'Telnet-Client'.
+
+    .PARAMETER Ensure
+        Specifies whether the role or feature should be installed ('Present')
+        or uninstalled ('Absent').
+        By default this is set to Present.
+
+    .PARAMETER IncludeAllSubFeature
+        Specifies whether or not all subfeatures should be installed or uninstalled with
+        the specified role or feature. Default is false.
+        If this property is true and Ensure is set to Present, all subfeatures will be installed.
+        If this property is false and Ensure is set to Present, subfeatures will not be installed or uninstalled.
+        If Ensure is set to Absent, all subfeatures will be uninstalled.
+
+    .PARAMETER Credential
+        The credential (if required) to install or uninstall the role or feature.
+        Optional. This must be added to the Node if it is required, as it is not being set
+        in this configuration file currently.
+
+    .PARAMETER LogPath
+        The custom path to the log file to log this operation.
+        If not passed in, the default log path will be used (%windir%\logs\ServerManager.log).
+        Optional. This must be added to the Node if it is required, as it is not being set
+        in this configuration file currently.
+#>
 
 Configuration 'Install_Feature_Telnet_Client'
 {
@@ -32,8 +55,8 @@ Configuration 'Install_Feature_Telnet_Client'
     
     Import-DscResource -ModuleName 'PSDscResources'
     
-    Node Localhost {
-
+    Node Localhost
+    {
         WindowsFeature WindowsFeatureTest
         {
             Name = $Name

@@ -1,15 +1,13 @@
-﻿
-param 
+﻿param 
 (
     [Parameter(Mandatory)]
     [System.String]
     $ConfigurationName
 )
-        
 
 Configuration $ConfigurationName
 {
-    param 
+    param
     (   
         [Parameter(Mandatory = $true)]     
         [System.String]
@@ -25,8 +23,8 @@ Configuration $ConfigurationName
     
     Import-DscResource -ModuleName 'PSDscResources'
     
-    Node Localhost {
-
+    Node Localhost
+    {
         WindowsFeature WindowsFeatureTest
         {
             Name = $Name

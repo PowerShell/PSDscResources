@@ -158,7 +158,7 @@ function Get-TargetResource
 #>
 function Set-TargetResource
 {
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param
     (
        [Parameter(Mandatory = $true)]
@@ -308,13 +308,13 @@ function Set-TargetResource
         By default this is set to Present.
 
     .PARAMETER IncludeAllSubFeature
-        Specifies whether the subfeatures of the indicated role or feature should also be checked
-        to ensure they are in the desired state. If Ensure is set to 'Present' and this is set to
-        $true then each subfeature is checked to ensure it is installed as well. If Ensure is set to
-        Absent and this is set to $true, then each subfeature is checked to ensure it is uninstalled.
-        As of now, this test can't be used to check if a feature is Installed but all of its
-        subfeatures are uninstalled.
-        By default this is set to $false.
+        Specifies whether or not the installation state of all subfeatures should be tested with 
+        the specified role or feature. Default is false.
+        -If this property is set to true and Ensure is set to Present, 
+            each subfeature will be tested to ensure it is installed.
+        -If this property is set to true and Ensure is set to Absent, 
+            each subfeature will be tested to ensure it is uninstalled.
+        -If this property is false, subfeatures will not be tested.
 
     .PARAMETER Credential
         The Credential (if required) to test the status of the role or feature.

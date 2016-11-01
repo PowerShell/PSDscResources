@@ -1,5 +1,5 @@
 ﻿<#
-    Integration tests for Installing/uninstalling a Windows Feature. Currently Telnet-Client is
+    Integration tests for installing/uninstalling a Windows Feature. Currently Telnet-Client is
     set as the feature to test since it's fairly small and doesn't require a restart. ADRMS
     is set as the feature to test installing/uninstalling a feature with subfeatures,
     but this takes a good chunk of time, so by default these tests are set to be skipped.
@@ -20,7 +20,6 @@ if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -l
 Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
                                -ChildPath (Join-Path -Path 'TestHelpers' `
                                                      -ChildPath 'CommonTestHelper.psm1')) `
-                                                     -Force
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceModuleName 'PSDscResources' `
@@ -29,17 +28,17 @@ $script:testEnvironment = Enter-DscResourceTestEnvironment `
 
 $script:testFeatureName = 'Telnet-Client'
 $script:testFeatureWithSubFeaturesName = 'ADRMS'
-$script:installStateOfTestFeature
-$script:installStateOfTestWithSubFeatures
+$script:installStateOfTestFeature = $false
+$script:installStateOfTestWithSubFeatures = $false
 
 <#
-    If this is set to $true then the tests that test installing/uninstalling a feature with
+    If this is set to $true then the tests for installing/uninstalling a feature with
     its subfeatures will not run.
 #>
 $script:skipLongTests = $false
 
-try {
-
+try
+{
     #Saving the state so we can clean up afterwards
     $testFeature = Get-WindowsFeature -Name $script:testFeatureName
     $script:installStateOfTestFeature = $testFeature.Installed
@@ -50,7 +49,6 @@ try {
     $configFile = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_WindowsFeature.config.ps1'
 
     Describe 'WindowsFeature Integration Tests' {
-
         $testIncludeAllSubFeature = $false
 
         Remove-WindowsFeature -Name $script:testFeatureName
@@ -96,7 +94,8 @@ try {
             }
             finally
             {
-                if (Test-Path -Path $logPath) {
+                if (Test-Path -Path $logPath)
+                {
                     Remove-Item -Path $logPath -Recurse -Force
                 }
 
@@ -145,7 +144,8 @@ try {
             }
             finally
             {
-                if (Test-Path -Path $logPath) {
+                if (Test-Path -Path $logPath)
+                {
                     Remove-Item -Path $logPath -Recurse -Force
                 }
 
@@ -207,7 +207,8 @@ try {
             }
             finally
             {
-                if (Test-Path -Path $logPath) {
+                if (Test-Path -Path $logPath)
+                {
                     Remove-Item -Path $logPath -Recurse -Force
                 }
 
@@ -263,7 +264,8 @@ try {
             }
             finally
             {
-                if (Test-Path -Path $logPath) {
+                if (Test-Path -Path $logPath)
+                {
                     Remove-Item -Path $logPath -Recurse -Force
                 }
 
@@ -300,5 +302,3 @@ finally
     }
     Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
 }
-
-
