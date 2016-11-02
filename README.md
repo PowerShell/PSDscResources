@@ -1,3 +1,27 @@
+master: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/dev?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/master)
+dev: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/dev)
+
+# PSDscResources
+  
+ 
+ EXPAND
+ EXPAND
+ COLLAPSED:  142 lines with no changes
+#### Requirements
+#### Requirements
+  
+ 
+ * Target machine must be running Windows Server 2008 or later.
+* Target machine must be running Windows Server 2008 or later.
+ * Target machine must have access to the DISM PowerShell module.
+* Target machine must have access to the DISM PowerShell module.
+ * Target machine must have access to the ServerManager module.
+* Target machine must have access to the ServerManager module.
+r1
+ In progress line 150
+NEW COMMENT
+kwirkykatKatie Keim
+
 # PSDscResources
 
 PSDscResources is the new home of the in-box resources from PSDesiredStateConfiguration.
@@ -30,6 +54,7 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 * [Group](#group): Provides a mechanism to manage local groups on the target node.
 * [Service](#service): Provides a mechanism to configure and manage Windows services.
 * [User](#user): Provides a mechanism to manage local users on the target node.
+* [WindowsFeature](#windows-feature): Provides a mechanism to install or uninstall windows roles or features on a target node.
 * [WindowsOptionalFeature](#windows-optional-feature): Provides a mechanism to enable or disable optional features on a target node.
 * [WindowsPackageCab](#windows-package-cab): Provides a mechanism to install or uninstall a package from a windows cabinet (cab) file on a target node.
 
@@ -137,6 +162,31 @@ None
 
 * [Create a new User](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_User_CreateUser.ps1)
 
+### WindowsFeature
+Provides a mechanism to install or uninstall Windows roles or features on a target node.
+
+#### Requirements
+
+* Target machine must be running Windows Server 2008 or later.
+* Target machine must have access to the DISM PowerShell module.
+* Target machine must have access to the ServerManager module (provided by default on Windows Server).
+
+#### Parameters
+
+* **[String] Name** _(Key)_: Indicates the name of the role or feature that you want to ensure is added or removed. This is the same as the Name property from the Get-WindowsFeature cmdlet, and not the display name of the role or feature.
+* **[PSCredential] Credential** _(Write)_: Indicates the credential to use to add or remove the role or feature if needed.
+* **[String] Ensure** _(Write)_: Specifies whether the feature should be installed (Present) or uninstalled (Absent) { *Present* | Absent }.
+* **[Boolean] IncludeAllSubFeature** _(Write)_: Specifies whether or not all subfeatures should be installed with the specified role or feature. The default value is false.
+* **[String] LogPath** _(Write)_: Indicates the path to a log file to log the operation.
+
+#### Read-Only Properties from Get-TargetResource
+
+* **[String] DisplayName** _(Read)_: The display name of the retrieved role or feature.
+
+#### Examples
+
+* [Install or uninstall a Windows feature](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_xWindowsFeature.ps1)
+
 
 ### WindowsOptionalFeature
 Provides a mechanism to enable or disable optional features on a target node.
@@ -192,6 +242,8 @@ None
 ## Versions
 
 ### Unreleased
+
+* Adding WindowsFeature resource/tests/example
 
 ### 2.0.0.0
 
