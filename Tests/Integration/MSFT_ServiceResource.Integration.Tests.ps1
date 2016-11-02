@@ -6,7 +6,7 @@ if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -l
 
 $script:DscResourceName = 'MSFT_ServiceResource'
 
-Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
+Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
                                -ChildPath (Join-Path -Path 'TestHelpers' `
                                                      -ChildPath 'CommonTestHelper.psm1'))
 
@@ -18,12 +18,12 @@ $script:testEnvironment = Enter-DscResourceTestEnvironment `
 try
 {
     $script:testServiceName = 'DscTestService'
-    $script:testServiceCodePath = Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers\DscTestService.cs'
+    $script:testServiceCodePath = Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers\DscTestService.cs'
     $script:testServiceDisplayName = 'DSC test service display name'
     $script:testServiceDescription = 'This is a DSC test service used for integration testing MSFT_ServiceResource'
     $script:testServiceDependsOn = 'winrm'
     $script:testServiceExecutablePath = Join-Path -Path $ENV:Temp -ChildPath 'DscTestService.exe'
-    $script:testServiceNewCodePath = Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers\DscTestService.cs'
+    $script:testServiceNewCodePath = Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers\DscTestService.cs'
     $script:testServiceNewDisplayName = 'New: DSC test service display name'
     $script:testServiceNewDescription = 'New: This is a DSC test service used for integration testing MSFT_ServiceResource'
     $script:testServiceNewDependsOn = 'spooler'
@@ -35,7 +35,7 @@ try
     #>
     if ($PSVersionTable.PSEdition -ieq 'Core') { $script:testServiceNewDependsOn = 'winrm' }
 
-    Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
+    Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
                                -ChildPath 'TestHelpers\MSFT_ServiceResource.TestHelper.psm1') `
                                -Force
 

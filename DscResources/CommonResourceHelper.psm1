@@ -1,6 +1,6 @@
 ﻿<#
     .SYNOPSIS
-    Tests if the current machine is a Nano server.
+        Tests if the current machine is a Nano server.
 #>
 function Test-IsNanoServer
 {
@@ -37,11 +37,11 @@ function New-InvalidArgumentException
         $ArgumentName
     )
 
-    $argumentException = New-Object -TypeName 'ArgumentException' -ArgumentList @( $Message,
-        $ArgumentName )
+    $argumentException = New-Object -TypeName 'ArgumentException' `
+                                    -ArgumentList @($Message, $ArgumentName)
     $newObjectParams = @{
         TypeName = 'System.Management.Automation.ErrorRecord'
-        ArgumentList = @( $argumentException, $ArgumentName, 'InvalidArgument', $null )
+        ArgumentList = @($argumentException, $ArgumentName, 'InvalidArgument', $null)
     }
     $errorRecord = New-Object @newObjectParams
 
@@ -78,21 +78,21 @@ function New-InvalidOperationException
     }
     elseif ($null -eq $ErrorRecord)
     {
-        $invalidOperationException =
-            New-Object -TypeName 'InvalidOperationException' -ArgumentList @( $Message )
+        $invalidOperationException = New-Object -TypeName 'InvalidOperationException' `
+                                                -ArgumentList @($Message)
     }
     else
     {
-        $invalidOperationException =
-            New-Object -TypeName 'InvalidOperationException' -ArgumentList @( $Message,
-                $ErrorRecord.Exception )
+        $invalidOperationException = New-Object -TypeName 'InvalidOperationException' `
+                                                -ArgumentList @($Message, $ErrorRecord.Exception)
     }
 
     $newObjectParams = @{
         TypeName = 'System.Management.Automation.ErrorRecord'
         ArgumentList = @( $invalidOperationException.ToString(), 'MachineStateIncorrect',
-            'InvalidOperation', $null )
+                          'InvalidOperation', $null )
     }
+
     $errorRecordToThrow = New-Object @newObjectParams
     throw $errorRecordToThrow
 }
@@ -104,11 +104,10 @@ function New-InvalidOperationException
 
     .PARAMETER ResourceName
         The name of the resource as it appears before '.strings.psd1' of the localized string file.
-
         For example:
-            For WindowsOptionalFeature: MSFT_xWindowsOptionalFeature
-            For Service: MSFT_xServiceResource
-            For Registry: MSFT_xRegistryResource
+            WindowsOptionalFeature: MSFT_WindowsOptionalFeature
+            Service: MSFT_ServiceResource
+            Registry: MSFT_RegistryResource
 #>
 function Get-LocalizedData
 {

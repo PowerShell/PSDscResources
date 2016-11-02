@@ -699,7 +699,7 @@ function Enter-DscResourceTestEnvironment
         $TestType
     )
 
-    $testsFolderPath = Join-Path -Path $PSScriptRoot -ChildPath 'Tests'
+    $testsFolderPath = Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent)
     $dscResourceTestsPath = Join-Path -Path $testsFolderPath -ChildPath 'DSCResource.Tests'
     $testHelperFilePath = Join-Path -Path $dscResourceTestsPath -ChildPath 'TestHelper.psm1'
 
@@ -750,7 +750,7 @@ function Exit-DscResourceTestEnvironment
         [PSObject]
         $TestEnvironment
     )
-    $testsFolderPath = Join-Path -Path $PSScriptRoot -ChildPath 'Tests'
+    $testsFolderPath = Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent)
     $dscResourceTestsPath = Join-Path -Path $testsFolderPath -ChildPath 'DSCResource.Tests'
     $testHelperFilePath = Join-Path -Path $dscResourceTestsPath -ChildPath 'TestHelper.psm1'
 

@@ -2,9 +2,11 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 param ()
 
-Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                               -ChildPath (Join-Path -Path 'TestHelpers' `
-                                                     -ChildPath 'CommonTestHelper.psm1'))
+$script:testHelpersPath = Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
+                                     -ChildPath 'TestHelpers'
+
+Import-Module -Name (Join-Path -Path  $script:testHelpersPath `
+                               -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DSCResourceModuleName 'PSDscResources' `
@@ -13,9 +15,8 @@ $script:testEnvironment = Enter-DscResourceTestEnvironment `
 
 try {
 
-    Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                                   -ChildPath (Join-Path -Path 'TestHelpers' `
-                                                     -ChildPath 'TestHelpers\MSFT_UserResource.TestHelper.psm1'))
+    Import-Module -Name (Join-Path -Path  $script:testHelpersPath `
+                                   -ChildPath 'MSFT_UserResource.TestHelper.psm1')
 
     InModuleScope 'MSFT_UserResource' {
         # Used to skip the Nano server tests for the time being since they are not working on AppVeyor

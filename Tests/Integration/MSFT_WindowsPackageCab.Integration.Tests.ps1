@@ -4,7 +4,7 @@
     return
 }
 
-Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
+Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
                                -ChildPath (Join-Path -Path 'TestHelpers' `
                                                      -ChildPath 'CommonTestHelper.psm1'))
 
