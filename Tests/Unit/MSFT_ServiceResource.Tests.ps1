@@ -2,16 +2,9 @@
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 param ()
 
-Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                               -ChildPath 'TestHelpers\CommonTestHelper.psm1') `
-                               -Force
-
-# Need this module to import the localized data
-Import-Module -Name (Join-Path -Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) `
-              -ChildPath 'DSCResources\CommonResourceHelper.psm1')
-
-# Localized messages for Write-Verbose statements
-$script:localizedData = Get-LocalizedData -ResourceName 'MSFT_ServiceResource'
+Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
+                               -ChildPath (Join-Path -Path 'TestHelpers' `
+                                                     -ChildPath 'CommonTestHelper.psm1'))
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DSCResourceModuleName 'PSDscResources' `
@@ -27,7 +20,7 @@ try
 
     InModuleScope 'MSFT_ServiceResource' {
 
-        Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
+        Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
                             -ChildPath 'TestHelpers\MSFT_ServiceResource.TestHelper.psm1') `
                             -Force
 

@@ -1,26 +1,7 @@
 master: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/dev?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/master)
+
 dev: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/dev)
 
-# PSDscResources
-  
- 
- EXPAND
- EXPAND
- COLLAPSED:  142 lines with no changes
-#### Requirements
-#### Requirements
-  
- 
- * Target machine must be running Windows Server 2008 or later.
-* Target machine must be running Windows Server 2008 or later.
- * Target machine must have access to the DISM PowerShell module.
-* Target machine must have access to the DISM PowerShell module.
- * Target machine must have access to the ServerManager module.
-* Target machine must have access to the ServerManager module.
-r1
- In progress line 150
-NEW COMMENT
-kwirkykatKatie Keim
 
 # PSDscResources
 

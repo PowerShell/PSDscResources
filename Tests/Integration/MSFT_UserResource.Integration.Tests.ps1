@@ -15,8 +15,8 @@ if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -l
 }
 
 Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                               -ChildPath 'TestHelpers\CommonTestHelper.psm1') `
-                               -Force
+                               -ChildPath (Join-Path -Path 'TestHelpers' `
+                                                     -ChildPath 'CommonTestHelper.psm1'))
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceModuleName 'PSDscResources' `
