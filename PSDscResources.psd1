@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.0.0.0'
+ModuleVersion = '2.1.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -99,7 +99,9 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Initial release of PSDscResources'
+        ReleaseNotes = '* Added WindowsFeature
+
+'
 
     } # End of PSData hashtable
 
@@ -112,4 +114,5 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
 

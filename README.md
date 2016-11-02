@@ -225,6 +225,8 @@ None
 
 ### Unreleased
 
+### 2.1.0.0
+
 * Added WindowsFeature
 
 ### 2.0.0.0
