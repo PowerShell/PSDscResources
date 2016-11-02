@@ -120,7 +120,7 @@ function Get-LocalizedData
         $ResourceName
     )
 
-    $resourceDirectory = (Join-Path -Path $PSScriptRoot -ChildPath $ResourceName)
+    $resourceDirectory = Join-Path -Path $PSScriptRoot -ChildPath $ResourceName
     $localizedStringFileLocation = Join-Path -Path $resourceDirectory -ChildPath $PSUICulture
 
     if (-not (Test-Path -Path $localizedStringFileLocation))
