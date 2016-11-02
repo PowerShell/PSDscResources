@@ -3,8 +3,8 @@
 param ()
 
 Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                               -ChildPath 'TestHelpers\CommonTestHelper.psm1') `
-                               -Force
+                               -ChildPath (Join-Path -Path 'TestHelpers' `
+                                                     -ChildPath 'CommonTestHelper.psm1'))
 
 # Need this module to import the localized data
 Import-Module -Name (Join-Path -Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) `

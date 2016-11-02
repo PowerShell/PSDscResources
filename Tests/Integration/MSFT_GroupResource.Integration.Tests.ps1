@@ -1,4 +1,4 @@
-﻿[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "")]
+﻿[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 param ()
 
 if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -lt 1)
@@ -7,7 +7,9 @@ if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -l
     return
 }
 
-Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers') -ChildPath 'CommonTestHelper.psm1')
+Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
+                               -ChildPath (Join-Path -Path 'TestHelpers' `
+                                                     -ChildPath 'CommonTestHelper.psm1'))
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceModuleName 'PSDscResources' `
@@ -18,10 +20,14 @@ try
 {
     Describe 'Group Integration Tests'  {
         BeforeAll {
-            Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers') -ChildPath 'MSFT_GroupResource.TestHelper.psm1')
+            Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
+                                                            -ChildPath 'TestHelpers') `
+                                           -ChildPath 'MSFT_GroupResource.TestHelper.psm1')
 
-            $script:confgurationWithMembersFilePath = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_GroupResource_Members.config.ps1'
-            $script:confgurationWithMembersToIncludeExcludeFilePath = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_GroupResource_MembersToIncludeExclude.config.ps1'
+            $script:confgurationWithMembersFilePath = Join-Path -Path $PSScriptRoot `
+                                                                -ChildPath 'MSFT_GroupResource_Members.config.ps1'
+            $script:confgurationWithMembersToIncludeExcludeFilePath = Join-Path -Path $PSScriptRoot `
+                                                                                -ChildPath 'MSFT_GroupResource_MembersToIncludeExclude.config.ps1'
         }
 
         It 'Should create an empty group' {

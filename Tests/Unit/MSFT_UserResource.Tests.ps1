@@ -3,8 +3,8 @@
 param ()
 
 Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                               -ChildPath 'TestHelpers\CommonTestHelper.psm1') `
-                               -Force
+                               -ChildPath (Join-Path -Path 'TestHelpers' `
+                                                     -ChildPath 'CommonTestHelper.psm1'))
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DSCResourceModuleName 'PSDscResources' `
@@ -14,8 +14,8 @@ $script:testEnvironment = Enter-DscResourceTestEnvironment `
 try {
 
     Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                                   -ChildPath 'TestHelpers\MSFT_UserResource.TestHelper.psm1') `
-                                   -Force
+                                   -ChildPath (Join-Path -Path 'TestHelpers' `
+                                                     -ChildPath 'TestHelpers\MSFT_UserResource.TestHelper.psm1'))
 
     InModuleScope 'MSFT_UserResource' {
         # Used to skip the Nano server tests for the time being since they are not working on AppVeyor

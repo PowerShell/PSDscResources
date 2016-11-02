@@ -31,8 +31,9 @@ Configuration $ConfigurationName
         [System.String]
         $Ensure = 'Present',
         
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $true)]
         [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
         $Password,
         
         [System.Boolean]

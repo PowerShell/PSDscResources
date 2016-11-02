@@ -2,7 +2,7 @@
 # Integration Test Config Template Version 1.0.0
 param 
 (
-    [Parameter(Mandatory)]
+    [Parameter(Mandatory = $true)]
     [System.String]
     $ConfigurationName
 )
@@ -25,8 +25,9 @@ Configuration $ConfigurationName
         [System.String]
         $Ensure = 'Present',
         
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $true)]
         [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
         $Password
     )
     

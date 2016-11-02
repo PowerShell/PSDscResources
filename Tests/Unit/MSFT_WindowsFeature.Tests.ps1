@@ -4,7 +4,7 @@ param ()
 
 Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
                                -ChildPath (Join-Path -Path 'TestHelpers' `
-                                                     -ChildPath 'CommonTestHelper.psm1')) `
+                                                     -ChildPath 'CommonTestHelper.psm1'))
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DSCResourceModuleName 'PSDscResources' `
