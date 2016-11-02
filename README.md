@@ -1,7 +1,5 @@
-master: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/dev?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/master)
-
+master: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/dev?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/master)  
 dev: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/dev)
-
 
 # PSDscResources
 
@@ -29,26 +27,31 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Contributing
+
+This module does not accept breaking changes.
+
 Please check out the common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResource.Kit/blob/master/CONTRIBUTING.md).
 
 ## Resources
-* [Group](#group): Provides a mechanism to manage local groups on the target node.
-* [Service](#service): Provides a mechanism to configure and manage Windows services.
-* [User](#user): Provides a mechanism to manage local users on the target node.
-* [WindowsFeature](#windows-feature): Provides a mechanism to install or uninstall windows roles or features on a target node.
-* [WindowsOptionalFeature](#windows-optional-feature): Provides a mechanism to enable or disable optional features on a target node.
-* [WindowsPackageCab](#windows-package-cab): Provides a mechanism to install or uninstall a package from a windows cabinet (cab) file on a target node.
 
-### Resources that work on Nano Server
+* [Group](#group): Provides a mechanism to manage local groups on a target node.
+* [Service](#service): Provides a mechanism to configure and manage Windows services on a target node.
+* [User](#user): Provides a mechanism to manage local users on a target node.
+* [WindowsFeature](#windowsfeature): Provides a mechanism to install or uninstall windows roles or features on a target node.
+* [WindowsOptionalFeature](#windowsoptionalfeature): Provides a mechanism to enable or disable optional features on a target node.
+* [WindowsPackageCab](#windowspackagecab): Provides a mechanism to install or uninstall a package from a windows cabinet (cab) file on a target node.
+
+### Resources that Work on Nano Server
 
 * [Group](#group)
 * [Service](#service)
 * [User](#user)
-* [WindowsOptionalFeature](#windows-optional-feature)
-* [WindowsPackageCab](#windows-package-cab)
+* [WindowsOptionalFeature](#windowsoptionalfeature)
+* [WindowsPackageCab](#windowspackagecab)
 
 ### Group
-Provides a mechanism to manage local groups on the target node.
+
+Provides a mechanism to manage local groups on a target node.
 This resource works on Nano Server.
 
 #### Requirements
@@ -56,6 +59,7 @@ This resource works on Nano Server.
 None
 
 #### Parameters
+
 * **[String] GroupName** _(Key)_: The name of the group to create, modify, or remove.
 * **[String] Ensure** _(Write)_: Indicates if the group should exist or not. To add a group or modify an existing group, set this property to Present. To remove a group, set this property to Absent. The default value is Present. { *Present* | Absent }.
 * **[String] Description** _(Write)_: The description the group should have.
@@ -74,7 +78,8 @@ None
 * [Create or modify a group with MembersToInclude and/or MembersToExclude](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_Members.ps1)
 
 ### Service
-Provides a mechanism to configure and manage Windows services.
+
+Provides a mechanism to configure and manage Windows services on a target node.
 This resource works on Nano Server.
 
 #### Requirements
@@ -107,7 +112,9 @@ None
 * [Delete a service](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Service_DeleteService.ps1)
 
 ### User
+
 Provides a mechanism to manage local users on a target node.
+This resource works on Nano Server.
 
 #### Requirements
 
@@ -117,23 +124,13 @@ None
 
 * **[String] UserName** _(Key)_: Indicates the account name for which you want to ensure a specific state.
 * **[String] Description** _(Write)_: Indicates the description you want to use for the user account.
-* **[Boolean] Disabled** _(Write)_: Indicates if the account is enabled. Set this property to $true to ensure that this account is disabled, and set it to $false to ensure that it is enabled.
-   - Suported values: $true, $false
-   - Default value: $false
-* **[String] Ensure** _(Write)_: Ensures that the feature is present or absent.
-   - Supported values: Present, Absent
-   - Default Value: Present
+* **[Boolean] Disabled** _(Write)_: Indicates if the account is disabled. Set this property to true to ensure that this account is disabled, and set it to false to ensure that it is enabled. The default value is false.
+* **[String] Ensure** _(Write)_: Ensures that the feature is present or absent { *Present* | Absent }.
 * **[String] FullName** _(Write)_: Represents a string with the full name you want to use for the user account.
 * **[PSCredential] Password** _(Write)_: Indicates the password you want to use for this account.
-* **[Boolean] PasswordChangeNotAllowed** _(Write)_: Indicates if the user can change the password. Set this property to $true to ensure that the user cannot change the password, and set it to $false to allow the user to change the password.
-   - Suported values: $true, $false
-   - Default value: $false
-* **[Boolean] PasswordChangeRequired** _(Write)_: Indicates if the user must change the password at the next sign in. Set this property to $true if the user must change the password.
-   - Suported values: $true, $false
-   - Default value: $true
-* **[Boolean] PasswordNeverExpires** _(Write)_: Indicates if the password will expire. To ensure that the password for this account will never expire, set this property to $true, and set it to $false if the password will expire.
-   - Suported values: $true, $false
-   - Default value: $false
+* **[Boolean] PasswordChangeNotAllowed** _(Write)_: Indicates if the user can change the password. Set this property to true to ensure that the user cannot change the password, and set it to false to allow the user to change the password. The default value is false.
+* **[Boolean] PasswordChangeRequired** _(Write)_: Indicates if the user must change the password at the next sign in. Set this property to true if the user must change their password. The default value is true.
+* **[Boolean] PasswordNeverExpires** _(Write)_: Indicates if the password will expire. To ensure that the password for this account will never expire, set this property to true. The default value is false.
 
 #### Read-Only Properties from Get-TargetResource
 
@@ -144,7 +141,9 @@ None
 * [Create a new User](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_User_CreateUser.ps1)
 
 ### WindowsFeature
+
 Provides a mechanism to install or uninstall Windows roles or features on a target node.
+This resource **is not supported** on Nano Server.
 
 #### Requirements
 
@@ -170,6 +169,7 @@ Provides a mechanism to install or uninstall Windows roles or features on a targ
 
 
 ### WindowsOptionalFeature
+
 Provides a mechanism to enable or disable optional features on a target node.
 This resource works on Nano Server.
 
@@ -198,6 +198,7 @@ This resource works on Nano Server.
 * [Enable the specified windows optional feature and output logs to the specified path](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsOptionalFeature.ps1)
 
 ### WindowsPackageCab
+
 Provides a mechanism to install or uninstall a package from a windows cabinet (cab) file on a target node.
 This resource works on Nano Server.
 
@@ -224,7 +225,7 @@ None
 
 ### Unreleased
 
-* Adding WindowsFeature resource/tests/example
+* Added WindowsFeature
 
 ### 2.0.0.0
 
