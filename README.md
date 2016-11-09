@@ -225,6 +225,10 @@ None
 
 ### Unreleased
 
+* WindowsFeature:
+    * Added Catch to ignore RuntimeException when importing ServerManager module. This solved the same issue that [PR #267](https://github.com/PowerShell/xPSDesiredStateConfiguration/pull/267) solved.
+    * Updated unit tests.
+
 ### 2.1.0.0
 
 * Added WindowsFeature

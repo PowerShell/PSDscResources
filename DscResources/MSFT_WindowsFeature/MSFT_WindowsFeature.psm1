@@ -515,7 +515,18 @@ function Import-ServerManager
 
     try
     {
-        Import-Module -Name 'ServerManager'
+        Import-Module -Name 'ServerManager' -ErrorAction Stop
+    }
+    catch [System.Management.Automation.RuntimeException] {
+        if ($_.Exception.Message -like "*Some or all identity references could not be translated*")
+        {
+            Write-Verbose $_.Exception.Message
+        }
+        else
+        {
+            Write-Verbose -Message $script:localizedData.ServerManagerModuleNotFoundMessage
+            New-InvalidOperationException -Message $script:localizedData.SkuNotSupported
+        }
     }
     catch
     {
