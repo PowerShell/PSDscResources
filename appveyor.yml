@@ -8,6 +8,8 @@ install:
         Import-Module -Name .\DscResource.Tests\TestHelper.psm1 -Force
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
         Install-Module -Name Pester -Repository PSGallery -Force
+        Import-Module -Name .\WMF5Dot1Installation.psm1 -Force
+        Restart-Computer -Force
 
 #---------------------------------#
 #      build configuration        #
