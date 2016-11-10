@@ -30,6 +30,20 @@ try
                                                                                 -ChildPath 'MSFT_GroupResource_MembersToIncludeExclude.config.ps1'
         }
 
+        It 'Should use Group from PSDscResources' {
+            $groupResource = Get-DscResource -Name 'Group'
+
+            $groupResource | Should Not Be $null
+
+            if ($groupResource.Count -gt 1)
+            {
+                $sortedGroupResrources = $groupResource | Sort-Object -Property 'Version' -Descending
+                $groupResource = $sortedGroupResrources | Select-Object -First 1
+            }
+
+            $groupResource.ModuleName | Should Be 'PSDscResources'
+        }
+
         It 'Should create an empty group' {
             $configurationName = 'CreateEmptyGroup'
             $testGroupName = 'TestEmptyGroup1'

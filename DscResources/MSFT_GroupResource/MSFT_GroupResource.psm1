@@ -135,9 +135,11 @@ function Get-TargetResource
         This property will replace all the current group members with the specified members.
 
         Members should be specified as strings in the format of their domain qualified name 
-        (domain\username), their UPN (username@domainname), their distinguished name (CN=username,DC=...), or their username (for local machine accounts).  
+        (domain\username), their UPN (username@domainname), their distinguished name (CN=username,DC=...),
+        or their username (for local machine accounts).  
         
-        Using either the MembersToExclude or MembersToInclude properties in the same configuration as this property will generate an error.
+        Using either the MembersToExclude or MembersToInclude properties in the same configuration
+        as this property will generate an error.
 
     .PARAMETER MembersToInclude
         The members the group should include.
@@ -145,7 +147,8 @@ function Get-TargetResource
         This property will only add members to a group.
 
         Members should be specified as strings in the format of their domain qualified name 
-        (domain\username), their UPN (username@domainname), their distinguished name (CN=username,DC=...), or their username (for local machine accounts).
+        (domain\username), their UPN (username@domainname), their distinguished name (CN=username,DC=...),
+        or their username (for local machine accounts).
 
         Using the Members property in the same configuration as this property will generate an error.
 
@@ -155,7 +158,8 @@ function Get-TargetResource
         This property will only remove members from a group.
 
         Members should be specified as strings in the format of their domain qualified name 
-        (domain\username), their UPN (username@domainname), their distinguished name (CN=username,DC=...), or their username (for local machine accounts).
+        (domain\username), their UPN (username@domainname), their distinguished name (CN=username,DC=...),
+        or their username (for local machine accounts).
 
         Using the Members property in the same configuration as this property will generate an error.
 
@@ -164,10 +168,15 @@ function Get-TargetResource
 
         An error will occur if this account does not have the appropriate Active Directory permissions to add all
         non-local accounts to the group.
+
+    .NOTES
+        ShouldProcess PSSA rule is suppressed because Set-TargetResourceOnFullSKU and
+        Set-TargetResourceOnNanoServer call ShouldProcess.
 #>
 function Set-TargetResource
 {
-    [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSShouldProcess', '')]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
         [Parameter(Mandatory = $true)]
@@ -2265,8 +2274,23 @@ function Split-MemberName
     return [System.String[]] @( $scope, $accountName )
 }
 
+<#
+    .SYNOPSIS
+        Finds a principal by identity.
+        Wrapper function for testing.
+
+    .PARAMETER PrincipalContext
+        The principal context to find the principal in.
+
+    .PARAMETER IdentityValue
+        The identity value to find the principal by (e.g. username).
+
+    .PARAMETER IdentityType
+        The identity type of the principal to find.
+#>
 function Find-Principal
 {
+    [OutputType([System.DirectoryServices.AccountManagement.Principal])]
     [CmdletBinding()]
     param
     (
@@ -2344,6 +2368,13 @@ function Get-Group
     return $group
 }
 
+<#
+    .SYNOPSIS
+        Retrieves the members of a group from the underlying directory entry.
+
+    .PARAMETER Group
+        The group to retrieve the members of.
+#>
 function Get-GroupMembersFromDirectoryEntry
 {
     [CmdletBinding()]
@@ -2424,7 +2455,7 @@ function Add-GroupMember
 #>
 function Remove-GroupMember
 {
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]

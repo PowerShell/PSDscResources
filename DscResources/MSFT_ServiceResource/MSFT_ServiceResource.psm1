@@ -127,10 +127,15 @@ function Get-TargetResource
 
     .PARAMETER TerminateTimeout
         The time to wait for the service to stop in milliseconds. Optional. Default is 3000.
+
+    .NOTES
+        ShouldProcess PSSA rule is suppressed because Set-ServiceStartMode calls ShouldProcess.
+        (Set-TargetResource --> Write-WriteProperties --> Set-ServiceMode)
 #>
 function Set-TargetResource
 {
-    [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSShouldProcess', '')]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
         [Parameter(Mandatory = $true)]
@@ -706,11 +711,15 @@ function Set-ServiceStartMode
 
     .PARAMETER Dependencies
         An array of strings indicating the names of the dependencies of the service. Optional.
+
+    .NOTES
+        ShouldProcess PSSA rule is suppressed because Set-ServiceStartMode calls ShouldProcess.
 #>
 function Write-WriteProperty
 {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSShouldProcess', '')]
     [OutputType([System.Boolean])]
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
         [Parameter(Mandatory = $true)]
@@ -1068,6 +1077,7 @@ function Test-UserName
 #>
 function Get-UserNameAndPassword
 {
+    [OutputType([Object[]])]
     [CmdletBinding()]
     param
     (
