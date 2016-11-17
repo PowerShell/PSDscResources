@@ -679,7 +679,7 @@ function Test-SetTargetResourceWithWhatIf
 #>
 function Enter-DscResourceTestEnvironment
 {
-    [OutputType([PSObject])]
+    [OutputType([Hashtable])]
     [CmdletBinding()]
     param
     (
@@ -700,13 +700,14 @@ function Enter-DscResourceTestEnvironment
     )
 
     $testsFolderPath = Split-Path -Path $PSScriptRoot -Parent
-    $dscResourceTestsPath = Join-Path -Path $testsFolderPath -ChildPath 'DSCResource.Tests'
+    $moduleRootPath = Split-Path -Path $testsFolderPath -Parent
+    $dscResourceTestsPath = Join-Path -Path $moduleRootPath -ChildPath 'DSCResource.Tests'
     $testHelperFilePath = Join-Path -Path $dscResourceTestsPath -ChildPath 'TestHelper.psm1'
 
-    if (-not (Test-Path -Path $testHelperFilePath))
+    if (-not (Test-Path -Path $dscResourceTestsPath))
     {
-        Push-Location $testsFolderPath
-        git clone 'https://github.com/PowerShell/DscResource.Tests.git' --quiet
+        Push-Location $moduleRootPath
+        git clone 'https://github.com/PowerShell/DscResource.Tests' --quiet
         Pop-Location
     }
     else
@@ -716,7 +717,7 @@ function Enter-DscResourceTestEnvironment
         if ($gitInstalled)
         {
             Push-Location $dscResourceTestsPath
-            git pull origin master --quiet
+            git pull origin dev --quiet
             Pop-Location
         }
         else
@@ -747,11 +748,13 @@ function Exit-DscResourceTestEnvironment
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [PSObject]
+        [Hashtable]
         $TestEnvironment
     )
+
     $testsFolderPath = Split-Path -Path $PSScriptRoot -Parent
-    $dscResourceTestsPath = Join-Path -Path $testsFolderPath -ChildPath 'DSCResource.Tests'
+    $moduleRootPath = Split-Path -Path $testsFolderPath -Parent
+    $dscResourceTestsPath = Join-Path -Path $moduleRootPath -ChildPath 'DSCResource.Tests'
     $testHelperFilePath = Join-Path -Path $dscResourceTestsPath -ChildPath 'TestHelper.psm1'
 
     Import-Module -Name $testHelperFilePath
