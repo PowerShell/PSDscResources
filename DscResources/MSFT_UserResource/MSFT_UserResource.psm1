@@ -13,10 +13,8 @@ if (-not (Test-IsNanoServer))
 {
     Add-Type -AssemblyName 'System.DirectoryServices.AccountManagement'
 }
-else
-{
-    Import-Module -Name 'Microsoft.Powershell.LocalAccounts'
-}
+    
+Import-Module -Name 'Microsoft.Powershell.LocalAccounts'
 
 <#
     .SYNOPSIS
