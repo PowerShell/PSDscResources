@@ -377,6 +377,133 @@ function Remove-UserOnNanoServer
 
 <#
     .SYNOPSIS
+        Determines if a user exists.
+
+    .DESCRIPTION
+        This function determines if a user exists on a local or remote machine.
+
+    .PARAMETER UserName
+        The name of the user to test.
+
+    .PARAMETER ComputerName
+        The optional name of the computer to update.
+#>
+function Test-User
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [String]
+        $UserName,
+
+        [String]
+        $ComputerName = $env:COMPUTERNAME
+    )
+
+    if (Test-IsNanoServer)
+    {
+        Test-UserOnNanoServer @PSBoundParameters
+    }
+    else
+    {
+        Test-UserOnFullSKU @PSBoundParameters
+    }
+}
+
+<#
+    .SYNOPSIS
+        Determines if a user exists on a full server.
+
+    .DESCRIPTION
+        This function determines if a user exists on a local or remote machine running a full server.
+
+    .PARAMETER UserName
+        The name of the user to test.
+
+    .PARAMETER ComputerName
+        The optional name of the computer to update.
+#>
+function Test-UserOnFullSKU
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [String]
+        $UserName,
+
+        [String]
+        $ComputerName = $env:COMPUTERNAME
+    )
+
+    Set-StrictMode -Version Latest
+
+    $adComputerEntry = [ADSI] "WinNT://$ComputerName"
+
+    if ($adComputerEntry.Children | Where-Object Path -like "WinNT://*$ComputerName/$UserName")
+    {
+        return $true
+    }
+
+    return $false
+}
+
+<#
+    .SYNOPSIS
+        Determines if a user exists on a Nano server.
+
+    .DESCRIPTION
+        This function determines if a user exists on a local or remote machine running a Nano server.
+
+    .PARAMETER UserName
+        The name of the user to test.
+
+    .PARAMETER ComputerName
+        This parameter should not be used on NanoServer.
+#>
+function Test-UserOnNanoServer
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [String]
+        $UserName,
+
+        [String]
+        $ComputerName = $env:COMPUTERNAME
+    )
+
+    if ($PSBoundParameters.ContainsKey('ComputerName'))
+    {
+        if (-not (Test-IsLocalMachine -Scope $ComputerName))
+        {
+            throw 'Do not specify the ComputerName arguments when running on NanoServer unless it is a local machine.'
+        }
+    }
+
+    # Try to find a user by name.
+    try
+    {
+        $null = Get-LocalUser -Name $UserName -ErrorAction Stop
+        return $true
+    }
+    catch [System.Exception]
+    {
+        if ($_.CategoryInfo.ToString().Contains('UserNotFoundException'))
+        {
+            # A user with the provided name does not exist.
+            return $false
+        }
+        throw $_.Exception
+    }
+
+    return $false
+}
+
+<#
+    .SYNOPSIS
         Waits a certain amount of time for a script block to return true.
         Return $true if completed successfully in the given amount of time, $false otherwise.
 
