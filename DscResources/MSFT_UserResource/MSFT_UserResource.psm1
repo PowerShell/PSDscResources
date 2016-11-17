@@ -1426,7 +1426,11 @@ function Remove-UserOnFullSku
 
     $user = Find-UserByNameOnFullSku -Username $UserName
 
+<<<<<<< HEAD
     if ($null -ne $user) {
+=======
+    if ($user -ne $null) {
+>>>>>>> 97e6b9fbd82549ab741016c1bd8e40c6a966a0eb
         try
         {
             if ($pscmdlet.ShouldProcess($script:localizedData.UserWithName -f $UserName, $script:localizedData.RemoveOperation))
