@@ -581,7 +581,7 @@ try
                 { Import-ServerManager } | Should Not Throw
             }
 
-            It 'Should Not Throw when exception is Identity Reference Runtime Exception' {
+            It 'Should not throw when exception is Identity Reference Runtime Exception' {
                 $mockIdentityReferenceRuntimeException = New-Object -TypeName System.Management.Automation.RuntimeException -ArgumentList 'Some or all identity references could not be translated'
                 Mock -CommandName Import-Module -MockWith { Throw $mockIdentityReferenceRuntimeException }
 
