@@ -520,7 +520,7 @@ function Import-ServerManager
     catch [System.Management.Automation.RuntimeException] {
         if ($_.Exception.Message -like "*Some or all identity references could not be translated*")
         {
-            Write-Verbose $_.Exception.Message
+            Write-Verbose -Message $script:localizedData.IdentityNotFoundMessage
         }
         else
         {

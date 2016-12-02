@@ -20,4 +20,5 @@ ConvertFrom-StringData @'
     EnableServerManagerPSHCmdletsFeature = Windows Server 2008R2 Core operating system detected: ServerManager-PSH-Cmdlets feature has been enabled.
     UninstallSuccess = Successfully uninstalled the feature {0}.
     InstallSuccess = Successfully installed the feature {0}.
+    IdentityNotFoundMessage = Some or all identity references could not be translated.
 '@
