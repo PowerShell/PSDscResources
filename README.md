@@ -225,6 +225,10 @@ None
 
 ### Unreleased
 
+* WindowsFeature:
+    * Added Catch to ignore RuntimeException when importing ServerManager module. This solves the issue described [here](https://social.technet.microsoft.com/Forums/en-US/9fc314e1-27bf-4f03-ab78-5e0f7a662b8f/importmodule-servermanager-some-or-all-identity-references-could-not-be-translated?forum=winserverpowershell).
+    * Updated unit tests.
+
 ### 2.1.0.0
 
 * Added WindowsFeature
