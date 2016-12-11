@@ -165,7 +165,7 @@ This resource **is not supported** on Nano Server.
 
 #### Examples
 
-* [Install or uninstall a Windows feature](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_xWindowsFeature.ps1)
+* [Install or uninstall a Windows feature](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsFeature.ps1)
 
 
 ### WindowsOptionalFeature
