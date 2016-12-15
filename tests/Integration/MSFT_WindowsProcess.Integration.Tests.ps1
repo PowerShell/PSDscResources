@@ -55,11 +55,11 @@ try
             }
             
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction 'Stop' } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction 'Stop'
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Path | Should Be $testProcessPath
                     $currentConfig.Arguments | Should Be $logFilePath
                     $currentConfig.Ensure | Should Be 'Absent'
@@ -93,11 +93,11 @@ try
             }
        
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction 'Stop' } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction 'Stop'
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Path | Should Be $testProcessPath
                     $currentConfig.Arguments | Should Be $logFilePath
                     $currentConfig.Ensure | Should Be 'Present'
@@ -132,11 +132,11 @@ try
             }
        
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction 'Stop' } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction 'Stop'
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Path | Should Be $testProcessPath
                     $currentConfig.Arguments | Should Be $logFilePath
                     $currentConfig.Ensure | Should Be 'Present'
@@ -171,11 +171,11 @@ try
             }
        
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction 'Stop' } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction 'Stop'
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Path | Should Be $testProcessPath
                     $currentConfig.Arguments | Should Be $logFilePath
                     $currentConfig.Ensure | Should Be 'Absent'
@@ -213,11 +213,11 @@ try
             }
        
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction 'Stop' } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction 'Stop'
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Path | Should Be $testProcessPath
                     $currentConfig.Arguments | Should Be $logFilePath
                     $currentConfig.Ensure | Should Be 'Present'
@@ -254,11 +254,11 @@ try
             }
        
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction 'Stop' } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction 'Stop'
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Path | Should Be $testProcessPath
                     $currentConfig.Arguments | Should Be $logFilePath
                     $currentConfig.Ensure | Should Be 'Absent'
@@ -315,11 +315,11 @@ try
             }
 
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction 'Stop' } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction 'Stop'
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Path | Should Be $testProcessPath
                     $currentConfig.Arguments | Should Be $logFilePath
                     $currentConfig.Ensure | Should Be 'Absent'
@@ -355,11 +355,11 @@ try
             }
 
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction 'Stop' } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction 'Stop'
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Path | Should Be $testProcessPath
                     $currentConfig.Arguments | Should Be $logFilePath
                     $currentConfig.Ensure | Should Be 'Present'
@@ -396,11 +396,11 @@ try
             }
        
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction 'Stop' } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction 'Stop'
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Path | Should Be $testProcessPath
                     $currentConfig.Arguments | Should Be $logFilePath
                     $currentConfig.Ensure | Should Be 'Present'
@@ -437,11 +437,11 @@ try
             }
        
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction 'Stop' } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction 'Stop'
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Path | Should Be $testProcessPath
                     $currentConfig.Arguments | Should Be $logFilePath
                     $currentConfig.Ensure | Should Be 'Absent'
@@ -481,11 +481,11 @@ try
             }
        
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction 'Stop' } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction 'Stop'
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Path | Should Be $testProcessPath
                     $currentConfig.Arguments | Should Be $logFilePath
                     $currentConfig.Ensure | Should Be 'Present'
@@ -524,11 +524,11 @@ try
             }
        
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction 'Stop' } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction 'Stop'
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Path | Should Be $testProcessPath
                     $currentConfig.Arguments | Should Be $logFilePath
                     $currentConfig.Ensure | Should Be 'Absent'
