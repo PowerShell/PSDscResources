@@ -1,6 +1,14 @@
-﻿Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent) `
-                                                -ChildPath 'DSCResources') `
-                               -ChildPath 'CommonResourceHelper.psm1')
+﻿[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "")]
+param ()
+
+$errorActionPreference = 'Stop'
+Set-StrictMode -Version 'Latest'
+
+<#
+    Cache the AppVeyor Administrator credential so that we do not reset the password multiple times
+    if retrieved the credential is requested multiple times.
+#>
+$script:appVeyorAdministratorCredential = $null
 
 <#
     .SYNOPSIS
@@ -51,8 +59,6 @@ function Test-IsLocalMachine
         [String]
         $Scope
     )
-
-    Set-StrictMode -Version latest
 
     if ($scope -eq '.')
     {
@@ -666,6 +672,50 @@ function Test-SetTargetResourceWithWhatIf
 
 <#
     .SYNOPSIS
+        Retrieves the administrator credential on an AppVeyor machine.
+        The password will be reset so that we know what the password is.
+
+    .NOTES
+        The AppVeyor credential will be cached after the first call to this function so that the
+        password is not reset if this function is called again.
+#>
+function Get-AppVeyorAdministratorCredential
+{
+    [OutputType([System.Management.Automation.PSCredential])]
+    [CmdletBinding()]
+    param ()
+
+    if ($null -eq $script:appVeyorAdministratorCredential)
+    {
+        $password = ''
+
+        $randomGenerator = New-Object -TypeName 'System.Random'
+
+        $passwordLength = Get-Random -Minimum 15 -Maximum 126
+
+        while ($password.Length -lt $passwordLength)
+        {
+            $password = $password + [Char]$randomGenerator.Next(45, 126)
+        }
+
+        # Change password
+        $appVeyorAdministratorUsername = 'appveyor'
+
+        $appVeyorAdministratorUser = [ADSI]("WinNT://$($env:computerName)/$appVeyorAdministratorUsername")
+
+        $null = $appVeyorAdministratorUser.SetPassword($password)
+        [Microsoft.Win32.Registry]::SetValue('HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon', 'DefaultPassword', $password)
+
+        $securePassword = ConvertTo-SecureString -String $password -AsPlainText -Force
+
+        $script:appVeyorAdministratorCredential = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList @( "$($env:computerName)\$appVeyorAdministratorUsername", $securePassword )
+    }
+
+    return $script:appVeyorAdministratorCredential
+}
+
+<#
+    .SYNOPSIS
         Enters a DSC Resource test environment.
 
     .PARAMETER DscResourceModuleName
@@ -762,13 +812,15 @@ function Exit-DscResourceTestEnvironment
     Restore-TestEnvironment -TestEnvironment $TestEnvironment
 }
 
-Export-ModuleMember -Function `
-    Test-GetTargetResourceResult, `
-    New-User, `
-    Remove-User, `
-    Test-User, `
-    Wait-ScriptBlockReturnTrue, `
-    Test-IsFileLocked, `
-    Test-SetTargetResourceWithWhatIf, `
-    Enter-DscResourceTestEnvironment, `
-    Exit-DscResourceTestEnvironment
+Export-ModuleMember -Function @(
+    'Test-GetTargetResourceResult', `
+    'New-User', `
+    'Remove-User', `
+    'Test-User', `
+    'Wait-ScriptBlockReturnTrue', `
+    'Test-IsFileLocked', `
+    'Test-SetTargetResourceWithWhatIf', `
+    'Get-AppVeyorAdministratorCredential', `
+    'Enter-DscResourceTestEnvironment', `
+    'Exit-DscResourceTestEnvironment'
+)

@@ -40,6 +40,7 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 * [WindowsFeature](#windowsfeature): Provides a mechanism to install or uninstall windows roles or features on a target node.
 * [WindowsOptionalFeature](#windowsoptionalfeature): Provides a mechanism to enable or disable optional features on a target node.
 * [WindowsPackageCab](#windowspackagecab): Provides a mechanism to install or uninstall a package from a windows cabinet (cab) file on a target node.
+* [WindowsProcess](#windowsprocess): Provides a mechanism to start and stop a Windows process.
 
 ### Resources that Work on Nano Server
 
@@ -221,13 +222,52 @@ None
 
 * [Install a cab file with the given name from the given path](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsPackageCab.ps1)
 
+### WindowsProcess
+
+Provides a mechanism to start and stop a Windows process.
+
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String] Path** _(Key)_: The executable file of the process. This can be defined as either the full path to the file or as the name of the file if it is accessible through the environment path. Relative paths are not supported.
+* **[String] Arguments** _(Key)_: A single string containing all the arguments to pass to the process. Pass in an empty string if no arguments are needed.
+* **[PSCredential] Credential** _(Write)_: The credential of the user account to run the process under. If this user is from the local system, the StandardOutputPath, StandardInputPath, and WorkingDirectory parameters cannot be provided at the same time.
+* **[String] Ensure** _(Write)_: Specifies whether or not the process should be running. To start the process, specify this property as Present. To stop the process, specify this property as Absent. { *Present* | Absent }.
+* **[String] StandardOutputPath** _(Write)_: The file path to which to write the standard output from the process. Any existing file at this file path will be overwritten. This property cannot be specified at the same time as Credential when running the process as a local user.
+* **[String] StandardErrorPath** _(Write)_: The file path to which to write the standard error output from the process. Any existing file at this file path will be overwritten.
+* **[String] StandardInputPath** _(Write)_: The file path from which to receive standard input for the process. This property cannot be specified at the same time as Credential when running the process as a local user.
+* **[String] WorkingDirectory** _(Write)_: The file path to the working directory under which to run the file. This property cannot be specified at the same time as Credential when running the process as a local user.
+
+#### Read-Only Properties from Get-TargetResource
+
+* **[UInt64] PagedMemorySize** _(Read)_: The amount of paged memory, in bytes, allocated for the process.
+* **[UInt64] NonPagedMemorySize** _(Read)_: The amount of nonpaged memory, in bytes, allocated for the process.
+* **[UInt64] VirtualMemorySize** _(Read)_: The amount of virtual memory, in bytes, allocated for the process.
+* **[SInt32] HandleCount** _(Read)_: The number of handles opened by the process.
+* **[SInt32] ProcessId** _(Read)_: The unique identifier of the process.
+* **[SInt32] ProcessCount** _(Read)_: The number of instances of the given process that are currently running.
+
+#### Examples
+
+* [Start a process](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsProcess_Start.ps1)
+* [Stop a process](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsProcess_Stop.ps1)
+* [Start a process under a user](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsProcess_StartUnderUser.ps1)
+* [Stop a process under a user](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsProcess_StopUnderUser.ps1)
+
 ## Versions
 
 ### Unreleased
 
 * WindowsFeature:
     * Added Catch to ignore RuntimeException when importing ServerManager module. This solves the issue described [here](https://social.technet.microsoft.com/Forums/en-US/9fc314e1-27bf-4f03-ab78-5e0f7a662b8f/importmodule-servermanager-some-or-all-identity-references-could-not-be-translated?forum=winserverpowershell).
-    * Updated unit tests.
+    * Updated unit tests.   
+* Added WindowsProcess
+* CommonTestHelper:
+    * Added Get-AppVeyorAdministratorCredential
+    * Added Set-StrictMode -'Latest' and $errorActionPreference -'Stop'
 
 ### 2.1.0.0
 
