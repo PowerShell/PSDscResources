@@ -17,8 +17,9 @@ $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
 # Import CommonTestHelper for Enter-DscResourceTestEnvironment, Exit-DscResourceTestEnvironment
-$script:moduleRootPath = Split-Path -Path $PSScriptRoot -Parent
-$script:testHelpersPath = Join-Path -Path $script:moduleRootPath -ChildPath 'TestHelpers'
+$script:moduleRootPath = Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent
+$script:testPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testPath -ChildPath 'TestHelpers'
 Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
@@ -31,18 +32,17 @@ try
     Describe 'Service Integration Tests' {
         BeforeAll {
             # Import CommonResourceHelper for Test-IsNanoServer, Get-AppveyorAdministratorCredential
-            $moduleRootFilePath = Split-Path -Path $script:testsFolderFilePath -Parent
-            $dscResourcesFolderFilePath = Join-Path -Path $moduleRootFilePath -ChildPath 'DscResources'
+            $dscResourcesFolderFilePath = Join-Path -Path $script:moduleRootPath -ChildPath 'DscResources'
             $commonResourceHelperFilePath = Join-Path -Path $dscResourcesFolderFilePath -ChildPath 'CommonResourceHelper.psm1'
             Import-Module -Name $commonResourceHelperFilePath
 
             # Import DscResource.Tests TestHelper for Reset-Dsc
-            $dscResourceTestsFilePath = Join-Path -Path $moduleRootFilePath -ChildPath 'DscResource.Tests'
+            $dscResourceTestsFilePath = Join-Path -Path $script:moduleRootPath -ChildPath 'DscResource.Tests'
             $dscResourceTestHelperFilePath = Join-Path -Path $dscResourceTestsFilePath -ChildPath 'TestHelper.psm1'
             Import-Module -Name $dscResourceTestHelperFilePath
 
             # Import Service test helper for New-ServiceBinary, Test-ServiceExists, Remove-ServiceWithTimeout
-            $serviceTestHelperFilePath = Join-Path -Path $script:testsHelpersFilePath -ChildPath 'MSFT_ServiceResource.TestHelper.psm1'
+            $serviceTestHelperFilePath = Join-Path -Path $script:testHelpersPath -ChildPath 'MSFT_ServiceResource.TestHelper.psm1'
             Import-Module -Name $serviceTestHelperFilePath
 
             # Import Service resource module for Test-TargetResource
@@ -65,7 +65,7 @@ try
 
             $existingServiceNewExecutableParameters = @{
                 ServiceName = $script:existingServiceProperties.Name
-                ServiceCodePath = Join-Path -Path $script:testsHelpersPath -ChildPath 'DscTestService.cs'
+                ServiceCodePath = Join-Path -Path $script:testHelpersPath -ChildPath 'DscTestService.cs'
                 ServiceDisplayName = $script:existingServiceProperties.DisplayName
                 ServiceDescription = $script:existingServiceProperties.Description
                 ServiceDependsOn = $script:existingServiceProperties.Dependencies -join ', '
