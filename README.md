@@ -37,9 +37,9 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 * [Group](#group): Provides a mechanism to manage local groups on a target node.
 * [Service](#service): Provides a mechanism to configure and manage Windows services on a target node.
 * [User](#user): Provides a mechanism to manage local users on a target node.
-* [WindowsFeature](#windowsfeature): Provides a mechanism to install or uninstall windows roles or features on a target node.
+* [WindowsFeature](#windowsfeature): Provides a mechanism to install or uninstall Windows roles or features on a target node.
 * [WindowsOptionalFeature](#windowsoptionalfeature): Provides a mechanism to enable or disable optional features on a target node.
-* [WindowsPackageCab](#windowspackagecab): Provides a mechanism to install or uninstall a package from a windows cabinet (cab) file on a target node.
+* [WindowsPackageCab](#windowspackagecab): Provides a mechanism to install or uninstall a package from a Windows cabinet (cab) file on a target node.
 * [WindowsProcess](#windowsprocess): Provides a mechanism to start and stop a Windows process.
 
 ### Resources that Work on Nano Server
@@ -111,6 +111,7 @@ None
 
 * [Create a service](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Service_CreateService.ps1)
 * [Delete a service](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Service_DeleteService.ps1)
+* [Update a service with StartupType set to 'Ignore'](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Service_UpdateStartupTypeIgnoreState)
 
 ### User
 
@@ -196,11 +197,11 @@ This resource works on Nano Server.
 
 #### Examples
 
-* [Enable the specified windows optional feature and output logs to the specified path](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsOptionalFeature.ps1)
+* [Enable the specified Windows optional feature and output logs to the specified path](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsOptionalFeature.ps1)
 
 ### WindowsPackageCab
 
-Provides a mechanism to install or uninstall a package from a windows cabinet (cab) file on a target node.
+Provides a mechanism to install or uninstall a package from a Windows cabinet (cab) file on a target node.
 This resource works on Nano Server.
 
 #### Requirements
@@ -268,6 +269,8 @@ None
 * CommonTestHelper:
     * Added Get-AppVeyorAdministratorCredential
     * Added Set-StrictMode -'Latest' and $errorActionPreference -'Stop'
+* Service:
+    * Updated resource module, tests, and examples to reflect the changes made in xPSDesiredStateConfiguration
 
 ### 2.1.0.0
 

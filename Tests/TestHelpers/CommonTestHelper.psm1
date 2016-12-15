@@ -1,4 +1,4 @@
-﻿[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "")]
+﻿[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 param ()
 
 $errorActionPreference = 'Stop'
@@ -87,6 +87,7 @@ function Test-IsLocalMachine
             NOTE: This is likely overkill; consider removing it.
         #>
         $networkAdapters = @(Get-CimInstance Win32_NetworkAdapterConfiguration)
+
         foreach ($networkAdapter in $networkAdapters)
         {
             if ($null -ne $networkAdapter.IPAddress)
