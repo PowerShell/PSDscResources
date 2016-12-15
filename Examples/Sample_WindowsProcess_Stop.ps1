@@ -6,8 +6,7 @@
 #>
 Configuration Sample_WindowsProcess_Stop
 {
-    param
-    ()
+    param ()
 
     Import-DSCResource -ModuleName 'PSDscResources'
 

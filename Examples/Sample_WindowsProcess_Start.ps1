@@ -5,8 +5,7 @@
 #>
 Configuration Sample_WindowsProcess_Start
 {
-    param
-    ()
+    param ()
 
     Import-DSCResource -ModuleName 'PSDscResources'
 

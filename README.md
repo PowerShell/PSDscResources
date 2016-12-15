@@ -223,6 +223,7 @@ None
 * [Install a cab file with the given name from the given path](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsPackageCab.ps1)
 
 ### WindowsProcess
+
 Provides a mechanism to start and stop a Windows process.
 
 #### Requirements
@@ -230,6 +231,7 @@ Provides a mechanism to start and stop a Windows process.
 None
 
 #### Parameters
+
 * **[String] Path** _(Key)_: The executable file of the process. This can be defined as either the full path to the file or as the name of the file if it is accessible through the environment path. Relative paths are not supported.
 * **[String] Arguments** _(Key)_: A single string containing all the arguments to pass to the process. Pass in an empty string if no arguments are needed.
 * **[PSCredential] Credential** _(Write)_: The credential of the user account to run the process under. If this user is from the local system, the StandardOutputPath, StandardInputPath, and WorkingDirectory parameters cannot be provided at the same time.
@@ -240,6 +242,7 @@ None
 * **[String] WorkingDirectory** _(Write)_: The file path to the working directory under which to run the file. This property cannot be specified at the same time as Credential when running the process as a local user.
 
 #### Read-Only Properties from Get-TargetResource
+
 * **[UInt64] PagedMemorySize** _(Read)_: The amount of paged memory, in bytes, allocated for the process.
 * **[UInt64] NonPagedMemorySize** _(Read)_: The amount of nonpaged memory, in bytes, allocated for the process.
 * **[UInt64] VirtualMemorySize** _(Read)_: The amount of virtual memory, in bytes, allocated for the process.
@@ -254,16 +257,17 @@ None
 * [Start a process under a user](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsProcess_StartUnderUser.ps1)
 * [Stop a process under a user](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsProcess_StopUnderUser.ps1)
 
-
 ## Versions
 
 ### Unreleased
 
 * WindowsFeature:
     * Added Catch to ignore RuntimeException when importing ServerManager module. This solves the issue described [here](https://social.technet.microsoft.com/Forums/en-US/9fc314e1-27bf-4f03-ab78-5e0f7a662b8f/importmodule-servermanager-some-or-all-identity-references-could-not-be-translated?forum=winserverpowershell).
-    * Updated unit tests.
-    
+    * Updated unit tests.   
 * Added WindowsProcess
+* CommonTestHelper:
+    * Added Get-AppVeyorAdministratorCredential
+    * Added Set-StrictMode -'Latest' and $errorActionPreference -'Stop'
 
 ### 2.1.0.0
 
