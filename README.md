@@ -267,15 +267,17 @@ None
     * Updated unit tests.   
 * Added WindowsProcess
 * CommonTestHelper:
-    * Added Get-AppVeyorAdministratorCredential
-    * Added Set-StrictMode -'Latest' and $errorActionPreference -'Stop'
+    * Added Get-AppVeyorAdministratorCredential.
+    * Added Set-StrictMode -'Latest' and $errorActionPreference -'Stop'.
 * Service:
-    * Updated resource module, tests, and examples to reflect the changes made in xPSDesiredStateConfiguration
+    * Updated resource module, unit tests, integration tests, and examples to reflect the changes made in xPSDesiredStateConfiguration.
+* Group:
+    * Updated resource module, examples, and integration tests to reflect the changes made in xPSDesiredStateConfiguration.
 
 ### 2.1.0.0
 
-* Added WindowsFeature
+* Added WindowsFeature.
 
 ### 2.0.0.0
 
-* Initial release of PSDscResources
+* Initial release of PSDscResources.

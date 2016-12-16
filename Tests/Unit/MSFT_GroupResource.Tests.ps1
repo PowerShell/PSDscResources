@@ -1,6 +1,9 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 param ()
 
+$errorActionPreference = 'Stop'
+Set-StrictMode -Version 'Latest'
+
 Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
                                -ChildPath (Join-Path -Path 'TestHelpers' `
                                                      -ChildPath 'CommonTestHelper.psm1'))
@@ -1664,8 +1667,9 @@ try
 
                     Mock 'Get-GroupMembersFromDirectoryEntry' { return @( $memberDirectoryEntry3 ) }
 
-                    It 'Should ignore stale members - Expected to write a warning' {
-                        $getMembersResult = Get-MembersAsPrincipalsList -Group $script:testGroup -PrincipalContextCache $principalContextCache -Disposables $disposables | Should Be $null
+                    It 'Should ignore stale members' {
+                        $getMembersResult = Get-MembersAsPrincipalsList -Group $script:testGroup -PrincipalContextCache $principalContextCache -Disposables $disposables -WarningAction 'SilentlyContinue'
+                        $getMembersResult | Should Be $null
 
                         Assert-MockCalled -CommandName 'Get-GroupMembersFromDirectoryEntry' -ParameterFilter { $Group.Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'New-Object' -ParameterFilter { $TypeName -eq 'System.DirectoryServices.DirectoryEntry' }
@@ -1998,8 +2002,6 @@ try
                     }
                 }
             }
-
-            
         }
     }
 }
