@@ -75,8 +75,8 @@ None
 
 #### Examples
 
-* [Create or modify a group with Members](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_Members.ps1)
-* [Create or modify a group with MembersToInclude and/or MembersToExclude](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_Members.ps1)
+* [Set members of a group](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_SetMembers.ps1)
+* [Remove members of a group](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_RemoveMembers.ps1)
 
 ### Service
 
