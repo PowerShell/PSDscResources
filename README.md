@@ -37,9 +37,9 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 * [Group](#group): Provides a mechanism to manage local groups on a target node.
 * [Service](#service): Provides a mechanism to configure and manage Windows services on a target node.
 * [User](#user): Provides a mechanism to manage local users on a target node.
-* [WindowsFeature](#windowsfeature): Provides a mechanism to install or uninstall windows roles or features on a target node.
+* [WindowsFeature](#windowsfeature): Provides a mechanism to install or uninstall Windows roles or features on a target node.
 * [WindowsOptionalFeature](#windowsoptionalfeature): Provides a mechanism to enable or disable optional features on a target node.
-* [WindowsPackageCab](#windowspackagecab): Provides a mechanism to install or uninstall a package from a windows cabinet (cab) file on a target node.
+* [WindowsPackageCab](#windowspackagecab): Provides a mechanism to install or uninstall a package from a Windows cabinet (cab) file on a target node.
 * [WindowsProcess](#windowsprocess): Provides a mechanism to start and stop a Windows process.
 
 ### Resources that Work on Nano Server
@@ -75,8 +75,8 @@ None
 
 #### Examples
 
-* [Create or modify a group with Members](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_Members.ps1)
-* [Create or modify a group with MembersToInclude and/or MembersToExclude](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_Members.ps1)
+* [Set members of a group](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_SetMembers.ps1)
+* [Remove members of a group](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_RemoveMembers.ps1)
 
 ### Service
 
@@ -111,6 +111,7 @@ None
 
 * [Create a service](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Service_CreateService.ps1)
 * [Delete a service](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Service_DeleteService.ps1)
+* [Update a service with StartupType set to 'Ignore'](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Service_UpdateStartupTypeIgnoreState)
 
 ### User
 
@@ -196,11 +197,11 @@ This resource works on Nano Server.
 
 #### Examples
 
-* [Enable the specified windows optional feature and output logs to the specified path](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsOptionalFeature.ps1)
+* [Enable the specified Windows optional feature and output logs to the specified path](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsOptionalFeature.ps1)
 
 ### WindowsPackageCab
 
-Provides a mechanism to install or uninstall a package from a windows cabinet (cab) file on a target node.
+Provides a mechanism to install or uninstall a package from a Windows cabinet (cab) file on a target node.
 This resource works on Nano Server.
 
 #### Requirements
@@ -266,13 +267,17 @@ None
     * Updated unit tests.   
 * Added WindowsProcess
 * CommonTestHelper:
-    * Added Get-AppVeyorAdministratorCredential
-    * Added Set-StrictMode -'Latest' and $errorActionPreference -'Stop'
+    * Added Get-AppVeyorAdministratorCredential.
+    * Added Set-StrictMode -'Latest' and $errorActionPreference -'Stop'.
+* Service:
+    * Updated resource module, unit tests, integration tests, and examples to reflect the changes made in xPSDesiredStateConfiguration.
+* Group:
+    * Updated resource module, examples, and integration tests to reflect the changes made in xPSDesiredStateConfiguration.
 
 ### 2.1.0.0
 
-* Added WindowsFeature
+* Added WindowsFeature.
 
 ### 2.0.0.0
 
-* Initial release of PSDscResources
+* Initial release of PSDscResources.

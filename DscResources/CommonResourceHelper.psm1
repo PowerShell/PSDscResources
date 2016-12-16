@@ -105,9 +105,9 @@ function New-InvalidOperationException
     .PARAMETER ResourceName
         The name of the resource as it appears before '.strings.psd1' of the localized string file.
         For example:
-            WindowsOptionalFeature: MSFT_WindowsOptionalFeature
-            Service: MSFT_ServiceResource
-            Registry: MSFT_RegistryResource
+            For WindowsOptionalFeature: MSFT_WindowsOptionalFeature
+            For Service: MSFT_ServiceResource
+            For Registry: MSFT_RegistryResource
 #>
 function Get-LocalizedData
 {
