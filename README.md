@@ -35,6 +35,7 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 ## Resources
 
 * [Group](#group): Provides a mechanism to manage local groups on a target node.
+* [Script](#script): Provides a mechanism to run PowerShell script blocks on a target node.
 * [Service](#service): Provides a mechanism to configure and manage Windows services on a target node.
 * [User](#user): Provides a mechanism to manage local users on a target node.
 * [WindowsFeature](#windowsfeature): Provides a mechanism to install or uninstall Windows roles or features on a target node.
@@ -45,6 +46,7 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 ### Resources that Work on Nano Server
 
 * [Group](#group)
+* [Script](#script)
 * [Service](#service)
 * [User](#user)
 * [WindowsOptionalFeature](#windowsoptionalfeature)
@@ -77,6 +79,30 @@ None
 
 * [Set members of a group](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_SetMembers.ps1)
 * [Remove members of a group](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_RemoveMembers.ps1)
+
+### Script
+
+Provides a mechanism to run PowerShell script blocks on a target node.
+This resource works on Nano Server.
+
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String] GetScript** _(Key)_: A string that can be used to create a PowerShell script block that retrieves the current state of the resource. This script block runs when the Get-DscConfiguration cmdlet is called. This script block should return a hash table containing one key named Result with a string value.
+* **[String] SetScript** _(Key)_: A string that can be used to create a PowerShell script block that sets the resource to the desired state. This script block runs conditionally when the Start-DscConfiguration cmdlet is called. The TestScript script block will run first. If the TestScript block returns False, this script block will run. If the TestScript block returns True, this script block will not run. This script block should not return.
+* **[String] TestScript** _(Key)_: A string that can be used to create a PowerShell script block that validates whether or not the resource is in the desired state. This script block runs when the Start-DscConfiguration cmdlet is called or when the Test-DscConfiguration cmdlet is called. This script block should return a boolean with True meaning that the resource is in the desired state and False meaning that the resource is not in the desired state.
+* **[PSCredential] Credential** _(Write)_: The credential of the user account to run the script under if needed.
+
+#### Read-Only Properties from Get-TargetResource
+
+* **[String] Result** _(Read)_: The result from the GetScript script block.
+
+#### Examples
+
+* [Create a file with content through xScript](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Script.ps1)
 
 ### Service
 
@@ -273,6 +299,7 @@ None
     * Updated resource module, unit tests, integration tests, and examples to reflect the changes made in xPSDesiredStateConfiguration.
 * Group:
     * Updated resource module, examples, and integration tests to reflect the changes made in xPSDesiredStateConfiguration.
+* Added Script
 
 ### 2.1.0.0
 
