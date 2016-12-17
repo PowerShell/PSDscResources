@@ -37,7 +37,7 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 * [Group](#group): Provides a mechanism to manage local groups on a target node.
 * [GroupSet](#groupset): Provides a mechanism to configure and manage multiple Group resources with common settings but different names.
 * [Script](#script): Provides a mechanism to run PowerShell script blocks on a target node.
-* [Service](#service): Provides a mechanism to configure and manage Service resources on a target node.
+* [Service](#service): Provides a mechanism to configure and manage Windows services on a target node.
 * [ServiceSet](#serviceset): Provides a mechanism to configure and manage multiple Service resources with common settings but different names.
 * [User](#user): Provides a mechanism to manage local users on a target node.
 * [WindowsFeature](#windowsfeature): Provides a mechanism to install or uninstall Windows roles or features on a target node.

@@ -22,6 +22,6 @@ Copyright = '(c) 2016 Microsoft. All rights reserved.'
 Description = 'Configures multiple Group resources with common settings but different names.'
 
 # Minimum version of the Windows PowerShell engine required by this module
-PowerShellVersion = '4.0'
+PowerShellVersion = '5.1'
 
 }

@@ -22,6 +22,6 @@ Copyright = '(c) 2016 Microsoft. All rights reserved.'
 Description = 'Provides a mechanism to configure and manage multiple WindowsProcess resources on a target node.'
 
 # Minimum version of the Windows PowerShell engine required by this module
-PowerShellVersion = '4.0'
+PowerShellVersion = '5.1'
 
 }

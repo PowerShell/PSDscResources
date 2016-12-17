@@ -22,6 +22,6 @@ Copyright = '(c) 2016 Microsoft. All rights reserved.'
 Description = 'Allows starting, stopping and change in state or account type for a group of services.'
 
 # Minimum version of the Windows PowerShell engine required by this module
-PowerShellVersion = '4.0'
+PowerShellVersion = '5.1'
 
 }
