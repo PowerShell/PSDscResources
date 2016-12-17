@@ -9,8 +9,8 @@ if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -l
 
 # Import CommonTestHelper for Enter-DscResourceTestEnvironment, Exit-DscResourceTestEnvironment
 $script:moduleRootPath = Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent
-$script:testPath = Split-Path -Path $PSScriptRoot -Parent
-$script:testHelpersPath = Join-Path -Path $script:testPath -ChildPath 'TestHelpers'
+$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
 Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `

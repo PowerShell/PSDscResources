@@ -36,6 +36,7 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 
 * [Group](#group): Provides a mechanism to manage local groups on a target node.
 * [GroupSet](#groupset): Provides a mechanism to configure and manage multiple Group resources with common settings but different names.
+* [Registry](#registry): Provides a mechanism to manage registry keys and values on a target node.
 * [Script](#script): Provides a mechanism to run PowerShell script blocks on a target node.
 * [Service](#service): Provides a mechanism to configure and manage Windows services on a target node.
 * [ServiceSet](#serviceset): Provides a mechanism to configure and manage multiple Service resources with common settings but different names.
@@ -112,6 +113,35 @@ None
 #### Examples
 
 * [Add members to multiple groups](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_GroupSet_AddMembers.ps1)
+
+### Registry
+
+Provides a mechanism to manage registry keys and values on a target node.
+
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String] Key** _(Key)_: The path of the registry key to add, modify, or remove. This path must include the registry hive/drive (e.g. HKEY_LOCAL_MACHINE, HKLM:).
+* **[String] ValueName** _(Key)_: The name of the registry value. To add or remove a registry key, specify this property as an empty string without specifying ValueType or ValueData. To modify or remove the default value of a registry key, specify this property as an empty string while also specifying ValueType or ValueData.
+* **[String] Ensure** _(Write)_: Specifies whether or not the registry key or value should exist. To add or modify a registry key or value, set this property to Present. To remove a registry key or value, set this property to Absent. { *Present* | Absent }.
+* **[String] ValueData** _(Write)_: The data the specified registry key value should have as a string or an array of strings (MultiString only).
+* **[String] ValueType** _(Write)_: The type the specified registry key value should have. { *String* | Binary | DWord | QWord | MultiString | ExpandString }
+* **[Boolean] Hex** _(Write)_: Specifies whether or not the specified DWord or QWord registry key data is provided in a hexadecimal format. Not valid for types other than DWord and QWord. The default value is $false.
+* **[Boolean] Force** _(Write)_: Specifies whether or not to overwrite the specified registry key value if it already has a value or whether or not to delete a registry key that has subkeys. The default value is $false.
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+* [Add a registry key](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_RegistryResource_AddKey.ps1)
+* [Add or modify a registry key value](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_RegistryResource_AddOrModifyValue.ps1)
+* [Remove a registry key value](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_RegistryResource_RemoveValue.ps1)
+* [Remove a registry key](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_RegistryResource_RemoveKey.ps1)
 
 ### Script
 
@@ -453,11 +483,12 @@ The following parameters will be the same for each process in the set:
     * Updated resource module, unit tests, integration tests, and examples to reflect the changes made in xPSDesiredStateConfiguration.
 * Group:
     * Updated resource module, examples, and integration tests to reflect the changes made in xPSDesiredStateConfiguration.
-* Added Script
+* Added Script.
 * Added GroupSet, ServiceSet, WindowsFeatureSet, WindowsOptionalFeatureSet, and ProcessSet.
 * Added Set-StrictMode -'Latest' and $errorActionPreference -'Stop' to Group, Service, User, WindowsFeature, WindowsOptionalFeature, WindowsPackageCab.
 * Fixed bug in WindowsFeature in which is was checking the 'Count' property of an object that was not always an array.
 * Cleaned Group and Service resources and tests.
+* Added Registry.
 
 ### 2.1.0.0
 
