@@ -8,6 +8,11 @@ $dscResourcesFolderFilePath = Join-Path -Path $moduleRootFilePath -ChildPath 'DS
 $commonResourceHelperFilePath = Join-Path -Path $dscResourcesFolderFilePath -ChildPath 'CommonResourceHelper.psm1'
 Import-Module -Name $commonResourceHelperFilePath
 
+if (-not (Test-IsNanoServer))
+{
+    Add-Type -AssemblyName 'System.DirectoryServices.AccountManagement'
+}
+
 <#
     .SYNOPSIS
         Tests if a Windows group with the given name and members exists.

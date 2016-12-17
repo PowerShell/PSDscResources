@@ -4,9 +4,9 @@ param ()
 $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
-Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
-                               -ChildPath (Join-Path -Path 'TestHelpers' `
-                                                     -ChildPath 'CommonTestHelper.psm1'))
+$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
+Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceModuleName 'PSDscResources' `

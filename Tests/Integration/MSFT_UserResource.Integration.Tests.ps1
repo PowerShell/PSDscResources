@@ -14,9 +14,12 @@ if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -l
     return
 }
 
-Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                               -ChildPath (Join-Path -Path 'TestHelpers' `
-                                                     -ChildPath 'CommonTestHelper.psm1'))
+$errorActionPreference = 'Stop'
+Set-StrictMode -Version 'Latest'
+
+$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
+Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceModuleName 'PSDscResources' `
@@ -69,11 +72,11 @@ try {
                 }
 
                 It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction Stop } | Should Not Throw
                 }
                 
                 It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
+                    $currentConfig = Get-DscConfiguration -ErrorAction Stop
                     $currentConfig.UserName | Should Be $testUserName
                     $currentConfig.Ensure | Should Be 'Present'
                     $currentConfig.Description | Should Be $TestDescription
@@ -122,11 +125,11 @@ try {
                 }
 
                 It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction Stop } | Should Not Throw
                 }
                 
                 It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
+                    $currentConfig = Get-DscConfiguration -ErrorAction Stop
                     $currentConfig.UserName | Should Be $testUserName
                     $currentConfig.Ensure | Should Be 'Present'
                     $currentConfig.Description | Should Be $TestDescription
@@ -174,11 +177,11 @@ try {
                 }
 
                 It 'Should be able to call Get-DscConfiguration without throwing' {
-                    { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not Throw
+                    { Get-DscConfiguration -ErrorAction Stop } | Should Not Throw
                 }
                 
                 It 'Should return the correct configuration' {
-                    $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
+                    $currentConfig = Get-DscConfiguration -ErrorAction Stop
                     $currentConfig.UserName | Should Be $testUserName
                     $currentConfig.Ensure | Should Be 'Absent'
                 }

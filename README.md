@@ -35,13 +35,18 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 ## Resources
 
 * [Group](#group): Provides a mechanism to manage local groups on a target node.
+* [GroupSet](#groupset): Provides a mechanism to configure and manage multiple Group resources with common settings but different names.
 * [Script](#script): Provides a mechanism to run PowerShell script blocks on a target node.
 * [Service](#service): Provides a mechanism to configure and manage Windows services on a target node.
+* [ServiceSet](#serviceset): Provides a mechanism to configure and manage multiple Service resources with common settings but different names.
 * [User](#user): Provides a mechanism to manage local users on a target node.
 * [WindowsFeature](#windowsfeature): Provides a mechanism to install or uninstall Windows roles or features on a target node.
+* [WindowsFeatureSet](#windowsfeatureset): Provides a mechanism to configure and manage multiple WindowsFeature resources on a target node.
 * [WindowsOptionalFeature](#windowsoptionalfeature): Provides a mechanism to enable or disable optional features on a target node.
+* [WindowsOptionalFeatureSet](#windowsoptionalfeatureset): Provides a mechanism to configure and manage multiple WindowsOptionalFeature resources on a target node.
 * [WindowsPackageCab](#windowspackagecab): Provides a mechanism to install or uninstall a package from a Windows cabinet (cab) file on a target node.
 * [WindowsProcess](#windowsprocess): Provides a mechanism to start and stop a Windows process.
+* [ProcessSet](#processset): Provides a mechanism to configure and manage multiple WindowsProcess resources on a target node.
 
 ### Resources that Work on Nano Server
 
@@ -50,6 +55,7 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 * [Service](#service)
 * [User](#user)
 * [WindowsOptionalFeature](#windowsoptionalfeature)
+* [WindowsOptionalFeatureSet](#windowsoptionalfeatureset)
 * [WindowsPackageCab](#windowspackagecab)
 
 ### Group
@@ -79,6 +85,33 @@ None
 
 * [Set members of a group](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_SetMembers.ps1)
 * [Remove members of a group](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Group_RemoveMembers.ps1)
+
+### GroupSet
+
+Provides a mechanism to configure and manage multiple Group resources with common settings but different names
+
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String] GroupName** _(Key)_: The names of the groups to create, modify, or remove.
+
+The following parameters will be the same for each group in the set:
+
+* **[String] Ensure** _(Write)_: Indicates if the groups should exist or not. To add groups or modify existing groups, set this property to Present. To remove groups, set this property to Absent. { Present | Absent }.
+* **[String[]] MembersToInclude** _(Write)_: The members the groups should include. This property will only add members to groups. Members should be specified as strings in the format of their domain qualified name (domain\username), their UPN (username@domainname), their distinguished name (CN=username,DC=...), or their username (for local machine accounts).
+* **[String[]] MembersToExclude** _(Write)_: The members the groups should exclude. This property will only remove members groups. Members should be specified as strings in the format of their domain qualified name (domain\username), their UPN (username@domainname), their distinguished name (CN=username,DC=...), or their username (for local machine accounts).
+* **[System.Management.Automation.PSCredential] Credential** _(Write)_: A credential to resolve non-local group members.
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+* [Add members to multiple groups](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_GroupSet_AddMembers.ps1)
 
 ### Script
 
@@ -139,6 +172,35 @@ None
 * [Delete a service](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Service_DeleteService.ps1)
 * [Update a service with StartupType set to 'Ignore'](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Service_UpdateStartupTypeIgnoreState)
 
+### ServiceSet
+Provides a mechanism to configure and manage multiple Service resources with common settings but different names.
+This resource can only modify or delete existing services. It cannot create services.
+
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String[]] Name** _(Key)_: The names of the services to modify or delete. This may be different from the service's display name. To retrieve a list of all services with their names and current states, use the Get-Service cmdlet.
+
+The following parameters will be the same for each service in the set:
+
+* **[String] Ensure** _(Write)_: Indicates whether the services are present or absent. { *Present* | Absent }.
+* **[String] BuiltInAccount** _(Write)_: The built-in account the services should start under. Cannot be specified at the same time as Credential. The user account specified by this property must have access to the service executable paths in order to start the services. { LocalService | LocalSystem | NetworkService }.
+* **[PSCredential] Credential** _(Write)_: The credential of the user account the services should start under. Cannot be specified at the same time as BuiltInAccount. The user specified by this credential will automatically be granted the Log on as a Service right. The user account specified by this property must have access to the service executable paths in order to start the services.
+* **[String] StartupType** _(Write)_: The startup type of the services. { Automatic | Disabled | Manual }.
+* **[String] State** _(Write)_: The state the services. { *Running* | Stopped | Ignore }.
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+* [Ensure that multiple services are running](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_ServiceSet_StartServices.ps1)
+* [Set multiple services to run under the built-in account LocalService](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_ServiceSet_BuiltInAccount.ps1)
+
 ### User
 
 Provides a mechanism to manage local users on a target node.
@@ -195,6 +257,32 @@ This resource **is not supported** on Nano Server.
 
 * [Install or uninstall a Windows feature](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsFeature.ps1)
 
+### WindowsFeatureSet
+
+Provides a mechanism to configure and manage multiple WindowsFeature resources on a target node.
+
+#### Requirements
+
+* Target machine must be running Windows Server 2008 or later.
+* Target machine must have access to the DISM PowerShell module.
+* Target machine must have access to the ServerManager module.
+
+#### Parameters
+
+* **[String] Name** _(Key)_: The names of the roles or features to install or uninstall. This may be different from the display name of the feature/role. To retrieve the names of features/roles on a machine use the Get-WindowsFeature cmdlet.
+* **[String] Ensure** _(Write)_: Specifies whether the feature should be installed or uninstalled. To install features, set this property to Present. To uninstall features, set this property to Absent. { Present | Absent }.
+* **[Boolean] IncludeAllSubFeature** _(Write)_: Specifies whether or not all subfeatures should be installed or uninstalled alongside the specified roles or features. If this property is true and Ensure is set to Present, all subfeatures will be installed. If this property is false and Ensure is set to Present, subfeatures will not be installed or uninstalled. If Ensure is set to Absent, all subfeatures will be uninstalled.
+* **[PSCredential] Credential** _(Write)_: The credential of the user account under which to install or uninstall the roles or features.
+* **[String] LogPath** _(Write)_: The custom file path to which to log this operation. If not passed in, the default log path will be used (%windir%\logs\ServerManager.log).
+
+#### Read-Only Properties from Get-TargetResource
+
+* **[String] DisplayName** _(Read)_: The display names of the retrieved roles or features.
+
+#### Examples
+
+* [Install multiple Windows features](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsFeatureSet_Install.ps1)
+* [Uninstall multiple Windows features](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsFeatureSet_Uninstall.ps1)
 
 ### WindowsOptionalFeature
 
@@ -224,6 +312,37 @@ This resource works on Nano Server.
 #### Examples
 
 * [Enable the specified Windows optional feature and output logs to the specified path](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsOptionalFeature.ps1)
+
+### WindowsOptionalFeatureSet
+
+Provides a mechanism to configure and manage multiple WindowsOptionalFeature resources on a target node.
+This resource works on Nano Server.
+
+#### Requirements
+
+* Target machine must be running a Windows client operating system, Windows Server 2012 or later, or Nano Server.
+* Target machine must have access to the DISM PowerShell module.
+
+#### Parameters
+
+* **[String[]] Name** _(Key)_: The names of the Windows optional features to enable or disable.
+
+The following parameters will be the same for each Windows optional feature in the set:
+
+* **[String] Ensure** _(Write)_: Specifies whether the Windows optional features should be enabled or disabled. To enable the features, set this property to Present. To disable the features, set this property to Absent. { Present | Absent }.
+* **[Boolean] RemoveFilesOnDisable** _(Write)_: Specifies whether or not to remove the files associated with the Windows optional features when they are disabled.
+* **[Boolean] NoWindowsUpdateCheck** _(Write)_: Specifies whether or not DISM should contact Windows Update (WU) when searching for the source files to restore Windows optional features on an online image.
+* **[String] LogPath** _(Write)_: The file path to which to log the operation.
+* **[String] LogLevel** _(Write)_: The level of detail to include in the log. { ErrorsOnly | ErrorsAndWarning | ErrorsAndWarningAndInformation }.
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+* [Enable multiple features](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsOptionalFeatureSet_Enable.ps1)
+* [Disable multiple features](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsOptionalFeatureSet_Disable.ps1)
 
 ### WindowsPackageCab
 
@@ -284,6 +403,41 @@ None
 * [Start a process under a user](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsProcess_StartUnderUser.ps1)
 * [Stop a process under a user](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsProcess_StopUnderUser.ps1)
 
+### ProcessSet
+
+Provides a mechanism to configure and manage multiple WindowsProcess resources on a target node.
+
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String[]] Path** _(Key)_: The file paths to the executables of the processes to start or stop. Only the names of the files may be specified if they are all accessible through the environment path. Relative paths are not supported.
+
+The following parameters will be the same for each process in the set:
+
+* **[PSCredential] Credential** _(Write)_: The credential of the user account to run the processes under. If this user is from the local system, the StandardOutputPath, StandardInputPath, and WorkingDirectory parameters cannot be provided at the same time.
+* **[String] Ensure** _(Write)_: Specifies whether or not the processes should be running. To start the processes, specify this property as Present. To stop the processes, specify this property as Absent. { Present | Absent }.
+* **[String] StandardOutputPath** _(Write)_: The file path to which to write the standard output from the processes. Any existing file at this file path will be overwritten. This property cannot be specified at the same time as Credential when running the processes as a local user.
+* **[String] StandardErrorPath** _(Write)_: The file path to which to write the standard error output from the processes. Any existing file at this file path will be overwritten.
+* **[String] StandardInputPath** _(Write)_: The file path from which to receive standard input for the processes. This property cannot be specified at the same time as Credential when running the processes as a local user.
+* **[String] WorkingDirectory** _(Write)_: The file path to the working directory under which to run the process. This property cannot be specified at the same time as Credential when running the processes as a local user.
+
+#### Read-Only Properties from Get-TargetResource
+
+* **[UInt64] PagedMemorySize** _(Read)_: The amount of paged memory, in bytes, allocated for the processes.
+* **[UInt64] NonPagedMemorySize** _(Read)_: The amount of nonpaged memory, in bytes, allocated for the processes.
+* **[UInt64] VirtualMemorySize** _(Read)_: The amount of virtual memory, in bytes, allocated for the processes.
+* **[SInt32] HandleCount** _(Read)_: The number of handles opened by the processes.
+* **[SInt32] ProcessId** _(Read)_: The unique identifier of the processes.
+* **[SInt32] ProcessCount** _(Read)_: The number of instances of the given processes that are currently running.
+
+#### Examples
+
+* [Start multiple processes](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_ProcessSet_Start.ps1)
+* [Stop multiple processes](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_ProcessSet_Stop.ps1)
+
 ## Versions
 
 ### Unreleased
@@ -300,6 +454,10 @@ None
 * Group:
     * Updated resource module, examples, and integration tests to reflect the changes made in xPSDesiredStateConfiguration.
 * Added Script
+* Added GroupSet, ServiceSet, WindowsFeatureSet, WindowsOptionalFeatureSet, and ProcessSet.
+* Added Set-StrictMode -'Latest' and $errorActionPreference -'Stop' to Group, Service, User, WindowsFeature, WindowsOptionalFeature, WindowsPackageCab.
+* Fixed bug in WindowsFeature in which is was checking the 'Count' property of an object that was not always an array.
+* Cleaned Group and Service resources and tests.
 
 ### 2.1.0.0
 

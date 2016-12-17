@@ -2,16 +2,17 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 param ()
 
-$script:testHelpersPath = Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
-                                     -ChildPath 'TestHelpers'
+$errorActionPreference = 'Stop'
+Set-StrictMode -Version 'Latest'
 
-Import-Module -Name (Join-Path -Path  $script:testHelpersPath `
-                               -ChildPath 'CommonTestHelper.psm1')
+$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
+Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DSCResourceModuleName 'PSDscResources' `
     -DSCResourceName 'MSFT_UserResource' `
-    -TestType Unit
+    -TestType 'Unit'
 
 try {
 

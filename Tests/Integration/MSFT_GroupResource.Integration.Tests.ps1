@@ -10,9 +10,9 @@ if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -l
     return
 }
 
-Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
-                               -ChildPath (Join-Path -Path 'TestHelpers' `
-                                                     -ChildPath 'CommonTestHelper.psm1'))
+$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
+Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceModuleName 'PSDscResources' `
@@ -23,8 +23,7 @@ try
 {
     Describe 'Group Integration Tests'  {
         BeforeAll {
-            Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
-                                                            -ChildPath 'TestHelpers') `
+            Import-Module -Name (Join-Path -Path $script:testHelpersPath `
                                            -ChildPath 'MSFT_GroupResource.TestHelper.psm1')
 
             $script:confgurationWithMembersFilePath = Join-Path -Path $PSScriptRoot `

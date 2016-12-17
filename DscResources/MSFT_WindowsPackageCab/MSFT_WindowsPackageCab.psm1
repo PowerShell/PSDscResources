@@ -1,4 +1,7 @@
-﻿Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
+﻿$errorActionPreference = 'Stop'
+Set-StrictMode -Version 'Latest'
+
+Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
                                -ChildPath 'CommonResourceHelper.psm1')
 $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_WindowsPackageCab'
 

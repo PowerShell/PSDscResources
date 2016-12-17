@@ -2,6 +2,9 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 param ()
 
+$errorActionPreference = 'Stop'
+Set-StrictMode -Version 'Latest'
+
 Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
                                -ChildPath 'CommonResourceHelper.psm1')
 
@@ -475,7 +478,7 @@ function Assert-SingleFeatureExists
         New-InvalidOperationException -Message ($script:localizedData.FeatureNotFoundError -f $Name)
     }
 
-    if ($Feature.Count -gt 1)
+    if ($Feature -is [Array] -and $Feature.Count -gt 1)
     {
         New-InvalidOperationException -Message ($script:localizedData.MultipleFeatureInstancesError -f $Name)
     }
