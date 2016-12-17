@@ -1,15 +1,18 @@
 ﻿[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 param ()
 
+$errorActionPreference = 'Stop'
+Set-StrictMode -Version 'Latest'
+
 if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -lt 1)
 {
     Write-Warning -Message 'Cannot run PSDscResources integration tests on PowerShell versions lower than 5.1'
     return
 }
 
-Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
-                               -ChildPath (Join-Path -Path 'TestHelpers' `
-                                                     -ChildPath 'CommonTestHelper.psm1'))
+$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
+Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceModuleName 'PSDscResources' `
@@ -20,14 +23,48 @@ try
 {
     Describe 'Group Integration Tests'  {
         BeforeAll {
-            Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
-                                                            -ChildPath 'TestHelpers') `
+            Import-Module -Name (Join-Path -Path $script:testHelpersPath `
                                            -ChildPath 'MSFT_GroupResource.TestHelper.psm1')
 
             $script:confgurationWithMembersFilePath = Join-Path -Path $PSScriptRoot `
                                                                 -ChildPath 'MSFT_GroupResource_Members.config.ps1'
             $script:confgurationWithMembersToIncludeExcludeFilePath = Join-Path -Path $PSScriptRoot `
                                                                                 -ChildPath 'MSFT_GroupResource_MembersToIncludeExclude.config.ps1'
+            # Fake users for testing
+            $testUsername1 = 'TestUser1'
+            $testUsername2 = 'TestUser2'
+
+            $testUsernames = @( $testUsername1, $testUsername2 )
+
+            $testPassword = 'T3stPassw0rd#'
+            $secureTestPassword = ConvertTo-SecureString -String $testPassword -AsPlainText -Force
+
+            foreach ($username in $testUsernames)
+            {
+                $testUserCredential = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList @( $username, $secureTestPassword )
+                $null = New-User -Credential $testUserCredential
+            }
+        }
+
+        AfterAll {
+            foreach ($username in $testUsernames)
+            {
+                Remove-User -UserName $username
+            }
+        }
+
+        It 'Should use Group from PSDscResources' {
+            $groupResource = Get-DscResource -Name 'Group'
+
+            $groupResource | Should Not Be $null
+
+            if ($groupResource.Count -gt 1)
+            {
+                $sortedGroupResrources = $groupResource | Sort-Object -Property 'Version' -Descending
+                $groupResource = $sortedGroupResrources | Select-Object -First 1
+            }
+
+            $groupResource.ModuleName | Should Be 'PSDscResources'
         }
 
         It 'Should create an empty group' {
@@ -49,7 +86,7 @@ try
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
                 } | Should Not Throw
 
-                Test-GroupExists -GroupName $testGroupName | Should Be $true
+                Test-GroupExists -GroupName $testGroupName -Members @() | Should Be $true
             }
             finally
             {
@@ -64,22 +101,12 @@ try
             $configurationName = 'CreateGroupWithTwoMembers'
             $testGroupName = 'TestGroupWithMembers2'
 
-            $username1 = 'TestUser1'
-            $username2 = 'TestUser2'
-
-            $testPassword = 'T3stPassw0rd#'
-            $secureTestPassword = ConvertTo-SecureString -String $testPassword -AsPlainText -Force
-
-            $testUserCredential1 = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList @( $username1, $secureTestPassword )
-            $testUserCredential2 = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList @( $username2, $secureTestPassword )
-
-            $user1 = New-User -Credential $testUserCredential1
-            $user2 = New-User -Credential $testUserCredential2
+            $groupMembers = $testUsernames
 
             $resourceParameters = @{
                 Ensure = 'Present'
                 GroupName = $testGroupName
-                Members = @( $username1, $username2 )
+                Members = $groupMembers
             }
 
             Test-GroupExists -GroupName $testGroupName | Should Be $false
@@ -92,7 +119,7 @@ try
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
                 } | Should Not Throw
 
-                Test-GroupExists -GroupName $testGroupName | Should Be $true
+                Test-GroupExists -GroupName $testGroupName -Members $groupMembers | Should Be $true
             }
             finally
             {
@@ -100,9 +127,6 @@ try
                 {
                     Remove-Group -GroupName $testGroupName
                 }
-
-                Remove-User -UserName $username1
-                Remove-User -UserName $username2
             }
         }
 
@@ -110,19 +134,12 @@ try
             $configurationName = 'CreateGroupWithTwoMembers'
             $testGroupName = 'TestGroupWithMembersToInclude3'
 
-            $username1 = 'TestUser1'
-
-            $testPassword = 'T3stPassw0rd#'
-            $secureTestPassword = ConvertTo-SecureString -String $testPassword -AsPlainText -Force
-
-            $testUserCredential1 = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList @( $username1, $secureTestPassword )
-
-            $user1 = New-User -Credential $testUserCredential1
+            $groupMembers = @( $testUsername1 )
 
             $resourceParameters = @{
                 Ensure = 'Present'
                 GroupName = $testGroupName
-                MembersToInclude = @( $username1 )
+                MembersToInclude = $groupMembers
             }
 
             Test-GroupExists -GroupName $testGroupName | Should Be $false
@@ -139,7 +156,7 @@ try
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
                 } | Should Not Throw
 
-                Test-GroupExists -GroupName $testGroupName | Should Be $true
+                Test-GroupExists -GroupName $testGroupName -MembersToInclude $groupMembers | Should Be $true
             }
             finally
             {
@@ -147,8 +164,6 @@ try
                 {
                     Remove-Group -GroupName $testGroupName
                 }
-
-                Remove-User -UserName $username1
             }
         }
 
@@ -156,24 +171,17 @@ try
             $configurationName = 'CreateGroupWithTwoMembers'
             $testGroupName = 'TestGroupWithMembersToInclude3'
 
-            $username1 = 'TestUser1'
-
-            $testPassword = 'T3stPassw0rd#'
-            $secureTestPassword = ConvertTo-SecureString -String $testPassword -AsPlainText -Force
-
-            $testUserCredential1 = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList @( $username1, $secureTestPassword )
-
-            $user1 = New-User -Credential $testUserCredential1
+            $groupMembersToExclude = @( $testUsername1 )
 
             $resourceParameters = @{
                 Ensure = 'Present'
                 GroupName = $testGroupName
-                MembersToExclude = @( $username1 )
+                MembersToExclude = $groupMembersToExclude
             }
 
             Test-GroupExists -GroupName $testGroupName | Should Be $false
 
-            New-Group -GroupName $testGroupName -MemberUserNames @( $username1 )
+            New-Group -GroupName $testGroupName -Members $groupMembersToExclude
 
             Test-GroupExists -GroupName $testGroupName | Should Be $true
 
@@ -185,7 +193,7 @@ try
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
                 } | Should Not Throw
 
-                Test-GroupExists -GroupName $testGroupName | Should Be $true
+                Test-GroupExists -GroupName $testGroupName -MembersToExclude $groupMembersToExclude | Should Be $true
             }
             finally
             {
@@ -193,8 +201,40 @@ try
                 {
                     Remove-Group -GroupName $testGroupName
                 }
+            }
+        }
 
-                Remove-User -UserName $username1
+        It 'Should remove a group' {
+            $configurationName = 'RemoveGroup'
+            $testGroupName = 'TestRemoveGroup1'
+
+            $resourceParameters = @{
+                Ensure = 'Absent'
+                GroupName = $testGroupName
+            }
+
+            Test-GroupExists -GroupName $testGroupName | Should Be $false
+
+            New-Group -GroupName $testGroupName
+
+            Test-GroupExists -GroupName $testGroupName | Should Be $true
+
+            try
+            {
+                { 
+                    . $script:confgurationWithMembersFilePath -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @resourceParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                } | Should Not Throw
+
+                Test-GroupExists -GroupName $testGroupName | Should Be $false
+            }
+            finally
+            {
+                if (Test-GroupExists -GroupName $testGroupName)
+                {
+                    Remove-Group -GroupName $testGroupName
+                }
             }
         }
     }

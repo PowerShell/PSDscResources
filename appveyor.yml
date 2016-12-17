@@ -1,13 +1,12 @@
 #---------------------------------#
 #      environment configuration  #
 #---------------------------------#
-version: 2.1.{build}.0
+version: 2.2.{build}.0
 install:
     - git clone https://github.com/PowerShell/DscResource.Tests
-    - ps: |
-        Import-Module -Name .\DscResource.Tests\TestHelper.psm1 -Force
-        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-        Install-Module -Name Pester -Repository PSGallery -Force
+    - ps: Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+    - ps: Install-Module -Name Pester -Repository PSGallery -Force
+        
 
 #---------------------------------#
 #      build configuration        #
@@ -22,8 +21,6 @@ build: false
 test_script:
     - ps: |
         $testResultsFile = ".\TestsResults.xml"
-        $tempModulePath = (Resolve-Path (join-path $PWD '..')).ProviderPath
-        $env:PSModulePath = "$env:PSModulePath;$tempModulePath"
         $res = Invoke-Pester -OutputFormat NUnitXml -OutputFile $testResultsFile -PassThru
         (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
         if ($res.FailedCount -gt 0) {
@@ -40,7 +37,7 @@ deploy_script:
       # Creating project artifact
       $stagingDirectory = (Resolve-Path ..).Path
       $manifest = Join-Path $pwd "PSDscResources.psd1"
-      (Get-Content $manifest -Raw).Replace("2.1.0.0", $env:APPVEYOR_BUILD_VERSION) | Out-File $manifest
+      (Get-Content $manifest -Raw).Replace("2.2.0.0", $env:APPVEYOR_BUILD_VERSION) | Out-File $manifest
       $zipFilePath = Join-Path $stagingDirectory "$(Split-Path $pwd -Leaf).zip"
       Add-Type -assemblyname System.IO.Compression.FileSystem
       [System.IO.Compression.ZipFile]::CreateFromDirectory($pwd, $zipFilePath)

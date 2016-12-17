@@ -2,14 +2,17 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 param ()
 
-Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
-                               -ChildPath (Join-Path -Path 'TestHelpers' `
-                                                     -ChildPath 'CommonTestHelper.psm1'))
+$errorActionPreference = 'Stop'
+Set-StrictMode -Version 'Latest'
+
+$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
+Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DSCResourceModuleName 'PSDscResources' `
     -DSCResourceName 'MSFT_WindowsFeature' `
-    -TestType Unit
+    -TestType 'Unit'
 
 try
 {
@@ -141,7 +144,7 @@ try
                 $windowsFeatureObject = New-Object -TypeName PSObject -Property $windowsFeature
                 $windowsFeatureObject.PSTypeNames[0] = 'Microsoft.Windows.ServerManager.Commands.Feature'
             
-                return $windowsFeatureObject
+                return @($windowsFeatureObject)
             }
 
             Mock -CommandName Get-WindowsFeature -ParameterFilter { $Name -eq $testWindowsFeatureName1 } -MockWith {
@@ -149,7 +152,7 @@ try
                 $windowsFeatureObject = New-Object -TypeName PSObject -Property $windowsFeature
                 $windowsFeatureObject.PSTypeNames[0] = 'Microsoft.Windows.ServerManager.Commands.Feature'
             
-                return $windowsFeatureObject
+                return @($windowsFeatureObject)
             }
 
             Mock -CommandName Get-WindowsFeature -ParameterFilter { $Name -eq $testSubFeatureName1 } -MockWith {
@@ -157,7 +160,7 @@ try
                 $windowsFeatureObject = New-Object -TypeName PSObject -Property $windowsFeature
                 $windowsFeatureObject.PSTypeNames[0] = 'Microsoft.Windows.ServerManager.Commands.Feature'
             
-                return $windowsFeatureObject
+                return @($windowsFeatureObject)
             }
 
             Mock -CommandName Get-WindowsFeature -ParameterFilter { $Name -eq $testSubFeatureName2 } -MockWith {
@@ -165,7 +168,7 @@ try
                 $windowsFeatureObject = New-Object -TypeName PSObject -Property $windowsFeature
                 $windowsFeatureObject.PSTypeNames[0] = 'Microsoft.Windows.ServerManager.Commands.Feature'
             
-                return $windowsFeatureObject
+                return @($windowsFeatureObject)
             }
 
             Mock -CommandName Get-WindowsFeature -ParameterFilter { $Name -eq $testSubFeatureName3 } -MockWith {
@@ -173,7 +176,7 @@ try
                 $windowsFeatureObject = New-Object -TypeName PSObject -Property $windowsFeature
                 $windowsFeatureObject.PSTypeNames[0] = 'Microsoft.Windows.ServerManager.Commands.Feature'
             
-                return $windowsFeatureObject
+                return @($windowsFeatureObject)
             }
             
 
@@ -394,7 +397,7 @@ try
                 $windowsFeatureObject = New-Object -TypeName PSObject -Property $windowsFeature
                 $windowsFeatureObject.PSTypeNames[0] = 'Microsoft.Windows.ServerManager.Commands.Feature'
             
-                return $windowsFeatureObject
+                return @($windowsFeatureObject)
             }
 
             Mock -CommandName Get-WindowsFeature -ParameterFilter { $Name -eq $testSubFeatureName1 } -MockWith {
@@ -402,7 +405,7 @@ try
                 $windowsFeatureObject = New-Object -TypeName PSObject -Property $windowsFeature
                 $windowsFeatureObject.PSTypeNames[0] = 'Microsoft.Windows.ServerManager.Commands.Feature'
             
-                return $windowsFeatureObject
+                return @($windowsFeatureObject)
             }
 
             Mock -CommandName Get-WindowsFeature -ParameterFilter { $Name -eq $testSubFeatureName2 } -MockWith {
@@ -410,7 +413,7 @@ try
                 $windowsFeatureObject = New-Object -TypeName PSObject -Property $windowsFeature
                 $windowsFeatureObject.PSTypeNames[0] = 'Microsoft.Windows.ServerManager.Commands.Feature'
             
-                return $windowsFeatureObject
+                return @($windowsFeatureObject)
             }
 
             Mock -CommandName Get-WindowsFeature -ParameterFilter { $Name -eq $testSubFeatureName3 } -MockWith {
@@ -418,7 +421,7 @@ try
                 $windowsFeatureObject = New-Object -TypeName PSObject -Property $windowsFeature
                 $windowsFeatureObject.PSTypeNames[0] = 'Microsoft.Windows.ServerManager.Commands.Feature'
             
-                return $windowsFeatureObject
+                return @($windowsFeatureObject)
             }
 
             # Used as Get-WindowsFeature when on R2/SP1 2008
@@ -427,7 +430,7 @@ try
                 $windowsFeatureObject = New-Object -TypeName PSObject -Property $windowsFeature
                 $windowsFeatureObject.PSTypeNames[0] = 'Microsoft.Windows.ServerManager.Commands.Feature'
             
-                return $windowsFeatureObject
+                return @($windowsFeatureObject)
             }
 
             Context 'Feature is in the desired state' {
@@ -551,10 +554,7 @@ try
         }
 
         Describe 'WindowsFeature/Assert-SingleFeatureExists' {
-            $multipleFeature = @{
-                Name = 'MultiFeatureName'
-                Count = 2
-            }
+            $multipleFeature = @(@{Name = 'MultiFeatureName'}, @{ Name = 'MultiFeatureName' })
 
             It 'Should throw invalid operation when feature equals null' {
                 $nonexistentName = 'NonexistentFeatureName'
@@ -563,7 +563,7 @@ try
             }
 
             It 'Should throw invalid operation when there are multiple features with the given name' {
-                { Assert-SingleFeatureExists -Feature $multipleFeature -Name $multipleFeature.Name } | 
+                { Assert-SingleFeatureExists -Feature $multipleFeature -Name $multipleFeature[0].Name } | 
                     Should Throw ($script:localizedData.MultipleFeatureInstancesError -f $multipleFeature.Name)
             }
         }
@@ -579,6 +579,20 @@ try
             It 'Should Not Throw' {
                 Mock -CommandName Import-Module -MockWith {}
                 { Import-ServerManager } | Should Not Throw
+            }
+
+            It 'Should not throw when exception is Identity Reference Runtime Exception' {
+                $mockIdentityReferenceRuntimeException = New-Object -TypeName System.Management.Automation.RuntimeException -ArgumentList 'Some or all identity references could not be translated'
+                Mock -CommandName Import-Module -MockWith { Throw $mockIdentityReferenceRuntimeException }
+
+                { Import-ServerManager } | Should Not Throw
+            }
+            
+            It 'Should throw invalid operation exception when exception is not Identity Reference Runtime Exception' {
+                $mockOtherRuntimeException = New-Object -TypeName System.Management.Automation.RuntimeException -ArgumentList 'Other error'
+                Mock -CommandName Import-Module -MockWith { Throw $mockOtherRuntimeException }
+
+                { Import-ServerManager } | Should Throw ($script:localizedData.SkuNotSupported)
             }
 
             It 'Should throw invalid operation exception' {
