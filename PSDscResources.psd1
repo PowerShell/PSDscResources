@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.2.0.0'
+ModuleVersion = '2.3.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -99,7 +99,11 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* WindowsFeature:
+        ReleaseNotes = '2.3:
+* Updated manifest to include both WindowsOptionalFeature and WindowsOptionalFeatureSet instead of just WindowsOptionalFeature twice
+
+2.2:
+* WindowsFeature:
     * Added Catch to ignore RuntimeException when importing ServerManager module. This solves the issue described [here](https://social.technet.microsoft.com/Forums/en-US/9fc314e1-27bf-4f03-ab78-5e0f7a662b8f/importmodule-servermanager-some-or-all-identity-references-could-not-be-translated?forum=winserverpowershell).
     * Updated unit tests.   
 * Added WindowsProcess
