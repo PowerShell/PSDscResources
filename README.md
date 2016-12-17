@@ -472,6 +472,10 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+### 2.3.0.0
+
+* Updated manifest to include both WindowsOptionalFeature and WindowsOptionalFeatureSet instead of just WindowsOptionalFeature twice
+
 ### 2.2.0.0
 
 * WindowsFeature:
