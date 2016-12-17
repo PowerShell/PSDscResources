@@ -16,7 +16,7 @@ Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonT
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceModuleName 'PSDscResources' `
     -DscResourceName 'MSFT_RegistryResource' `
-    -TestType 'Integration'
+    -TestType 'Unit'
 
 try
 {
