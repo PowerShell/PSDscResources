@@ -73,7 +73,7 @@ VariablesToExport = '*'
 AliasesToExport = @()
 
 # DSC resources to export from this module
-DscResourcesToExport = 'Group', 'Script', 'Service', 'User', 'WindowsFeature', 'WindowsOptionalFeature', 'WindowsPackageCab', 'WindowsProcess'
+DscResourcesToExport = 'Group', 'Script', 'Service', 'ServiceSet', 'User', 'WindowsFeature', 'WindowsFeatureSet', 'WindowsOptionalFeature', 'WindowsOptionalFeature', 'WindowsPackageCab', 'WindowsProcess', 'ProcessSet'
 
 # List of all modules packaged with this module
 # ModuleList = @()
@@ -99,9 +99,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Added WindowsFeature
-
-'
+        ReleaseNotes = '* Added WindowsFeature'
 
     } # End of PSData hashtable
 

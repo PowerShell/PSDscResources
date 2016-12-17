@@ -3,6 +3,9 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSDSCUseVerboseMessageInDSCResource', '')]
 param ()
 
+$errorActionPreference = 'Stop'
+Set-StrictMode -Version 'Latest'
+
 Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
                                -ChildPath 'CommonResourceHelper.psm1')
 

@@ -17,9 +17,12 @@ if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -l
     return
 }
 
-Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
-                               -ChildPath (Join-Path -Path 'TestHelpers' `
-                                                     -ChildPath 'CommonTestHelper.psm1')) `
+$errorActionPreference = 'Stop'
+Set-StrictMode -Version 'Latest'
+
+$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
+Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceModuleName 'PSDscResources' `
@@ -39,19 +42,48 @@ $script:skipLongTests = $false
 
 try
 {
-    #Saving the state so we can clean up afterwards
-    $testFeature = Get-WindowsFeature -Name $script:testFeatureName
-    $script:installStateOfTestFeature = $testFeature.Installed
-
-    $testFeatureWithSubFeatures = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
-    $script:installStateOfTestWithSubFeatures = $testFeatureWithSubFeatures.Installed
-
-    $configFile = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_WindowsFeature.config.ps1'
-
     Describe 'WindowsFeature Integration Tests' {
-        $testIncludeAllSubFeature = $false
+        BeforeAll {
+            $script:testFeatureName = 'Telnet-Client'
+            $script:testFeatureWithSubFeaturesName = 'RSAT-File-Services'
 
-        Remove-WindowsFeature -Name $script:testFeatureName
+            #Saving the state so we can clean up afterwards
+            $testFeature = Get-WindowsFeature -Name $script:testFeatureName
+            $script:installStateOfTestFeature = $testFeature.Installed
+
+            $testFeatureWithSubFeatures = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
+            $script:installStateOfTestWithSubFeatures = $testFeatureWithSubFeatures.Installed
+
+            $configFile = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_WindowsFeature.config.ps1'
+        }
+
+        AfterAll {
+            # Ensure that features used for testing are re-installed/uninstalled
+            $feature = Get-WindowsFeature -Name $script:testFeatureName
+
+            if ($script:installStateOfTestFeature -and -not $feature.Installed)
+            {
+                Add-WindowsFeature -Name $script:testFeatureName
+            }
+            elseif ( -not $script:installStateOfTestFeature -and $feature.Installed)
+            {
+                Remove-WindowsFeature -Name $script:testFeatureName
+            }
+
+            if (-not $script:skipLongTests)
+            {
+                $feature = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
+
+                if ($script:installStateOfTestWithSubFeatures -and -not $feature.Installed)
+                {
+                    Add-WindowsFeature -Name $script:testFeatureWithSubFeaturesName -IncludeAllSubFeature
+                }
+                elseif ( -not $script:installStateOfTestWithSubFeatures -and $feature.Installed)
+                {
+                    Remove-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
+                }
+            }
+        }
 
         Context "Should Install the Windows Feature: $script:testFeatureName" {
             $configurationName = 'MSFT_WindowsFeature_InstallFeature'
@@ -68,7 +100,7 @@ try
                     {
                         . $configFile -ConfigurationName $configurationName
                         & $configurationName -Name $script:testFeatureName `
-                                             -IncludeAllSubFeature $testIncludeAllSubFeature `
+                                             -IncludeAllSubFeature $false `
                                              -Ensure 'Present' `
                                              -OutputPath $configurationPath `
                                              -ErrorAction 'Stop'
@@ -83,7 +115,7 @@ try
                 It 'Should return the correct configuration' {
                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                    $currentConfig.Name | Should Be $script:testFeatureName
-                   $currentConfig.IncludeAllSubFeature | Should Be $testIncludeAllSubFeature
+                   $currentConfig.IncludeAllSubFeature | Should Be $false
                    $currentConfig.Ensure | Should Be 'Present'
                 }
 
@@ -94,8 +126,7 @@ try
             }
             finally
             {
-                if (Test-Path -Path $logPath)
-                {
+                if (Test-Path -Path $logPath) {
                     Remove-Item -Path $logPath -Recurse -Force
                 }
 
@@ -118,7 +149,7 @@ try
                     {
                         . $configFile -ConfigurationName $configurationName
                         & $configurationName -Name $script:testFeatureName `
-                                             -IncludeAllSubFeature $testIncludeAllSubFeature `
+                                             -IncludeAllSubFeature $false `
                                              -Ensure 'Absent' `
                                              -OutputPath $configurationPath `
                                              -ErrorAction 'Stop'
@@ -133,7 +164,7 @@ try
                 It 'Should return the correct configuration' {
                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                    $currentConfig.Name | Should Be $script:testFeatureName
-                   $currentConfig.IncludeAllSubFeature | Should Be $testIncludeAllSubFeature
+                   $currentConfig.IncludeAllSubFeature | Should Be $false
                    $currentConfig.Ensure | Should Be 'Absent'
                 }
 
@@ -144,8 +175,7 @@ try
             }
             finally
             {
-                if (Test-Path -Path $logPath)
-                {
+                if (Test-Path -Path $logPath) {
                     Remove-Item -Path $logPath -Recurse -Force
                 }
 
@@ -162,59 +192,43 @@ try
 
             $logPath = Join-Path -Path $TestDrive -ChildPath 'InstallSubFeatureTest.log'
 
-            try
+            if (-not $script:skipLongTests)
             {
-                if (-not $script:skipLongTests)
-                {
-                    # Ensure that the feature is not already installed
-                    Remove-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
-                }
-
-                It 'Should compile without throwing' -Skip:$script:skipLongTests {
-                    {
-                        . $configFile -ConfigurationName $configurationName
-                        & $configurationName -Name $script:testFeatureWithSubFeaturesName `
-                                             -IncludeAllSubFeature $true `
-                                             -Ensure 'Present' `
-                                             -OutputPath $configurationPath `
-                                             -ErrorAction 'Stop'
-                        Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
-                    } | Should Not Throw
-                }
-
-                It 'Should be able to call Get-DscConfiguration without throwing' -Skip:$script:skipLongTests {
-                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
-                }
-                
-                It 'Should return the correct configuration' -Skip:$script:skipLongTests {
-                   $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                   $currentConfig.Name | Should Be $script:testFeatureWithSubFeaturesName
-                   $currentConfig.IncludeAllSubFeature | Should Be $true
-                   $currentConfig.Ensure | Should Be 'Present'
-                }
-
-                It 'Should be Installed (includes check for subFeatures)' -Skip:$script:skipLongTests {
-                    $feature = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
-                    $feature.Installed | Should Be $true
-
-                    foreach ($subFeatureName in $feature.SubFeatures)
-                    {
-                        $subFeature = Get-WindowsFeature -Name $subFeatureName
-                        $subFeature.Installed | Should Be $true
-                    }
-                }
-
+                # Ensure that the feature is not already installed
+                Remove-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
             }
-            finally
-            {
-                if (Test-Path -Path $logPath)
-                {
-                    Remove-Item -Path $logPath -Recurse -Force
-                }
 
-                if (Test-Path -Path $configurationPath)
+            It 'Should compile without throwing' -Skip:$script:skipLongTests {
                 {
-                    Remove-Item -Path $configurationPath -Recurse -Force
+                    . $configFile -ConfigurationName $configurationName
+                    & $configurationName -Name $script:testFeatureWithSubFeaturesName `
+                                            -IncludeAllSubFeature $true `
+                                            -Ensure 'Present' `
+                                            -OutputPath $configurationPath `
+                                            -ErrorAction 'Stop'
+                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
+                } | Should Not Throw
+            }
+
+            It 'Should be able to call Get-DscConfiguration without throwing' -Skip:$script:skipLongTests {
+                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+                
+            It 'Should return the correct configuration' -Skip:$script:skipLongTests {
+                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
+                $currentConfig.Name | Should Be $script:testFeatureWithSubFeaturesName
+                $currentConfig.IncludeAllSubFeature | Should Be $true
+                $currentConfig.Ensure | Should Be 'Present'
+            }
+
+            It 'Should be Installed (includes check for subFeatures)' -Skip:$script:skipLongTests {
+                $feature = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
+                $feature.Installed | Should Be $true
+
+                foreach ($subFeatureName in $feature.SubFeatures)
+                {
+                    $subFeature = Get-WindowsFeature -Name $subFeatureName
+                    $subFeature.Installed | Should Be $true
                 }
             }
         }
@@ -225,53 +239,37 @@ try
 
             $logPath = Join-Path -Path $TestDrive -ChildPath 'UninstallSubFeatureTest.log'
 
-            try
-            {
-                It 'Should compile without throwing' -Skip:$script:skipLongTests {
-                    {
-                        . $configFile -ConfigurationName $configurationName
-                        & $configurationName -Name $script:testFeatureWithSubFeaturesName `
-                                             -IncludeAllSubFeature $true `
-                                             -Ensure 'Absent' `
-                                             -OutputPath $configurationPath `
-                                             -ErrorAction 'Stop'
-                        Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
-                    } | Should Not Throw
-                }
-
-                It 'Should be able to call Get-DscConfiguration without throwing' -Skip:$script:skipLongTests {
-                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
-                }
-                
-                It 'Should return the correct configuration' -Skip:$script:skipLongTests  {
-                   $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                   $currentConfig.Name | Should Be $script:testFeatureWithSubFeaturesName
-                   $currentConfig.IncludeAllSubFeature | Should Be $false
-                   $currentConfig.Ensure | Should Be 'Absent'
-                }
-
-                It 'Should not be installed (includes check for subFeatures)' -Skip:$script:skipLongTests {
-                    $feature = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
-                    $feature.Installed | Should Be $false
-
-                    foreach ($subFeatureName in $feature.SubFeatures)
-                    {
-                        $subFeature = Get-WindowsFeature -Name $subFeatureName
-                        $subFeature.Installed | Should Be $false
-                    }
-                }
-
+            It 'Should compile without throwing' -Skip:$script:skipLongTests {
+                {
+                    . $configFile -ConfigurationName $configurationName
+                    & $configurationName -Name $script:testFeatureWithSubFeaturesName `
+                                            -IncludeAllSubFeature $true `
+                                            -Ensure 'Absent' `
+                                            -OutputPath $configurationPath `
+                                            -ErrorAction 'Stop'
+                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
+                } | Should Not Throw
             }
-            finally
-            {
-                if (Test-Path -Path $logPath)
-                {
-                    Remove-Item -Path $logPath -Recurse -Force
-                }
 
-                if (Test-Path -Path $configurationPath)
+            It 'Should be able to call Get-DscConfiguration without throwing' -Skip:$script:skipLongTests {
+                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+                
+            It 'Should return the correct configuration' -Skip:$script:skipLongTests  {
+                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
+                $currentConfig.Name | Should Be $script:testFeatureWithSubFeaturesName
+                $currentConfig.IncludeAllSubFeature | Should Be $false
+                $currentConfig.Ensure | Should Be 'Absent'
+            }
+
+            It 'Should not be installed (includes check for subFeatures)' -Skip:$script:skipLongTests {
+                $feature = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
+                $feature.Installed | Should Be $false
+
+                foreach ($subFeatureName in $feature.SubFeatures)
                 {
-                    Remove-Item -Path $configurationPath -Recurse -Force
+                    $subFeature = Get-WindowsFeature -Name $subFeatureName
+                    $subFeature.Installed | Should Be $false
                 }
             }
         }
@@ -279,26 +277,5 @@ try
 }
 finally
 {
-    # Ensure that features used for testing are re-installed/uninstalled
-    if ($script:installStateOfTestFeature)
-    {
-        Add-WindowsFeature -Name $script:testFeatureName
-    }
-    else
-    {
-        Remove-WindowsFeature -Name $script:testFeatureName
-    }
-
-    if (-not $script:skipLongTests)
-    {
-        if ($script:installStateOfTestWithSubFeatures)
-        {
-            Add-WindowsFeature -Name $script:testFeatureWithSubFeaturesName -IncludeAllSubFeature
-        }
-        else
-        {
-            Remove-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
-        }
-    }
     Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
 }

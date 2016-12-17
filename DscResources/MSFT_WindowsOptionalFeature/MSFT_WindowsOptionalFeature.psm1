@@ -2,6 +2,9 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 param ()
 
+$errorActionPreference = 'Stop'
+Set-StrictMode -Version 'Latest'
+
 Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
                                -ChildPath 'CommonResourceHelper.psm1')
 $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_WindowsOptionalFeature'
@@ -128,11 +131,11 @@ function Set-TargetResource
 
     Assert-ResourcePrerequisitesValid
 
-    switch ($LogLevel)
+    $dismLogLevel = switch ($LogLevel)
     {
-        'ErrorsOnly' { $dismLogLevel = 'Errors' }
-        'ErrorsAndWarning' { $dismLogLevel = 'Warnings' }
-        'ErrorsAndWarningAndInformation' { $dismLogLevel = 'WarningsInfo' }
+        'ErrorsOnly' {  'Errors'; break }
+        'ErrorsAndWarning' { 'Warnings'; break }
+        'ErrorsAndWarningAndInformation' { 'WarningsInfo'; break }
     }
 
     # Construct splatting hashtable for DISM cmdlets

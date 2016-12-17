@@ -66,7 +66,7 @@ Configuration WindowsFeatureSet
 
     $newResourceSetConfigurationParams = @{
         ResourceName = 'WindowsFeature'
-        ModuleName = 'PSDscResource'
+        ModuleName = 'PSDscResources'
         KeyParameterName = 'Name'
         Parameters = $PSBoundParameters
     }

@@ -16,8 +16,8 @@ if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -l
 $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
-$script:moduleRootPath = Split-Path -Path $PSScriptRoot -Parent
-$script:testHelpersPath = Join-Path -Path $script:moduleRootPath -ChildPath 'TestHelpers'
+$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
 Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
