@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.1.0.0'
+ModuleVersion = '2.2.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -99,7 +99,25 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Added WindowsFeature'
+        ReleaseNotes = '* WindowsFeature:
+    * Added Catch to ignore RuntimeException when importing ServerManager module. This solves the issue described [here](https://social.technet.microsoft.com/Forums/en-US/9fc314e1-27bf-4f03-ab78-5e0f7a662b8f/importmodule-servermanager-some-or-all-identity-references-could-not-be-translated?forum=winserverpowershell).
+    * Updated unit tests.   
+* Added WindowsProcess
+* CommonTestHelper:
+    * Added Get-AppVeyorAdministratorCredential.
+    * Added Set-StrictMode -"Latest" and $errorActionPreference -"Stop".
+* Service:
+    * Updated resource module, unit tests, integration tests, and examples to reflect the changes made in xPSDesiredStateConfiguration.
+* Group:
+    * Updated resource module, examples, and integration tests to reflect the changes made in xPSDesiredStateConfiguration.
+* Added Script.
+* Added GroupSet, ServiceSet, WindowsFeatureSet, WindowsOptionalFeatureSet, and ProcessSet.
+* Added Set-StrictMode -"Latest" and $errorActionPreference -"Stop" to Group, Service, User, WindowsFeature, WindowsOptionalFeature, WindowsPackageCab.
+* Fixed bug in WindowsFeature in which is was checking the "Count" property of an object that was not always an array.
+* Cleaned Group and Service resources and tests.
+* Added Registry.
+
+'
 
     } # End of PSData hashtable
 
@@ -112,5 +130,6 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
 
 
