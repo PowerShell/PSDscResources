@@ -401,9 +401,9 @@ try {
                     Mock -CommandName Test-IsNanoServer -MockWith { return $true }
                     Mock -CommandName Test-CredentialsValidOnNanoServer -MockWith { return $true }
                     # Mock -CommandName New-LocalUser -MockWith {}
-                    Mock -CommandName Remove-LocalUser -MockWith {}
-                    Mock -CommandName Disable-LocalUser -MockWith {}
-                    Mock -CommandName Enable-LocalUser -MockWith {}
+                    # Mock -CommandName Remove-LocalUser -MockWith {}
+                    # Mock -CommandName Disable-LocalUser -MockWith {}
+                    # Mock -CommandName Enable-LocalUser -MockWith {}
                 
                     It 'Should add a new user' -Skip:$true {
                         Mock -CommandName Set-LocalUser -MockWith { $modifiableUserValues.FullName = [String]::Empty}
@@ -423,7 +423,7 @@ try {
                         $modifiableUserValues.FullName | Should Be ''
                     }
 
-                    It 'Should remove the user' {
+                    It 'Should remove the user' -Skip:$true {
                         Mock -CommandName Find-UserByNameOnNanoServer -MockWith { return $script:UserObject }
                         Mock -CommandName Set-LocalUser -MockWith {}
                         
@@ -431,12 +431,12 @@ try {
                                            -Ensure 'Absent'
 
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
-                        # Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
+                        Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Remove-LocalUser -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Set-LocalUser -Exactly 0 -Scope It
                     }
 
-                    It 'Should not remove the user if the user does not exist' {
+                    It 'Should not remove the user if the user does not exist' -Skip:$true {
                         Mock -CommandName Find-UserByNameOnNanoServer `
                              -MockWith { Write-Error -Message 'Test error message' -ErrorId  'UserNotFound' }
                         Mock -CommandName Set-LocalUser -MockWith {}
@@ -445,12 +445,12 @@ try {
                                            -Ensure 'Absent'
 
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
-                        # Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
+                        Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Remove-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Set-LocalUser -Exactly 0 -Scope It
                     }
 
-                    It 'Should update all values of the user' {
+                    It 'Should update all values of the user' -Skip:$true {
                         Mock -CommandName Find-UserByNameOnNanoServer -MockWith { return $existingUserValues }
                         Mock -CommandName Set-LocalUser -MockWith {}
 
@@ -473,7 +473,7 @@ try {
                              Set UserMayChangePassword
                         #>
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
-                        # Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
+                        Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Remove-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Set-LocalUser -Exactly 6 -Scope It
                         Assert-MockCalled -CommandName Disable-LocalUser -Exactly 1 -Scope It
@@ -481,7 +481,7 @@ try {
 
                     }
                                         
-                    It 'Should update the user with different values' {
+                    It 'Should update the user with different values' -Skip:$true {
                         Mock -CommandName Find-UserByNameOnNanoServer -MockWith { return $modifiableUserValues }
                         $modifiableUserValues.FullName = 'new full name'
                         Mock -CommandName Set-LocalUser -MockWith {}
@@ -505,14 +505,14 @@ try {
                              (Set-LocalUser will not be called to set PasswordChangeRequired if it is set to false, )
                         #>
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
-                        # Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
+                        Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Remove-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Set-LocalUser -Exactly 5 -Scope It
                         Assert-MockCalled -CommandName Disable-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Enable-LocalUser -Exactly 1 -Scope It
                     }
 
-                    It 'Should not update the user if no new values are passed in' {
+                    It 'Should not update the user if no new values are passed in' -Skip:$true {
                         Mock -CommandName Find-UserByNameOnNanoServer -MockWith { return $existingUserValues }
                         Mock -CommandName Set-LocalUser -MockWith {}
 
@@ -520,14 +520,14 @@ try {
                                            -Ensure 'Present'
                     
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
-                        # Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
+                        Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Remove-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Set-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Disable-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Enable-LocalUser -Exactly 0 -Scope It
                     }
 
-                    It 'Should not update the user if existing values are passed in' {
+                    It 'Should not update the user if existing values are passed in' -Skip:$true {
                         Mock -CommandName Find-UserByNameOnNanoServer -MockWith { return $existingUserValues }
                         Mock -CommandName Set-LocalUser -MockWith {}
 
@@ -541,14 +541,14 @@ try {
                                            -PasswordChangeNotAllowed (-not $existingUserValues.UserMayChangePassword)
 
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
-                        # Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
+                        Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Remove-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Set-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Disable-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Enable-LocalUser -Exactly 0 -Scope It
                     }
 
-                    It 'Should throw an Invalid Operation exception' {
+                    It 'Should throw an Invalid Operation exception' -Skip:$true {
                         $exception = New-Object -TypeName 'InvalidOperationException' `
                                                 -ArgumentList @($null)
                         $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
@@ -558,7 +558,7 @@ try {
                         { Set-TargetResource -UserName 'DuplicateUser' } | Should Throw $errorRecord
 
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
-                        # Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
+                        Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Remove-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Set-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Disable-LocalUser -Exactly 0 -Scope It
@@ -567,6 +567,7 @@ try {
 
                 }
             }
+
             Describe 'UserResource/Test-TargetResource' {
                 Context 'Tests on FullSKU' {
                     Mock -CommandName Test-IsNanoServer -MockWith { return $false }
