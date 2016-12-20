@@ -1506,7 +1506,7 @@ function Revoke-UserPassword
 #>
 function Find-UserByNameOnNanoServer
 {
-    [OutputType([Microsoft.PowerShell.Commands.LocalUser])]
+    #[OutputType([Microsoft.PowerShell.Commands.LocalUser])]
     [CmdletBinding()]
     param
     (
