@@ -16,6 +16,11 @@ if (-not (Test-IsNanoServer))
 {
     Add-Type -AssemblyName 'System.DirectoryServices.AccountManagement'
 }
+# get rid of this else once the fix for this is released
+else
+{
+    Import-Module -Name 'Microsoft.Powershell.LocalAccounts'
+}
 
 # Commented out until the fix is released
 #Import-Module -Name 'Microsoft.Powershell.LocalAccounts'

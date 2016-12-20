@@ -19,7 +19,14 @@ try {
     Import-Module -Name (Join-Path -Path  $script:testHelpersPath `
                                    -ChildPath 'MSFT_UserResource.TestHelper.psm1')
 
-    Import-Module -Name 'Microsoft.Powershell.LocalAccounts'
+    # get rid of this if-check once the fix for this is released
+    if (Test-IsNanoServer)
+    {
+        Import-Module -Name 'Microsoft.Powershell.LocalAccounts'
+    }
+
+    # Commented out until the fix is released
+    #Import-Module -Name 'Microsoft.Powershell.LocalAccounts'
 
     InModuleScope 'MSFT_UserResource' {
 
