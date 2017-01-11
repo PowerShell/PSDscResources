@@ -472,6 +472,9 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* Cleaned User
+* Updated User to have non-dependent unit tests.
+
 ### 2.3.0.0
 
 * Updated manifest to include both WindowsOptionalFeature and WindowsOptionalFeatureSet instead of just WindowsOptionalFeature twice
