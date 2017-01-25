@@ -29,8 +29,6 @@ $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceName 'MSFT_WindowsFeature' `
     -TestType 'Integration'
 
-$script:testFeatureName = 'Telnet-Client'
-$script:testFeatureWithSubFeaturesName = 'ADRMS'
 $script:installStateOfTestFeature = $false
 $script:installStateOfTestWithSubFeatures = $false
 
@@ -186,90 +184,101 @@ try
             }
         }
 
-        Context "Should Install the Windows Feature: $script:testFeatureWithSubFeaturesName" {
-            $configurationName = 'MSFT_WindowsFeature_InstallFeatureWithSubFeatures'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+        <#
+            This test triggers a pending reboot on the machine which crashes the WindowsFeatureSet
+            and WindowsOptionalFeatureSet tests on AppVeyor.
+            
+            If anyone knows of a Windows Feature that exists on Server 2012 R2, does not require a
+            reboot, and has subfeatures, please update $script:testFeatureWithSubFeaturesName with
+            the name of that feature and turn these tests back on in AppVeyor
+        #>
+        if (-not $env:appveyor)
+        {
+            Context "Should Install the Windows Feature: $script:testFeatureWithSubFeaturesName" {
+                $configurationName = 'MSFT_WindowsFeature_InstallFeatureWithSubFeatures'
+                $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
-            $logPath = Join-Path -Path $TestDrive -ChildPath 'InstallSubFeatureTest.log'
+                $logPath = Join-Path -Path $TestDrive -ChildPath 'InstallSubFeatureTest.log'
 
-            if (-not $script:skipLongTests)
-            {
-                # Ensure that the feature is not already installed
-                Remove-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
-            }
-
-            It 'Should compile without throwing' -Skip:$script:skipLongTests {
+                if (-not $script:skipLongTests)
                 {
-                    . $configFile -ConfigurationName $configurationName
-                    & $configurationName -Name $script:testFeatureWithSubFeaturesName `
-                                            -IncludeAllSubFeature $true `
-                                            -Ensure 'Present' `
-                                            -OutputPath $configurationPath `
-                                            -ErrorAction 'Stop'
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
+                    # Ensure that the feature is not already installed
+                    Remove-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
+                }
 
-            It 'Should be able to call Get-DscConfiguration without throwing' -Skip:$script:skipLongTests {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
-            }
+                It 'Should compile without throwing' -Skip:$script:skipLongTests {
+                    {
+                        . $configFile -ConfigurationName $configurationName
+                        & $configurationName -Name $script:testFeatureWithSubFeaturesName `
+                                                -IncludeAllSubFeature $true `
+                                                -Ensure 'Present' `
+                                                -OutputPath $configurationPath `
+                                                -ErrorAction 'Stop'
+                        Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
+                    } | Should Not Throw
+                }
+
+                It 'Should be able to call Get-DscConfiguration without throwing' -Skip:$script:skipLongTests {
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+                }
                 
-            It 'Should return the correct configuration' -Skip:$script:skipLongTests {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Name | Should Be $script:testFeatureWithSubFeaturesName
-                $currentConfig.IncludeAllSubFeature | Should Be $true
-                $currentConfig.Ensure | Should Be 'Present'
-            }
+                It 'Should return the correct configuration' -Skip:$script:skipLongTests {
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
+                    $currentConfig.Name | Should Be $script:testFeatureWithSubFeaturesName
+                    $currentConfig.IncludeAllSubFeature | Should Be $true
+                    $currentConfig.Ensure | Should Be 'Present'
+                }
 
-            It 'Should be Installed (includes check for subFeatures)' -Skip:$script:skipLongTests {
-                $feature = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
-                $feature.Installed | Should Be $true
+                It 'Should be Installed (includes check for subFeatures)' -Skip:$script:skipLongTests {
+                    $feature = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
+                    $feature.Installed | Should Be $true
 
-                foreach ($subFeatureName in $feature.SubFeatures)
-                {
-                    $subFeature = Get-WindowsFeature -Name $subFeatureName
-                    $subFeature.Installed | Should Be $true
+                    foreach ($subFeatureName in $feature.SubFeatures)
+                    {
+                        $subFeature = Get-WindowsFeature -Name $subFeatureName
+                        $subFeature.Installed | Should Be $true
+                    }
                 }
             }
-        }
 
-        Context "Should Uninstall the Windows Feature: $script:testFeatureWithSubFeaturesName" {
-            $configurationName = 'MSFT_WindowsFeature_UninstallFeatureWithSubFeatures'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+            Context "Should Uninstall the Windows Feature: $script:testFeatureWithSubFeaturesName" {
+                $configurationName = 'MSFT_WindowsFeature_UninstallFeatureWithSubFeatures'
+                $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
-            $logPath = Join-Path -Path $TestDrive -ChildPath 'UninstallSubFeatureTest.log'
+                $logPath = Join-Path -Path $TestDrive -ChildPath 'UninstallSubFeatureTest.log'
 
-            It 'Should compile without throwing' -Skip:$script:skipLongTests {
-                {
-                    . $configFile -ConfigurationName $configurationName
-                    & $configurationName -Name $script:testFeatureWithSubFeaturesName `
-                                            -IncludeAllSubFeature $true `
-                                            -Ensure 'Absent' `
-                                            -OutputPath $configurationPath `
-                                            -ErrorAction 'Stop'
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
+                It 'Should compile without throwing' -Skip:$script:skipLongTests {
+                    {
+                        . $configFile -ConfigurationName $configurationName
+                        & $configurationName -Name $script:testFeatureWithSubFeaturesName `
+                                                -IncludeAllSubFeature $true `
+                                                -Ensure 'Absent' `
+                                                -OutputPath $configurationPath `
+                                                -ErrorAction 'Stop'
+                        Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
+                    } | Should Not Throw
+                }
 
-            It 'Should be able to call Get-DscConfiguration without throwing' -Skip:$script:skipLongTests {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
-            }
+                It 'Should be able to call Get-DscConfiguration without throwing' -Skip:$script:skipLongTests {
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+                }
                 
-            It 'Should return the correct configuration' -Skip:$script:skipLongTests  {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Name | Should Be $script:testFeatureWithSubFeaturesName
-                $currentConfig.IncludeAllSubFeature | Should Be $false
-                $currentConfig.Ensure | Should Be 'Absent'
-            }
+                It 'Should return the correct configuration' -Skip:$script:skipLongTests  {
+                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
+                    $currentConfig.Name | Should Be $script:testFeatureWithSubFeaturesName
+                    $currentConfig.IncludeAllSubFeature | Should Be $false
+                    $currentConfig.Ensure | Should Be 'Absent'
+                }
 
-            It 'Should not be installed (includes check for subFeatures)' -Skip:$script:skipLongTests {
-                $feature = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
-                $feature.Installed | Should Be $false
+                It 'Should not be installed (includes check for subFeatures)' -Skip:$script:skipLongTests {
+                    $feature = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
+                    $feature.Installed | Should Be $false
 
-                foreach ($subFeatureName in $feature.SubFeatures)
-                {
-                    $subFeature = Get-WindowsFeature -Name $subFeatureName
-                    $subFeature.Installed | Should Be $false
+                    foreach ($subFeatureName in $feature.SubFeatures)
+                    {
+                        $subFeature = Get-WindowsFeature -Name $subFeatureName
+                        $subFeature.Installed | Should Be $false
+                    }
                 }
             }
         }
