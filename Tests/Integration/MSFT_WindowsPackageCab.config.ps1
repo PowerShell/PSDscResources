@@ -29,9 +29,9 @@ Configuration $ConfigurationName
         $LogPath = (Join-Path -Path (Get-Location) -ChildPath 'WindowsPackageCabTestLog.txt')
     )
 
-    Import-DscResource -ModuleName 'xPSDesiredStateConfiguration'
+    Import-DscResource -ModuleName 'PSDscResources'
 
-    xWindowsPackageCab WindowsPackageCab1
+    WindowsPackageCab WindowsPackageCab1
     {
         Name = $Name
         Ensure = $Ensure
