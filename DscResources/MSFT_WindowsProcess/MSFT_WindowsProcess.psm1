@@ -1,8 +1,10 @@
 $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
-Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
-                               -ChildPath 'CommonResourceHelper.psm1')
+# Import CommonResourceHelper for Get-LocalizedData, New-InvalidOperationException, New-InvalidArgumentException
+$script:dscResourcesFolderFilePath = Split-Path $PSScriptRoot -Parent
+$script:commonResourceHelperFilePath = Join-Path -Path $script:dscResourcesFolderFilePath -ChildPath 'CommonResourceHelper.psm1'
+Import-Module -Name $script:commonResourceHelperFilePath
 
 # Localized messages for verbose and error statements in this resource
 $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_WindowsProcess'
@@ -19,8 +21,8 @@ $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_WindowsProcess'
         The path to the process executable. If this is the file name of the executable
         (not the fully qualified path), the DSC resource will search the environment Path variable
         ($env:Path) to find the executable file. If the value of this property is a fully qualified
-        path, DSC will not use the Path environment variable to find the file, and will throw an
-        error if the path does not exist. Relative paths are not allowed.
+        path, DSC will use the given Path variable to find the file. If the path is not found it
+        will throw an error. Relative paths are not allowed.
 
     .PARAMETER Arguments
         The arguments to the process as a single string.
@@ -109,11 +111,11 @@ function Get-TargetResource
         The path to the process executable. If this is the file name of the executable
         (not the fully qualified path), the DSC resource will search the environment Path variable
         ($env:Path) to find the executable file. If the value of this property is a fully qualified
-        path, DSC will not use the Path environment variable to find the file, and will throw an
-        error if the path does not exist. Relative paths are not allowed.
+        path, DSC will use the given Path variable to find the file. If the path is not found it
+        will throw an error. Relative paths are not allowed.
 
     .PARAMETER Arguments
-        The arguments to the process as a single string.
+        The arguments to pass to the process as a single string.
 
     .PARAMETER Credential
         The credential of the user account to start the process under.
@@ -391,11 +393,11 @@ function Set-TargetResource
         The path to the process executable. If this is the file name of the executable
         (not the fully qualified path), the DSC resource will search the environment Path variable
         ($env:Path) to find the executable file. If the value of this property is a fully qualified
-        path, DSC will not use the Path environment variable to find the file, and will throw an
-        error if the path does not exist. Relative paths are not allowed.
+        path, DSC will use the given Path variable to find the file. If the path is not found it
+        will throw an error. Relative paths are not allowed.
 
     .PARAMETER Arguments
-        The arguments to the process as a single string.
+        The arguments to pass to the process as a single string.
 
     .PARAMETER Credential
         The credential of the user account the process should be running under.
@@ -685,17 +687,22 @@ function Get-ProcessOwner
         $Process
     )
 
-    $owner = Get-ProcessOwnerCimInstance -Process $Process
+    $owner = Get-ProcessOwnerCimInstance -Process $Process -ErrorAction 'SilentlyContinue'
 
-    if ($null -ne $owner.Domain)
+    if ($null -ne $owner)
     {
-        return ($owner.Domain + '\' + $owner.User)
+        if ($null -ne $owner.Domain)
+        {
+            return ($owner.Domain + '\' + $owner.User)
+        }
+        else
+        {
+            # return the default domain
+            return ($env:computerName + '\' + $owner.User)
+        }
     }
-    else
-    {
-        # return the default domain
-        return ($env:computerName + '\' + $owner.User)
-    }
+
+    return ''
 }
 
 <#
@@ -721,7 +728,7 @@ function Get-ProcessOwnerCimInstance
         $Process
     )
 
-    return Invoke-CimMethod -InputObject $Process -MethodName 'GetOwner'
+    return Invoke-CimMethod -InputObject $Process -MethodName 'GetOwner' -ErrorAction 'SilentlyContinue'
 }
 
 <#
@@ -1482,5 +1489,3 @@ namespace PSDesiredStateConfiguration
     # if not on Nano:
     Add-Type -TypeDefinition $dscNativeMethodsSource -ReferencedAssemblies 'System.ServiceProcess'
 } 
-
-Export-ModuleMember -Function *-TargetResource
