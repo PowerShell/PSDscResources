@@ -740,7 +740,7 @@ try {
                         $testTargetResourceResult | Should Be $false 
                     }
 
-                    It 'Should throw an Invalid Operation exception' {
+                    It 'Should throw an Invalid Operation exception when there are multiple users with the given name' {
                         $exception = New-Object -TypeName 'InvalidOperationException' `
                                                 -ArgumentList @($null)
                         $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `

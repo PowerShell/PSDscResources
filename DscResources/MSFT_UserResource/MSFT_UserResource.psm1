@@ -709,15 +709,15 @@ function Get-TargetResourceOnNanoServer
         $UserName
     )
 
-    Set-StrictMode -Version Latest
-
     Assert-UserNameValid -UserName $UserName
+
+    $returnValue = @{}
 
     # Try to find a user by a name
     try
     {
         Write-Verbose -Message 'Starting Get-TargetResource on NanoServer'
-        $user = Find-UserByNameOnNanoServer -UserName $UserName -ErrorAction 'Stop'
+        $user = Find-UserByNameOnNanoServer -UserName $UserName
 
         # The user is found. Return all user properties and Ensure = 'Present'.
         $returnValue = @{
@@ -738,15 +738,13 @@ function Get-TargetResourceOnNanoServer
         {
             $returnValue.Add('PasswordNeverExpires', $true)
         }
-
-        return $returnValue
     }
     catch [System.Exception]
     {
         if ($_.FullyQualifiedErrorId -match 'UserNotFound')
         {
             # The user is not found
-            return @{
+            $returnValue = @{
                 UserName = $UserName
                 Ensure = 'Absent'
             }
@@ -756,6 +754,8 @@ function Get-TargetResourceOnNanoServer
             New-InvalidOperationException -ErrorRecord $_
         }
     }
+
+    return $returnValue
 }
 
 <#
@@ -846,7 +846,7 @@ function Set-TargetResourceOnNanoServer
     
     try
     {
-        $user = Find-UserByNameOnNanoServer -UserName $UserName -ErrorAction 'Stop'
+        $user = Find-UserByNameOnNanoServer -UserName $UserName
         $userExists = $true
     }
     catch [System.Exception]
@@ -1028,14 +1028,12 @@ function Test-TargetResourceOnNanoServer
         $PasswordChangeNotAllowed
     )
 
-    Set-StrictMode -Version Latest
-
     Assert-UserNameValid -UserName $UserName
 
     # Try to find a user by a name
     try
     {
-        $user = Find-UserByNameOnNanoServer -UserName $UserName -ErrorAction 'Stop'
+        $user = Find-UserByNameOnNanoServer -UserName $UserName
     }
     catch [System.Exception]
     {
