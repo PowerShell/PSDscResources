@@ -1040,14 +1040,7 @@ function Test-TargetResourceOnNanoServer
         if ($_.FullyQualifiedErrorId -match 'UserNotFound')
         {
             # The user is not found
-            if ($Ensure -eq 'Absent')
-            {
-                return $true
-            }
-            else
-            {
-                return $false
-            }
+            return ($Ensure -eq 'Absent')
         }
         else
         {
