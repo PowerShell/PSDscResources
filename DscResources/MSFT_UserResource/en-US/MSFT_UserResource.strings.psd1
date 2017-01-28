@@ -17,7 +17,6 @@ ConvertFrom-StringData @'
     UserDoesNotExist = A user with the name {0} does not exist.
     PropertyMismatch = The value of the {0} property is expected to be {1} but it is {2}.
     PasswordPropertyMismatch = The value of the {0} property does not match.
-    AllUserPropertisMatch = All {0} {1} properties match.
-    ConnectionError = There could be a possible connection error while trying to use the System.DirectoryServices API's.
+    AllUserPropertiesMatch = All {0} {1} properties match.
     MultipleMatches = There could be a possible multiple matches exception while trying to use the System.DirectoryServices API's.
 '@
