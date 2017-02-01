@@ -1099,7 +1099,6 @@ function Test-TargetResourceOnFullSKU
         [String]
         $Description,
 
-        [ValidateNotNull()]
         [String[]]
         $Members,
 
@@ -1122,7 +1121,7 @@ function Test-TargetResourceOnFullSKU
     {
         $principalContext = Get-PrincipalContext `
             -PrincipalContextCache $PrincipalContextCache `
-            -Disposables $Disposables `
+            -Disposables $disposables `
             -Scope $env:computerName
 
         $group = Get-Group -GroupName $GroupName -PrincipalContext $principalContext
@@ -1151,7 +1150,6 @@ function Test-TargetResourceOnFullSKU
 
         if ($PSBoundParameters.ContainsKey('Members'))
         {
-            
             foreach ($incompatibleParameterName in @( 'MembersToInclude', 'MembersToExclude' ))
             {
                 if ($PSBoundParameters.ContainsKey($incompatibleParameterName))
@@ -1362,7 +1360,6 @@ function Test-TargetResourceOnNanoServer
         [String]
         $Description,
 
-        [ValidateNotNull()]
         [String[]]
         $Members,
 
@@ -2159,7 +2156,7 @@ function Test-IsLocalMachine
         $Scope
     )
 
-    $localMachineScopes = @( '.', $env:computerName, 'localhost', '127.0.0.1' )
+    $localMachineScopes = @( '.', $env:computerName, 'localhost', '127.0.0.1', 'NT Authority' )
 
     if ($localMachineScopes -icontains $Scope)
     {
@@ -2572,5 +2569,3 @@ function Remove-DisposableObject
         }
     }
 }
-
-Export-ModuleMember -Function '*-TargetResource'

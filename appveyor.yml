@@ -9,7 +9,7 @@ install:
     - ps: Start-Sleep 5
     - ps: Restart-Computer -Force
     - ps: Start-Sleep 5
-    - ps: Write-Verbose -Message "Returned after restart with PSVersion $($PSVersionTable.PSVersion)"
+    - ps: Write-Verbose -Message "Returned after restart with PSVersion $($PSVersionTable.PSVersion)" -Verbose
     - ps: if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -lt 1)
         {
             throw 'WMF 5.1 install failed'
