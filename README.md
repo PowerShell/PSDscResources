@@ -474,6 +474,12 @@ The following parameters will be the same for each process in the set:
 
 * Cleaned User
 * Updated User to have non-dependent unit tests.
+* Ported fixes from [xPSDesiredStateConfiguration](https://github.com/PowerShell/xPSDesiredStateConfiguration):
+    * WindowsProcess: Minor updates to integration tests
+    * Registry: Fixed support for forward slashes in registry key names
+* Group:
+    * Group members in the "NT Authority" scope should now be resolved without an error. If you were seeing the error "Exception calling ".ctor" with "4" argument(s): "Server names cannot contain a space character."", this fix should resolve that error.
+    * The resource will no longer attempt to resolve group members if Members, MembersToInclude, and MembersToExclude are not specified.
 
 ### 2.3.0.0
 
