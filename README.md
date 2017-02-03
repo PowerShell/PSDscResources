@@ -506,7 +506,7 @@ The following parameters will be the same for each process in the set:
     * WindowsProcess: Minor updates to integration tests
     * Registry: Fixed support for forward slashes in registry key names
 * Group:
-    * Group members in the "NT Authority" and "NT Service" scopes should now be resolved without an error. If you were seeing the errors "Exception calling ".ctor" with "4" argument(s): "Server names cannot contain a space character."" or "Exception calling ".ctor" with "2" argument(s): "Server names cannot contain a space character."", this fix should resolve those errors. If you are still seeing one of the errors, there is probably another local scope we need to add. Please let us know.
+    * Group members in the "NT Authority", "BuiltIn" and "NT Service" scopes should now be resolved without an error. If you were seeing the errors "Exception calling ".ctor" with "4" argument(s): "Server names cannot contain a space character."" or "Exception calling ".ctor" with "2" argument(s): "Server names cannot contain a space character."", this fix should resolve those errors. If you are still seeing one of the errors, there is probably another local scope we need to add. Please let us know.
     * The resource will no longer attempt to resolve group members if Members, MembersToInclude, and MembersToExclude are not specified.
 * Added Environment
 
