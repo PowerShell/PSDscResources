@@ -500,6 +500,8 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+### 2.4.0.0
+
 * Cleaned User
 * Updated User to have non-dependent unit tests.
 * Ported fixes from [xPSDesiredStateConfiguration](https://github.com/PowerShell/xPSDesiredStateConfiguration):
