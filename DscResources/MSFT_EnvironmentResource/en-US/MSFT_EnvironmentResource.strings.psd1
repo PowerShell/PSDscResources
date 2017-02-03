@@ -15,7 +15,7 @@ ConvertFrom-StringData @'
     EnvVarNotFound = Environment variable '{0}' does not exist.
     EnvVarFound = Environment variable '{0}' with value '{1}' was successfully found.
     EnvVarFoundWithMisMatchingValue = Environment variable '{0}' with value '{1}' mismatched the specified value '{2}'.
-    EnvVarRemoved = Environment variable '{0}' removed.
+    EnvVarRemoved = Environment variable '{0}' was removed.
     GetItemPropertyFailure = Failed to get the item property for variable '{0}' with path '{1}'.
     RemoveNonExistentVarError = Environment variable '{0}' cannot be removed because it does not exist.
 '@

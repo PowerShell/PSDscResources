@@ -386,7 +386,7 @@ function Set-TargetResource
             {
                 Set-EnvironmentVariable -Name $Name -Value $finalPath -Target @('Process')
                 Write-Verbose -Message ($script:localizedData.EnvVarPathUpdated -f $Name, $currentValueFromProcess, $finalPath)
-            }       
+            }
         }
     }
 }
