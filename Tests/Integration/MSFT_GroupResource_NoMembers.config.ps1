@@ -22,7 +22,7 @@ Configuration $ConfigurationName
 
     Import-DscResource -ModuleName 'PSDscResources'
 
-    Group Group1
+    Group Group3
     {
         GroupName = $GroupName
         Ensure = $Ensure
