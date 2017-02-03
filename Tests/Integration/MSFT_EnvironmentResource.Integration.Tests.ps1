@@ -4,24 +4,24 @@ $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
 # Import CommonTestHelper for Enter-DscResourceTestEnvironment, Exit-DscResourceTestEnvironment
-$script:testsFolderFilePath = Split-Path $PSScriptRoot -Parent
-$script:commonTestHelperFilePath = Join-Path -Path $testsFolderFilePath -ChildPath 'CommonTestHelper.psm1'
-Import-Module -Name $commonTestHelperFilePath
+$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
+Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
-    -DscResourceModuleName 'xPSDesiredStateConfiguration' `
-    -DscResourceName 'MSFT_xEnvironmentResource' `
+    -DscResourceModuleName 'PSDscResources' `
+    -DscResourceName 'MSFT_EnvironmentResource' `
     -TestType 'Integration'
 
 try
 {
-        Describe 'xEnvironment Integration Tests' {
+        Describe 'Environment Integration Tests' {
             BeforeAll {
                 # Import environment resource module for Get-TargetResource, Test-TargetResource, Set-TargetResource
                 $moduleRootFilePath = Split-Path -Path (Split-Path $PSScriptRoot -Parent) -Parent
                 $dscResourcesFolderFilePath = Join-Path -Path $moduleRootFilePath -ChildPath 'DscResources'
-                $environmentResourceFolderFilePath = Join-Path -Path $dscResourcesFolderFilePath -ChildPath 'MSFT_xEnvironmentResource'
-                $environmentResourceModuleFilePath = Join-Path -Path $environmentResourceFolderFilePath -ChildPath 'MSFT_xEnvironmentResource.psm1'
+                $environmentResourceFolderFilePath = Join-Path -Path $dscResourcesFolderFilePath -ChildPath 'MSFT_EnvironmentResource'
+                $environmentResourceModuleFilePath = Join-Path -Path $environmentResourceFolderFilePath -ChildPath 'MSFT_EnvironmentResource.psm1'
                 Import-Module -Name $environmentResourceModuleFilePath -Force
             }
 

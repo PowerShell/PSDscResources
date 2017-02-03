@@ -6,7 +6,7 @@ $script:dscResourcesFolderFilePath = Split-Path $PSScriptRoot -Parent
 $script:commonResourceHelperFilePath = Join-Path -Path $script:dscResourcesFolderFilePath -ChildPath 'CommonResourceHelper.psm1'
 Import-Module -Name $script:commonResourceHelperFilePath
 
-$script:localizedData = Get-LocalizedData -ResourceName 'MSFT_xEnvironmentResource'
+$script:localizedData = Get-LocalizedData -ResourceName 'MSFT_EnvironmentResource'
 
 $script:envVarRegPathMachine = 'HKLM:\System\CurrentControlSet\Control\Session Manager\Environment'
 $script:envVarRegPathUser = 'HKCU:\Environment'

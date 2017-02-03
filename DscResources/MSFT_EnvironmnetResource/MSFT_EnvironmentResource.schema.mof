@@ -1,5 +1,5 @@
-[ClassVersion("1.0.0"), FriendlyName("xEnvironment")] 
-class MSFT_xEnvironmentResource : OMI_BaseResource
+[ClassVersion("1.0.0"), FriendlyName("Environment")] 
+class MSFT_EnvironmentResource : OMI_BaseResource
 {
   [Key, Description("The name of the environment variable for which you want to ensure a specific state.")] String Name;
   [Write, Description("The desired value for the environment variable.")] String Value;

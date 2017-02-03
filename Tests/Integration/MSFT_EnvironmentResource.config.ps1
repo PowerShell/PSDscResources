@@ -30,9 +30,9 @@ Configuration $ConfigurationName
         $Target = ('Process', 'Machine')
     )
 
-    Import-DscResource -ModuleName 'xPSDesiredStateConfiguration'
+    Import-DscResource -ModuleName 'PSDscResources'
 
-    xEnvironment Environment1
+    Environment Environment1
     {
         Name = $Name
         Value = $Value

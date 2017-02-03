@@ -2,18 +2,18 @@
 Set-StrictMode -Version 'Latest'
 
 # Import CommonTestHelper for Enter-DscResourceTestEnvironment, Exit-DscResourceTestEnvironment
-$script:testsFolderFilePath = Split-Path $PSScriptRoot -Parent
-$script:commonTestHelperFilePath = Join-Path -Path $testsFolderFilePath -ChildPath 'CommonTestHelper.psm1'
-Import-Module -Name $commonTestHelperFilePath
+$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
+Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
-    -DscResourceModuleName 'xPSDesiredStateConfiguration' `
-    -DscResourceName 'MSFT_xEnvironmentResource' `
+    -DscResourceModuleName 'PSDscResources' `
+    -DscResourceName 'MSFT_EnvironmentResource' `
     -TestType 'Unit'
 
 try
 {
-    InModuleScope 'MSFT_xEnvironmentResource' {
+    InModuleScope 'MSFT_EnvironmentResource' {
         # Mock objects
         $script:mockEnvironmentVarName = 'PATH'
         $script:mockEnvironmentVarInvalidName = 'Invalid'
@@ -22,7 +22,7 @@ try
             PATH = 'mock path for testing'
         }
 
-        Describe 'xEnvironmentResource\Get-TargetResource' {
+        Describe 'EnvironmentResource\Get-TargetResource' {
             Mock -CommandName Get-EnvironmentVariableWithoutExpanding -MockWith {
                 if ($Name -eq $script:mockEnvironmentVarName)
                 {
@@ -190,7 +190,7 @@ try
             }
         }
 
-        Describe 'xEnvironmentResource\Set-TargetResource - Both Targets' {
+        Describe 'EnvironmentResource\Set-TargetResource - Both Targets' {
             $newPathValue = 'new path value'
             Mock -CommandName Get-EnvironmentVariableWithoutExpanding -MockWith { return $null }
             Mock -CommandName Get-ItemProperty -MockWith { return $null }
@@ -515,7 +515,7 @@ try
             }
         }
 
-        Describe 'xEnvironmentResource\Set-TargetResource - Target set to Process' {
+        Describe 'EnvironmentResource\Set-TargetResource - Target set to Process' {
             $newPathValue = 'new path value'
             Mock -CommandName Get-EnvironmentVariableWithoutExpanding -MockWith { return $null }
             Mock -CommandName Get-EnvironmentVariable -MockWith { return $null }
@@ -829,7 +829,7 @@ try
             }
         }
 
-        Describe 'xEnvironmentResource\Set-TargetResource - Target set to Machine' {
+        Describe 'EnvironmentResource\Set-TargetResource - Target set to Machine' {
             $newPathValue = 'new path value'
             Mock -CommandName Get-EnvironmentVariableWithoutExpanding -MockWith { return $null }
             Mock -CommandName Get-ItemProperty -MockWith { return $null }
@@ -1165,7 +1165,7 @@ try
             }
         }
 
-        Describe 'xEnvironmentResource\Test-TargetResource - Both Targets' {
+        Describe 'EnvironmentResource\Test-TargetResource - Both Targets' {
             Mock -CommandName Get-EnvironmentVariableWithoutExpanding -MockWith { return $null }
             Mock -CommandName Get-EnvironmentVariable -MockWith { return $null }
             Mock -CommandName Get-ItemProperty -MockWith { return $script:mockEnvironmentVar }
@@ -1475,7 +1475,7 @@ try
             }
         }
 
-        Describe 'xEnvironmentResource\Test-TargetResource - Target set to Process' {
+        Describe 'EnvironmentResource\Test-TargetResource - Target set to Process' {
             Mock -CommandName Get-EnvironmentVariable -MockWith { return $null }
             Mock -CommandName Test-PathsInValue -MockWith { return $true }
             Mock -CommandName Get-EnvironmentVariableWithoutExpanding -MockWith { return $null }
@@ -1782,7 +1782,7 @@ try
             }
         }
 
-        Describe 'xEnvironmentResource\Test-TargetResource - Target set to Machine' {
+        Describe 'EnvironmentResource\Test-TargetResource - Target set to Machine' {
             Mock -CommandName Get-EnvironmentVariableWithoutExpanding -MockWith { return $null }
             Mock -CommandName Get-ItemProperty -MockWith { return $script:mockEnvironmentVar }
             Mock -CommandName Get-EnvironmentVariable -MockWith { return $null }
@@ -2107,7 +2107,7 @@ try
             }
         }
 
-        Describe 'xEnvironmentResource\Get-EnvironmentVariable' {
+        Describe 'EnvironmentResource\Get-EnvironmentVariable' {
             $desiredValue = 'desiredValue'
             Mock -CommandName Get-ProcessEnvironmentVariable -MockWith { return $desiredValue }
             Mock -CommandName Get-ItemProperty -MockWith {
@@ -2144,7 +2144,7 @@ try
             }
         }
 
-        Describe 'xEnvironmentResource\Add-PathsToValue' {
+        Describe 'EnvironmentResource\Add-PathsToValue' {
             Context 'Path is updated' {
                 It 'Should return the updated path value with the new path' {
                     $getPathValueWithAddedPathsResult = Add-PathsToValue -CurrentValue 'path1;path2;path4' `
@@ -2176,7 +2176,7 @@ try
             }
         }
         
-        Describe 'xEnvironmentResource\Remove-PathsFromValue' {
+        Describe 'EnvironmentResource\Remove-PathsFromValue' {
             Context 'Path is updated' {
                 It 'Should return the updated path value with the specified path removed' {
                     $getPathValueWithRemovedPathsResult = Remove-PathsFromValue -CurrentValue 'path1;path2;path4' `
@@ -2206,7 +2206,7 @@ try
             }
         }
 
-        Describe 'xEnvironmentResource\Set-EnvironmentVariable' {
+        Describe 'EnvironmentResource\Set-EnvironmentVariable' {
             Mock -CommandName Set-ProcessEnvironmentVariable -MockWith {}
             Mock -CommandName Set-ItemProperty -MockWith {}
             Mock -CommandName Remove-ItemProperty -MockWith {}
@@ -2305,7 +2305,7 @@ try
             }
         }
         
-        Describe 'xEnvironmentResource\Test-PathsInValue' {
+        Describe 'EnvironmentResource\Test-PathsInValue' {
             $existingPaths = 'path1;path2;path3;path5;path6'
 
             Context "'Any' criteria specified" {
@@ -2355,7 +2355,7 @@ try
             }
         }
 
-        Describe 'xEnvironmentResource\Get-EnvironmentVariableWithoutExpanding' {
+        Describe 'EnvironmentResource\Get-EnvironmentVariableWithoutExpanding' {
             Mock -CommandName Get-KeyValue -MockWith { return $script:mockEnvironmentVar.$script:mockEnvironmentVarName }
 
             It 'Should return the correct value when the environment variable exists' {

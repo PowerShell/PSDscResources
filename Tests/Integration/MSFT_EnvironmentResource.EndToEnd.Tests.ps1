@@ -3,23 +3,38 @@
     They must be run in the order given - if one test fails, subsequent tests may
     also fail.
 #>
+
+if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -lt 1)
+{
+    Write-Warning -Message 'Cannot run PSDscResources integration tests on PowerShell versions lower than 5.1'
+    return
+}
+
 $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
 # Import CommonTestHelper for Enter-DscResourceTestEnvironment, Exit-DscResourceTestEnvironment
-$script:testsFolderFilePath = Split-Path $PSScriptRoot -Parent
-$script:commonTestHelperFilePath = Join-Path -Path $testsFolderFilePath -ChildPath 'CommonTestHelper.psm1'
-Import-Module -Name $commonTestHelperFilePath
+$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
+Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
 $script:testEnvironment = Enter-DscResourceTestEnvironment `
-    -DscResourceModuleName 'xPSDesiredStateConfiguration' `
-    -DscResourceName 'MSFT_xEnvironmentResource' `
+    -DscResourceModuleName 'PSDscResources' `
+    -DscResourceName 'MSFT_EnvironmentResource' `
     -TestType 'Integration'
 
 try
 {
-    Describe 'xEnvironmentResouce Integration Tests - with both Targets specified (default)' {
+    Describe 'EnvironmentResouce Integration Tests - with both Targets specified (default)' {
         BeforeAll {
+
+            # Import Environment resource module for Get-TargetResource, Test-TargetResource, Set-TargetResource
+            $moduleRootFilePath = Split-Path -Path $script:testFolderPath -Parent
+            $dscResourcesFolderFilePath = Join-Path -Path $moduleRootFilePath -ChildPath 'DscResources'
+            $environmentResourceFolderFilePath = Join-Path -Path $dscResourcesFolderFilePath -ChildPath 'MSFT_EnvironmentResource'
+            $environmentResourceModuleFilePath = Join-Path -Path $environmentResourceFolderFilePath -ChildPath 'MSFT_EnvironmentResource.psm1'
+            Import-Module -Name $environmentResourceModuleFilePath -Force
+
             $testEnvironmentVarName = 'TestEnvironmentVariableName'
             $testPathEnvironmentVarName = 'TestPathEnvironmentVariableName'
             $machineEnvironmentRegistryPath = 'HKLM:\System\CurrentControlSet\Control\Session Manager\Environment'
@@ -27,7 +42,7 @@ try
             $testValue = 'InitialTestValue'
             $newTestValue = 'NewTestValue'
 
-            $configFile = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_xEnvironmentResource.config.ps1'
+            $configFile = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_EnvironmentResource.config.ps1'
         }
 
         AfterAll {
@@ -47,7 +62,7 @@ try
         }
 
         Context "Should create the environment variable $testEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Create'
+            $configurationName = 'MSFT_EnvironmentResource_Create'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             # Ensure the environment variable doesn't exist
@@ -86,7 +101,7 @@ try
         }
 
         Context "Should update environment variable $testEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Update'
+            $configurationName = 'MSFT_EnvironmentResource_Update'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -114,7 +129,7 @@ try
         }
 
         Context 'Should not remove environment variable when value is different than what is already set' {
-            $configurationName = 'MSFT_xEnvironmentResource_NonRemove'
+            $configurationName = 'MSFT_EnvironmentResource_NonRemove'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -142,7 +157,7 @@ try
         }
 
         Context "Should remove environment variable $testEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Remove'
+            $configurationName = 'MSFT_EnvironmentResource_Remove'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -170,7 +185,7 @@ try
         }
 
         Context "Should create the path environment variable $testPathEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Create_Path'
+            $configurationName = 'MSFT_EnvironmentResource_Create_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             # Ensure the environment variable doesn't exist
@@ -210,7 +225,7 @@ try
         }
 
         Context "Should update environment variable $testPathEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Update_Path'
+            $configurationName = 'MSFT_EnvironmentResource_Update_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             $expectedValue = $testValue + ';' + $newTestValue
@@ -241,7 +256,7 @@ try
         }
 
         Context 'Should not remove environment variable when value is different than what is already set' {
-            $configurationName = 'MSFT_xEnvironmentResource_NonRemove_Path'
+            $configurationName = 'MSFT_EnvironmentResource_NonRemove_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             $expectedValue = $testValue + ';' + $newTestValue
@@ -272,7 +287,7 @@ try
         }
 
         Context "Should remove only one value from environment variable $testPathEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_PartialRemove_Path'
+            $configurationName = 'MSFT_EnvironmentResource_PartialRemove_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -301,7 +316,7 @@ try
         }
 
         Context "Should remove the environment variable $testPathEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Remove_Path'
+            $configurationName = 'MSFT_EnvironmentResource_Remove_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -330,7 +345,7 @@ try
         }
     }
 
-    Describe 'xEnvironmentResouce Integration Tests - only Process Target specified' {
+    Describe 'EnvironmentResouce Integration Tests - only Process Target specified' {
         BeforeAll {
             $testEnvironmentVarName = 'TestProcessEnvironmentVariableName'
             $testPathEnvironmentVarName = 'TestProcessPathEnvironmentVariableName'
@@ -338,7 +353,7 @@ try
             $testValue = 'InitialProcessTestValue'
             $newTestValue = 'NewProcessTestValue'
 
-            $configFile = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_xEnvironmentResource.config.ps1'
+            $configFile = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_EnvironmentResource.config.ps1'
         }
 
         AfterAll {
@@ -358,7 +373,7 @@ try
         }
 
         Context "Should create the environment variable $testEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Create'
+            $configurationName = 'MSFT_EnvironmentResource_Create'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             # Ensure the environment variable doesn't exist
@@ -392,7 +407,7 @@ try
         }
 
         Context "Should update environment variable $testEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Update'
+            $configurationName = 'MSFT_EnvironmentResource_Update'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -421,7 +436,7 @@ try
         }
 
         Context 'Should not remove environment variable when value is different than what is already set' {
-            $configurationName = 'MSFT_xEnvironmentResource_NonRemove'
+            $configurationName = 'MSFT_EnvironmentResource_NonRemove'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -450,7 +465,7 @@ try
         }
 
         Context "Should remove environment variable $testEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Remove'
+            $configurationName = 'MSFT_EnvironmentResource_Remove'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -479,7 +494,7 @@ try
         }
 
         Context "Should create the path environment variable $testPathEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Create_Path'
+            $configurationName = 'MSFT_EnvironmentResource_Create_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             # Ensure the environment variable doesn't exist
@@ -514,7 +529,7 @@ try
         }
 
         Context "Should update environment variable $testPathEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Update_Path'
+            $configurationName = 'MSFT_EnvironmentResource_Update_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             $expectedValue = $testValue + ';' + $newTestValue
@@ -546,7 +561,7 @@ try
         }
 
         Context 'Should not remove environment variable when value is different than what is already set' {
-            $configurationName = 'MSFT_xEnvironmentResource_NonRemove_Path'
+            $configurationName = 'MSFT_EnvironmentResource_NonRemove_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             $expectedValue = $testValue + ';' + $newTestValue
@@ -578,7 +593,7 @@ try
         }
 
         Context "Should remove only one value from environment variable $testPathEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_PartialRemove_Path'
+            $configurationName = 'MSFT_EnvironmentResource_PartialRemove_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -608,7 +623,7 @@ try
         }
 
         Context "Should remove the environment variable $testPathEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Remove_Path'
+            $configurationName = 'MSFT_EnvironmentResource_Remove_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -638,7 +653,7 @@ try
         }
     }
 
-    Describe 'xEnvironmentResouce Integration Tests - only Machine Target specified' {
+    Describe 'EnvironmentResouce Integration Tests - only Machine Target specified' {
         BeforeAll {
             $testEnvironmentVarName = 'TestMachineEnvironmentVariableName'
             $testPathEnvironmentVarName = 'TestMachinePathEnvironmentVariableName'
@@ -646,7 +661,7 @@ try
             $testValue = 'InitialMachineTestValue'
             $newTestValue = 'NewMachineTestValue'
 
-            $configFile = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_xEnvironmentResource.config.ps1'
+            $configFile = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_EnvironmentResource.config.ps1'
         }
 
         AfterAll {
@@ -666,7 +681,7 @@ try
         }
 
         Context "Should create the environment variable $testEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Create'
+            $configurationName = 'MSFT_EnvironmentResource_Create'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             # Ensure the environment variable doesn't exist:
@@ -703,7 +718,7 @@ try
         }
 
         Context "Should update environment variable $testEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Update'
+            $configurationName = 'MSFT_EnvironmentResource_Update'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -732,7 +747,7 @@ try
         }
 
         Context 'Should not remove environment variable when value is different than what is already set' {
-            $configurationName = 'MSFT_xEnvironmentResource_NonRemove'
+            $configurationName = 'MSFT_EnvironmentResource_NonRemove'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -761,7 +776,7 @@ try
         }
 
         Context "Should remove environment variable $testEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Remove'
+            $configurationName = 'MSFT_EnvironmentResource_Remove'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -790,7 +805,7 @@ try
         }
 
         Context "Should create the path environment variable $testPathEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Create_Path'
+            $configurationName = 'MSFT_EnvironmentResource_Create_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             # Ensure the environment variable doesn't exist:
@@ -828,7 +843,7 @@ try
         }
 
         Context "Should update environment variable $testPathEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Update_Path'
+            $configurationName = 'MSFT_EnvironmentResource_Update_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             $expectedValue = $testValue + ';' + $newTestValue
@@ -860,7 +875,7 @@ try
         }
 
         Context 'Should not remove environment variable when value is different than what is already set' {
-            $configurationName = 'MSFT_xEnvironmentResource_NonRemove_Path'
+            $configurationName = 'MSFT_EnvironmentResource_NonRemove_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             $expectedValue = $testValue + ';' + $newTestValue
@@ -892,7 +907,7 @@ try
         }
 
         Context "Should remove only one value from environment variable $testPathEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_PartialRemove_Path'
+            $configurationName = 'MSFT_EnvironmentResource_PartialRemove_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
@@ -922,7 +937,7 @@ try
         }
 
         Context "Should remove the environment variable $testPathEnvironmentVarName" {
-            $configurationName = 'MSFT_xEnvironmentResource_Remove_Path'
+            $configurationName = 'MSFT_EnvironmentResource_Remove_Path'
             $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
 
             It 'Should compile without throwing' {
