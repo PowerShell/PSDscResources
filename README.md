@@ -34,6 +34,7 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 
 ## Resources
 
+* [Environment](#environment): Provides a mechanism to configure and manage environment variables for a machine or process.
 * [Group](#group): Provides a mechanism to manage local groups on a target node.
 * [GroupSet](#groupset): Provides a mechanism to configure and manage multiple Group resources with common settings but different names.
 * [Registry](#registry): Provides a mechanism to manage registry keys and values on a target node.
@@ -58,6 +59,32 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 * [WindowsOptionalFeature](#windowsoptionalfeature)
 * [WindowsOptionalFeatureSet](#windowsoptionalfeatureset)
 * [WindowsPackageCab](#windowspackagecab)
+
+### Environment
+
+Provides a mechanism to configure and manage environment variables for a machine or process.
+
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String] Name** _(Key)_: The name of the environment variable to create, modify, or remove.
+* **[String] Value** _(Write)_: The desired value for the environment variable. The default value is an empty string which either indicates that the variable should be removed entirely or that the value does not matter when testing its existence.
+* **[String] Ensure** _(Write)_: Specifies if the environment varaible should exist. { *Present* | Absent }.
+* **[Boolean] Path** _(Write)_: Indicates whether or not the environment variable is a path variable. If the variable being configured is a path variable, the value provided will be appended to or removed from the existing value, otherwise the existing value will be replaced by the new value. The default value is False.
+* **[String[]] Target** _(Write)_: Indicates the target where the environment variable should be set. { Process | Machine | *Process, Machine* }.
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+* [Create a non-path environment variable](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Environment_CreateNonPathVariable.ps1)
+* [Create or update a path environment variable](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Environment_CreatePathVariable.ps1)
+* [Remove an environment variable](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Environment_Remove.ps1)
 
 ### Group
 
@@ -203,6 +230,7 @@ None
 * [Update a service with StartupType set to 'Ignore'](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Service_UpdateStartupTypeIgnoreState)
 
 ### ServiceSet
+
 Provides a mechanism to configure and manage multiple Service resources with common settings but different names.
 This resource can only modify or delete existing services. It cannot create services.
 
@@ -471,6 +499,18 @@ The following parameters will be the same for each process in the set:
 ## Versions
 
 ### Unreleased
+
+### 2.4.0.0
+
+* Cleaned User
+* Updated User to have non-dependent unit tests.
+* Ported fixes from [xPSDesiredStateConfiguration](https://github.com/PowerShell/xPSDesiredStateConfiguration):
+    * WindowsProcess: Minor updates to integration tests
+    * Registry: Fixed support for forward slashes in registry key names
+* Group:
+    * Group members in the "NT Authority", "BuiltIn" and "NT Service" scopes should now be resolved without an error. If you were seeing the errors "Exception calling ".ctor" with "4" argument(s): "Server names cannot contain a space character."" or "Exception calling ".ctor" with "2" argument(s): "Server names cannot contain a space character."", this fix should resolve those errors. If you are still seeing one of the errors, there is probably another local scope we need to add. Please let us know.
+    * The resource will no longer attempt to resolve group members if Members, MembersToInclude, and MembersToExclude are not specified.
+* Added Environment
 
 ### 2.3.0.0
 

@@ -60,6 +60,10 @@ try
                 } | Should Not Throw
             }
 
+            It 'Should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
             $registryKey = Get-Item -Path $registryParameters.Key -ErrorAction 'SilentlyContinue'
 
             It 'Should have created the registry key' {

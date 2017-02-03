@@ -12,30 +12,19 @@ Configuration $ConfigurationName
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [String]
-        $Name,
+        $GroupName,
 
-        [Parameter(Mandatory = $true)]
         [ValidateSet('Present', 'Absent')]
-        [String]
-        $Ensure,
-
-        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [String]
-        $SourcePath,
-
-        [ValidateNotNullOrEmpty()]
-        [String]
-        $LogPath = (Join-Path -Path (Get-Location) -ChildPath 'WindowsPackageCabTestLog.txt')
+        $Ensure = 'Present'
     )
 
     Import-DscResource -ModuleName 'PSDscResources'
 
-    WindowsPackageCab WindowsPackageCab1
+    Group Group3
     {
-        Name = $Name
+        GroupName = $GroupName
         Ensure = $Ensure
-        SourcePath = $SourcePath
-        LogPath = $LogPath
     }
 }

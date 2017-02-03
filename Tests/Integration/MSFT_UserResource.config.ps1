@@ -28,12 +28,15 @@ Configuration $ConfigurationName
         [Parameter(Mandatory = $true)]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Password
+        $Password,
+
+        [Boolean]
+        $PasswordNeverExpires = $false
     )
     
     Import-DscResource -ModuleName 'PSDscResources'
     
-    Node Localhost {
+    Node localhost {
 
         User UserResource1
         {
@@ -42,6 +45,7 @@ Configuration $ConfigurationName
             FullName = $FullName
             Description = $Description
             Password = $Password
+            PasswordNeverExpires = $PasswordNeverExpires
         }
     }
 }

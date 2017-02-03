@@ -994,8 +994,10 @@ function New-RegistryKey
         $RegistryKeyPath
     )
 
-    $parentRegistryKeyPath = Split-Path -Path $RegistryKeyPath -Parent
-    $newRegistryKeyName = Split-Path -Path $RegistryKeyPath -Leaf
+    # Registry key names can contain forward slashes, so we can't use Split-Path here (it will split on /)
+    $indexOfLastBackslash = $RegistryKeyPath.LastIndexOf('\')
+    $parentRegistryKeyPath = $RegistryKeyPath.Substring(0, $indexOfLastBackslash)
+    $newRegistryKeyName = $RegistryKeyPath.Substring($indexOfLastBackslash + 1)
 
     $parentRegistryKey = Get-RegistryKey -RegistryKeyPath $parentRegistryKeyPath -WriteAccessAllowed
 
