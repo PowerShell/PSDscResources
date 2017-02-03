@@ -3,15 +3,15 @@
         Creates the environment variable 'TestEnvironmentVariable' and sets the value to 'TestValue'
         both on the machine and within the process.
 #>
-Configuration Sample_xEnvironment_CreateNonPathVariable 
+Configuration Sample_Environment_CreateNonPathVariable 
 {
     param ()
 
-    Import-DscResource -ModuleName 'xPSDesiredStateConfiguration'
+    Import-DscResource -ModuleName 'PSDscResources'
 
     Node localhost
     {
-        xEnvironment CreateEnvironmentVariable
+        Environment CreateEnvironmentVariable
         {
             Name = 'TestEnvironmentVariable'
             Value = 'TestValue'
@@ -22,4 +22,4 @@ Configuration Sample_xEnvironment_CreateNonPathVariable
     }
 }
 
-Sample_xEnvironment_CreateNonPathVariable
+Sample_Environment_CreateNonPathVariable

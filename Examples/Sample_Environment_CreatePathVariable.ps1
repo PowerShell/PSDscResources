@@ -4,15 +4,15 @@
         if it doesn't already exist or appends the value 'TestValue' to the existing path if it does
         already exist on the machine and within the process.
 #>
-Configuration Sample_xEnvironment_CreatePathVariable 
+Configuration Sample_Environment_CreatePathVariable 
 {
     param ()
 
-    Import-DscResource -ModuleName 'xPSDesiredStateConfiguration'
+    Import-DscResource -ModuleName 'PSDscResources'
 
     Node localhost
     {
-        xEnvironment CreatePathEnvironmentVariable
+        Environment CreatePathEnvironmentVariable
         {
             Name = 'TestPathEnvironmentVariable'
             Value = 'TestValue'
@@ -23,4 +23,4 @@ Configuration Sample_xEnvironment_CreatePathVariable
     }
 }
 
-Sample_xEnvironment_CreatePathVariable
+Sample_Environment_CreatePathVariable

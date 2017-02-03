@@ -3,15 +3,15 @@
         Removes the environment variable 'TestEnvironmentVariable' from
         both the machine and the process.
 #>
-Configuration Sample_xEnvironment_Remove 
+Configuration Sample_Environment_Remove 
 {
     param ()
 
-    Import-DscResource -ModuleName 'xPSDesiredStateConfiguration'
+    Import-DscResource -ModuleName 'PSDscResources'
 
     Node localhost
     {
-        xEnvironment RemoveEnvironmentVariable
+        Environment RemoveEnvironmentVariable
         {
             Name = 'TestEnvironmentVariable'
             Ensure = 'Absent'
@@ -21,4 +21,4 @@ Configuration Sample_xEnvironment_Remove
     }
 }
 
-Sample_xEnvironment_Remove
+Sample_Environment_Remove
