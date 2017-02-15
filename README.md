@@ -500,6 +500,8 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* Enable codecov.io code coverage reporting
+
 ### 2.4.0.0
 
 * Cleaned User
