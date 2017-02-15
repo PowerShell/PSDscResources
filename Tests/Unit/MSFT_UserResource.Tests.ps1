@@ -131,7 +131,7 @@ try {
 
                 Context 'Tests on FullSKU' {
                     Mock -CommandName Test-IsNanoServer -MockWith { return $false }
-                    Mock -CommandName Remove-User -MockWith {}
+                    Mock -CommandName Remove-UserOnFullSku -MockWith {}
                     Mock -CommandName Remove-DisposableObject -MockWith {}
 
                     It 'Should return the user as Present' {
