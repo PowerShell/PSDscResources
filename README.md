@@ -504,6 +504,8 @@ The following parameters will be the same for each process in the set:
 ### Unreleased
 
 * Enable codecov.io code coverage reporting
+- Group
+    - Added support for domain based group members on Nano server.
 
 ### 2.4.0.0
 
