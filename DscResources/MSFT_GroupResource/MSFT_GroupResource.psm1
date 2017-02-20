@@ -1498,7 +1498,7 @@ function Test-TargetResourceOnNanoServer
 #>
 function Get-MembersOnNanoServer
 {
-    [OutputType([System.Array[]])]
+    [OutputType([System.String[]])]
     [CmdletBinding()]
     param
     (
