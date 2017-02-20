@@ -1522,6 +1522,7 @@ function Get-MembersOnNanoServer
         }
         else
         {
+            Write-Verbose -Message ($script:localizedData.MemberIsNotALocalUser -f $groupMember.Name,$groupMember.PrincipalSource)
             $domainMemberName = $groupMember.Name
             $null = $memberNames.Add($domainMemberName)
         }
