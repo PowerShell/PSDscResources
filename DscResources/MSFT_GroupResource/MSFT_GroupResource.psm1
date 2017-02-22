@@ -1938,7 +1938,7 @@ function ConvertTo-Principal
     elseif ($null -ne $Credential)
     {
         # The account is domain qualified - a credential is provided to resolve it.
-        Write-Verbose -Message ($script:localizedData.ResolvingDomainAccount -f $identityValue, $scope)
+        Write-Verbose -Message ($script:localizedData.ResolvingDomainAccount -f $scope, $identityValue)
     }
     else
     {
