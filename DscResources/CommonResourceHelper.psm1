@@ -14,9 +14,11 @@ function Test-IsNanoServer
     {
         $computerInfo = Get-ComputerInfo
 
-        if ('Server' -eq $computerInfo.OsProductType -and 'NanoServer' -eq $computerInfo.OsServerLevel)
+        $computerIsServer = 'Server' -ieq $computerInfo.OsProductType
+
+        if ($computerIsServer)
         {
-            $isNanoServer = $true
+            $isNanoServer = 'NanoServer' -ieq $computerInfo.OsServerLevel
         }
     }
 
