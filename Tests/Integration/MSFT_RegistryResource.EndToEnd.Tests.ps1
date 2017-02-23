@@ -24,6 +24,8 @@ $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceName 'MSFT_RegistryResource' `
     -TestType 'Integration'
 
+$VerbosePreference = 'Continue'
+
 try
 {
     Describe 'Registry End to End Tests' {
@@ -92,6 +94,10 @@ try
                 } | Should Not Throw
             }
 
+            It 'Should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
             $registryKeyValue = Get-ItemProperty -Path $registryParameters.Key -Name $registryParameters.ValueName -ErrorAction 'SilentlyContinue'
 
             It 'Should have created the registry key value' {
@@ -124,6 +130,10 @@ try
                     & $configurationName -OutputPath $TestDrive @registryParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
                 } | Should Not Throw
+            }
+
+            It 'Should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
             $registryKeyValue = Get-ItemProperty -Path $registryParameters.Key -Name $registryParameters.ValueName -ErrorAction 'SilentlyContinue'
@@ -182,6 +192,10 @@ try
                     } | Should Not Throw
                 }
 
+                It 'Should be able to call Get-DscConfiguration without throwing' {
+                    { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+                }
+
                 $registryKeyValue = Get-ItemProperty -Path $registryParameters.Key -Name $registryParameters.ValueName -ErrorAction 'SilentlyContinue'
 
                 It 'Should be able to retrieve the registry key value' {
@@ -219,6 +233,10 @@ try
                 } | Should Not Throw
             }
 
+            It 'Should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
             $registryKeyValue = Get-ItemProperty -Path $registryParameters.Key -Name $registryParameters.ValueName -ErrorAction 'SilentlyContinue'
 
             It 'Should be able to retrieve the registry key value' {
@@ -251,6 +269,10 @@ try
                 } | Should Not Throw
             }
 
+            It 'Should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
             $registryKeyValue = Get-ItemProperty -Path $registryParameters.Key -Name $registryParameters.ValueName -ErrorAction 'SilentlyContinue'
 
             It 'Should have removed the registry key value' {
@@ -281,6 +303,10 @@ try
                 } | Should Not Throw
             }
 
+            It 'Should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
             $registryKeyValue = Get-ItemProperty -Path $registryParameters.Key -Name $registryParameters.ValueName -ErrorAction 'SilentlyContinue'
 
             It 'Should have removed the registry key value' {
@@ -309,6 +335,10 @@ try
                 } | Should Not Throw
             }
 
+            It 'Should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
             $registryKey = Get-Item -Path $registryParameters.Key -ErrorAction 'SilentlyContinue'
 
             It 'Should have removed the registry key value' {
@@ -323,6 +353,7 @@ try
 }
 finally
 {
+    $VerbosePreference = 'SilentlyContinue'
     Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
 }
         
