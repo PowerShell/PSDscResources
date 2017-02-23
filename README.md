@@ -540,6 +540,7 @@ The following parameters will be the same for each process in the set:
 * Group
     * Added support for domain based group members on Nano server.
 * Added the Archive resource
+* Update Test-IsNanoServer cmdlet to properly test for a Nano server rather than the core version of PowerShell
 
 ### 2.4.0.0
 
