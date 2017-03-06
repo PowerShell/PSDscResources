@@ -66,9 +66,6 @@ function Get-TargetResource
     $registryResource = @{
         Key = $Key
         Ensure = 'Absent'
-        ValueName = $null
-        ValueType = $null
-        ValueData = $null
     }
 
     # Retrieve the registry key at the specified path
