@@ -541,6 +541,8 @@ The following parameters will be the same for each process in the set:
     * Added support for domain based group members on Nano server.
 * Added the Archive resource
 * Update Test-IsNanoServer cmdlet to properly test for a Nano server rather than the core version of PowerShell
+* Registry
+    * Fixed bug where an error was thrown when running Get-DscConfiguration if the registry already existed
 
 ### 2.4.0.0
 
