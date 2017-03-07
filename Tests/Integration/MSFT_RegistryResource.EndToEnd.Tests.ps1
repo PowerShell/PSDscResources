@@ -24,8 +24,6 @@ $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceName 'MSFT_RegistryResource' `
     -TestType 'Integration'
 
-$VerbosePreference = 'Continue'
-
 try
 {
     Describe 'Registry End to End Tests' {
@@ -353,7 +351,6 @@ try
 }
 finally
 {
-    $VerbosePreference = 'SilentlyContinue'
     Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
 }
         

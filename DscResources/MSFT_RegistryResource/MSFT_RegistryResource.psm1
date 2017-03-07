@@ -66,6 +66,9 @@ function Get-TargetResource
     $registryResource = @{
         Key = $Key
         Ensure = 'Absent'
+        ValueName = $null
+        ValueType = $null
+        ValueData = $null
     }
 
     # Retrieve the registry key at the specified path
@@ -104,7 +107,7 @@ function Get-TargetResource
                 $actualValueType = Get-RegistryKeyValueType -RegistryKey $registryKey -RegistryKeyValueName $ValueName
 
                 # If the registry key value exists, convert it to a readable string
-                $registryKeyValueAsReadableString = ConvertTo-ReadableString -RegistryKeyValue $registryKeyValue -RegistryKeyValueType $actualValueType
+                $registryKeyValueAsReadableString = @() + (ConvertTo-ReadableString -RegistryKeyValue $registryKeyValue -RegistryKeyValueType $actualValueType)
 
                 $registryResource['Ensure'] = 'Present'
                 $registryResource['ValueType'] = $actualValueType
