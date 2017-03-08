@@ -1,5 +1,8 @@
-master: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/dev?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/master)  
-dev: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/dev)
+master: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/master)
+[![codecov](https://codecov.io/gh/PowerShell/PSDscResources/branch/master/graph/badge.svg)](https://codecov.io/gh/PowerShell/PSDscResources)
+
+dev: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/dev?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/dev)
+[![codecov](https://codecov.io/gh/PowerShell/PSDscResources/branch/dev/graph/badge.svg)](https://codecov.io/gh/PowerShell/PSDscResources)
 
 # PSDscResources
 
@@ -34,6 +37,7 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 
 ## Resources
 
+* [Archive](#archive): Provides a mechanism to expand an archive (.zip) file to a specific path or remove an expanded archive (.zip) file from a specific path on a target node.
 * [Environment](#environment): Provides a mechanism to configure and manage environment variables for a machine or process.
 * [Group](#group): Provides a mechanism to manage local groups on a target node.
 * [GroupSet](#groupset): Provides a mechanism to configure and manage multiple Group resources with common settings but different names.
@@ -59,6 +63,38 @@ Please check out the common DSC Resources [contributing guidelines](https://gith
 * [WindowsOptionalFeature](#windowsoptionalfeature)
 * [WindowsOptionalFeatureSet](#windowsoptionalfeatureset)
 * [WindowsPackageCab](#windowspackagecab)
+
+### Archive
+
+Provides a mechanism to expand an archive (.zip) file to a specific path or remove an expanded archive (.zip) file from a specific path on a target node.
+
+#### Requirements
+
+* The System.IO.Compression type assembly must be available on the machine.
+* The System.IO.Compression.FileSystem type assembly must be available on the machine.
+
+#### Parameters
+
+* **[String] Path** _(Key)_: The path to the archive file that should be expanded to or removed from the specified destination.
+* **[String] Destination** _(Key)_: The path where the specified archive file should be expanded to or removed from.
+* **[String] Ensure** _(Write)_: Specifies whether or not the expanded content of the archive file at the specified path should exist at the specified destination. To update the specified destination to have the expanded content of the archive file at the specified path, specify this property as Present. To remove the expanded content of the archive file at the specified path from the specified destination, specify this property as Absent. The default value is Present. { *Present* | Absent }.
+* **[Boolean] Validate** _(Write)_: Specifies whether or not to validate that a file at the destination with the same name as a file in the archive actually matches that corresponding file in the archive by the specified checksum method. If the file does not match and Ensure is specified as Present and Force is not specified, the resource will throw an error that the file at the desintation cannot be overwritten. If the file does not match and Ensure is specified as Present and Force is specified, the file at the desintation will be overwritten. If the file does not match and Ensure is specified as Absent, the file at the desintation will not be removed. The default value is false.
+* **[String] Checksum** _(Write)_: The Checksum method to use to validate whether or not a file at the destination with the same name as a file in the archive actually matches that corresponding file in the archive. An invalid argument exception will be thrown if Checksum is specified while Validate is specified as false. ModifiedDate will check that the LastWriteTime property of the file at the destination matches the LastWriteTime property of the file in the archive. CreatedDate will check that the CreationTime property of the file at the destination matches the CreationTime property of the file in the archive. SHA-1, SHA-256, and SHA-512 will check that the hash of the file at the destination by the specified SHA method matches the hash of the file in the archive by the specified SHA method. The default value is ModifiedDate. { *ModifiedDate* | CreatedDate | SHA-1 | SHA-256 | SHA-512 }
+* **[System.Management.Automation.PSCredential] Credential** _(Write)_: The credential of a user account with permissions to access the specified archive path and destination if needed.
+* **[Boolean] Force** _(Write)_: Specifies whether or not any existing files or directories at the destination with the same name as a file or directory in the archive should be overwritten to match the file or directory in the archive. When this property is false, an error will be thrown if an item at the destination needs to be overwritten. The default value is false.
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+* [Expand an archive without file validation](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_Archive_ExpandArchiveNoValidation.ps1)
+* [Expand an archive under a credential without file validation](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_Archive_ExpandArchiveNoValidationCredential.ps1)
+* [Expand an archive with default file validation and file overwrite allowed](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_Archive_ExpandArchiveDefaultValidationAndForce.ps1)
+* [Expand an archive with SHA-256 file validation and file overwrite allowed](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_Archive_ExpandArchiveChecksumAndForce.ps1)
+* [Remove an archive without file validation](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_Archive_RemoveArchiveNoValidation.ps1)
+* [Remove an archive with SHA-256 file validation](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_Archive_RemoveArchiveChecksum.ps1)
 
 ### Environment
 
@@ -499,6 +535,16 @@ The following parameters will be the same for each process in the set:
 ## Versions
 
 ### Unreleased
+
+### 2.5.0.0
+
+* Enable codecov.io code coverage reporting
+* Group
+    * Added support for domain based group members on Nano server.
+* Added the Archive resource
+* Update Test-IsNanoServer cmdlet to properly test for a Nano server rather than the core version of PowerShell
+* Registry
+    * Fixed bug where an error was thrown when running Get-DscConfiguration if the registry already existed
 
 ### 2.4.0.0
 

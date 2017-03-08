@@ -8,7 +8,43 @@ function Test-IsNanoServer
     [CmdletBinding()]
     param ()
 
-    return $PSVersionTable.PSEdition -ieq 'Core'
+    $isNanoServer = $false
+    
+    if (Test-CommandExists -Name 'Get-ComputerInfo')
+    {
+        $computerInfo = Get-ComputerInfo
+
+        $computerIsServer = 'Server' -ieq $computerInfo.OsProductType
+
+        if ($computerIsServer)
+        {
+            $isNanoServer = 'NanoServer' -ieq $computerInfo.OsServerLevel
+        }
+    }
+
+    return $isNanoServer
+}
+
+<#
+    .SYNOPSIS
+        Tests whether or not the command with the specified name exists.
+
+    .PARAMETER Name
+        The name of the command to test for.
+#>
+function Test-CommandExists
+{
+    [OutputType([Boolean])]
+    [CmdletBinding()]
+    param 
+    (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [String] $Name 
+    )
+
+    $command = Get-Command -Name $Name -ErrorAction 'SilentlyContinue'
+    return ($null -ne $command)
 }
 
 <#

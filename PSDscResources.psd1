@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.4.0.0'
+ModuleVersion = '2.5.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -73,7 +73,7 @@ VariablesToExport = '*'
 AliasesToExport = @()
 
 # DSC resources to export from this module
-DscResourcesToExport = 'Environment', 'Group', 'GroupSet', 'Registry', 'Script', 'Service', 'ServiceSet', 'User', 'WindowsFeature', 'WindowsFeatureSet', 'WindowsOptionalFeature', 'WindowsOptionalFeatureSet', 'WindowsPackageCab', 'WindowsProcess', 'ProcessSet'
+DscResourcesToExport = @( 'Archive', 'Environment', 'Group', 'GroupSet', 'Registry', 'Script', 'Service', 'ServiceSet', 'User', 'WindowsFeature', 'WindowsFeatureSet', 'WindowsOptionalFeature', 'WindowsOptionalFeatureSet', 'WindowsPackageCab', 'WindowsProcess', 'ProcessSet' )
 
 # List of all modules packaged with this module
 # ModuleList = @()
@@ -99,15 +99,13 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Cleaned User
-* Updated User to have non-dependent unit tests.
-* Ported fixes from [xPSDesiredStateConfiguration](https://github.com/PowerShell/xPSDesiredStateConfiguration):
-    * WindowsProcess: Minor updates to integration tests
-    * Registry: Fixed support for forward slashes in registry key names
-* Group:
-    * Group members in the "NT Authority", "BuiltIn" and "NT Service" scopes should now be resolved without an error. If you were seeing the errors "Exception calling ".ctor" with "4" argument(s): "Server names cannot contain a space character."" or "Exception calling ".ctor" with "2" argument(s): "Server names cannot contain a space character."", this fix should resolve those errors. If you are still seeing one of the errors, there is probably another local scope we need to add. Please let us know.
-    * The resource will no longer attempt to resolve group members if Members, MembersToInclude, and MembersToExclude are not specified.
-* Added Environment
+        ReleaseNotes = '* Enable codecov.io code coverage reporting
+* Group
+    * Added support for domain based group members on Nano server.
+* Added the Archive resource
+* Update Test-IsNanoServer cmdlet to properly test for a Nano server rather than the core version of PowerShell
+* Registry
+    * Fixed bug where an error was thrown when running Get-DscConfiguration if the registry already existed
 
 '
 
@@ -122,6 +120,7 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
 
 
 
