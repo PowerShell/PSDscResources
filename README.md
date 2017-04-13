@@ -536,6 +536,9 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* Archive:
+    * Fixed a minor bug in the unit tests where sometimes the incorrect DateTime format was used.
+
 ### 2.5.0.0
 
 * Enable codecov.io code coverage reporting
