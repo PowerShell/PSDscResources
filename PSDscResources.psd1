@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.5.0.0'
+ModuleVersion = '2.6.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -22,7 +22,9 @@ CompanyName = 'MicrosoftCorporation'
 Copyright = '(c) 2016 Microsoft Corporation. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'This module contains the standard DSC resources.'
+Description = 'This module contains the standard DSC resources.
+Because PSDscResources overwrites in-box resources, it is only available for WMF 5.1. Many of the resource updates provided here are also included in the xPSDesiredStateConfiguration module which is still compatible with WMF 4 and WMF 5 (though that module is not supported and may be removed in the future).
+'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '5.1'
@@ -73,7 +75,7 @@ VariablesToExport = '*'
 AliasesToExport = @()
 
 # DSC resources to export from this module
-DscResourcesToExport = @( 'Archive', 'Environment', 'Group', 'GroupSet', 'Registry', 'Script', 'Service', 'ServiceSet', 'User', 'WindowsFeature', 'WindowsFeatureSet', 'WindowsOptionalFeature', 'WindowsOptionalFeatureSet', 'WindowsPackageCab', 'WindowsProcess', 'ProcessSet' )
+DscResourcesToExport = @( 'Archive', 'Environment', 'Group', 'GroupSet', 'MsiPackage', 'Registry', 'Script', 'Service', 'ServiceSet', 'User', 'WindowsFeature', 'WindowsFeatureSet', 'WindowsOptionalFeature', 'WindowsOptionalFeatureSet', 'WindowsPackageCab', 'WindowsProcess', 'ProcessSet' )
 
 # List of all modules packaged with this module
 # ModuleList = @()
@@ -87,7 +89,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'DesiredStateConfiguration', 'DSC', 'DSCResourceKit', 'DSCResource'
+        Tags = 'DesiredStateConfiguration', 'DSC', 'DSCResourceKit', 'DSCResource', 'AzureAutomationNotSupported'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/PowerShell/PSDscResources/blob/master/LICENSE'
@@ -99,13 +101,9 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Enable codecov.io code coverage reporting
-* Group
-    * Added support for domain based group members on Nano server.
-* Added the Archive resource
-* Update Test-IsNanoServer cmdlet to properly test for a Nano server rather than the core version of PowerShell
-* Registry
-    * Fixed bug where an error was thrown when running Get-DscConfiguration if the registry already existed
+        ReleaseNotes = '* Archive:
+    * Fixed a minor bug in the unit tests where sometimes the incorrect DateTime format was used.
+* Added MsiPackage
 
 '
 
@@ -120,6 +118,7 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
 
 
 
