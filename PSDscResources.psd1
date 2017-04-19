@@ -22,7 +22,9 @@ CompanyName = 'MicrosoftCorporation'
 Copyright = '(c) 2016 Microsoft Corporation. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'This module contains the standard DSC resources.'
+Description = 'This module contains the standard DSC resources.
+Because PSDscResources overwrites in-box resources, it is only available for WMF 5.1. Many of the resource updates provided here are also included in the xPSDesiredStateConfiguration module which is still compatible with WMF 4 and WMF 5 (though that module is not supported and may be removed in the future).
+'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '5.1'
@@ -87,7 +89,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'DesiredStateConfiguration', 'DSC', 'DSCResourceKit', 'DSCResource'
+        Tags = 'DesiredStateConfiguration', 'DSC', 'DSCResourceKit', 'DSCResource', 'AzureAutomationNotSupported'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/PowerShell/PSDscResources/blob/master/LICENSE'
