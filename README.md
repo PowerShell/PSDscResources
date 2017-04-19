@@ -577,6 +577,8 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+### 2.6.0.0
+
 * Archive:
     * Fixed a minor bug in the unit tests where sometimes the incorrect DateTime format was used.
 * Added MsiPackage

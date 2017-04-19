@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.5.0.0'
+ModuleVersion = '2.6.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -101,13 +101,9 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Enable codecov.io code coverage reporting
-* Group
-    * Added support for domain based group members on Nano server.
-* Added the Archive resource
-* Update Test-IsNanoServer cmdlet to properly test for a Nano server rather than the core version of PowerShell
-* Registry
-    * Fixed bug where an error was thrown when running Get-DscConfiguration if the registry already existed
+        ReleaseNotes = '* Archive:
+    * Fixed a minor bug in the unit tests where sometimes the incorrect DateTime format was used.
+* Added MsiPackage
 
 '
 
@@ -122,6 +118,7 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
 
 
 
