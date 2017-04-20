@@ -57,7 +57,7 @@ Describe 'MsiPackage Unit Tests' {
         $script:mockProductEntryInfo = @{
             Name = 'TestDisplayName'
             InstallSource = 'TestInstallSource'
-            InstalledOn = '4/4/2017'
+            InstalledOn = ([DateTime]::new(2017, 4, 24).ToShortDateString())
             Size = 2048
             Version = '1.2.3.4'
             PackageDescription = 'Test Description'
@@ -586,7 +586,7 @@ Describe 'MsiPackage Unit Tests' {
         }
 
         Describe 'Get-ProductEntryInfo' {
-            Mock -CommandName Get-ProductEntryValue -MockWith { return '20170404' } -ParameterFilter { $Property -eq 'InstallDate' }
+            Mock -CommandName Get-ProductEntryValue -MockWith { return '20170424' } -ParameterFilter { $Property -eq 'InstallDate' }
             Mock -CommandName Get-ProductEntryValue -MockWith { return $script:mockProductEntryInfo.Publisher } -ParameterFilter { $Property -eq 'Publisher' }
             Mock -CommandName Get-ProductEntryValue -MockWith { return $script:mockProductEntryInfo.Size } -ParameterFilter { $Property -eq 'EstimatedSize' }
             Mock -CommandName Get-ProductEntryValue -MockWith { return $script:mockProductEntryInfo.Version } -ParameterFilter { $Property -eq 'DisplayVersion' }
