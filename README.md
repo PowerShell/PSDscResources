@@ -582,6 +582,8 @@ The following parameters will be the same for each process in the set:
 * Archive:
     * Fixed a minor bug in the unit tests where sometimes the incorrect DateTime format was used.
 * Added MsiPackage
+	* Parse installation date from registry using invariant culture.
+	* Fix a bug in unit test failing, when regional setting differs from English-US.
 
 ### 2.5.0.0
 
