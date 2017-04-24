@@ -578,8 +578,8 @@ The following parameters will be the same for each process in the set:
 ### Unreleased
 
 * MsiPackage
-	* Parse installation date from registry using invariant culture.
-	* Fix a bug in unit test failing, when regional setting differs from English-US.
+    * Parse installation date from registry using invariant culture.
+    * Fix a bug in unit test failing, when regional setting differs from English-US.
 
 ### 2.6.0.0
 
