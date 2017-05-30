@@ -35,4 +35,10 @@ ConvertFrom-StringData @'
     InvalidRegistryDrive = The registry drive {0} is invalid. Please update the Key parameter to include a valid registry drive.
     InvalidRegistryDriveAbbreviation = The registry drive abbreviation {0} is invalid. Please update the Key parameter to include a valid registry drive.
     RegistryDriveCouldNotBeMounted = The registry drive with the abbreviation {0} could not be mounted.
+    
+    Exclusive_RemovingRegistryValueName = Enforcing Exclusive Flag by removing Value Name ({1}) from key ({0}).
+    Exclusive_IsExclusive = ValueName ({1}) IS EXCLUSIVE within key ({0}).
+    Exclusive_IsNotExclusive = ValueName ({1}) IS NOT EXCLUSIVE within key ({0}).
+    Exclusive_TESTIsExclusive = ValueName ({1}) IS EXCLUSIVE within Key ({0}).
+    Exclusive_TESTIsNotExclusive = The ValueName ({1}) IS NOT EXCLUSIVE within Key ({0}).
 '@

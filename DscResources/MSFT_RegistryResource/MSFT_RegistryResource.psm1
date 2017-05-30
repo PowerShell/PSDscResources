@@ -118,6 +118,20 @@ function Get-TargetResource
         {
             $registryResource['Ensure'] = 'Present'
         }
+
+        $valueNames = Get-RegistryKeyValueNames -RegistryKey $registryKey
+        $otherValueNames = @($valueNames | Where-Object {$_ -ne $ValueName})
+
+        if ($otherValueNames.Count -gt 0)
+        {
+            Write-Verbose -Message ($script:localizedData.Exclusive_IsNotExclusive -f $Key, $ValueName)
+            $registryResource['Exclusive'] = $false
+        }
+        elseif ($valueNames -eq $valueName)
+        {
+            Write-Verbose -Message ($script:localizedData.Exclusive_IsExclusive -f $Key, $ValueName)
+            $registryResource['Exclusive'] = $true
+        }
     }
 
     Write-Verbose -Message ($script:localizedData.GetTargetResourceEndMessage -f $Key)
@@ -206,7 +220,10 @@ function Set-TargetResource
         $Hex = $false,
 
         [Boolean]
-        $Force = $false
+        $Force = $false,
+
+        [Boolean]
+        $Exclusive = $false
     )
 
     Write-Verbose -Message ($script:localizedData.SetTargetResourceStartMessage -f $Key)
@@ -259,6 +276,20 @@ function Set-TargetResource
                 # Retrieve the name of the registry key
                 $registryKeyName = Get-RegistryKeyName -RegistryKey $registryKey
 
+                # Retrieve other registry key value names.
+                $valueNames = Get-RegistryKeyValueNames -RegistryKey $registryKey
+
+                if ($Exclusive)
+                {
+                    $otherValueNames = $valueNames | Where-Object {$_ -ne $ValueName}
+
+                    foreach ($name in $otherValueNames)
+                    {
+                        Write-Verbose -Message ($script:localizedData.Exclusive_RemovingRegistryValueName -f $Key, $Name)
+                        $null = Remove-ItemProperty -Path $Key -Name $name -Force
+                    }
+                }
+                
                 # Check if the registry key value exists
                 if ($null -eq $actualRegistryKeyValue)
                 {
@@ -330,6 +361,20 @@ function Set-TargetResource
                     # Remove the registry key
                     Write-Verbose -Message ($script:localizedData.RemovingRegistryKey -f $Key)
                     $null = Remove-Item -Path $Key -Recurse -Force
+                }
+            }
+            else
+            {
+                if ($Exclusive)
+                {
+                    # Retrieve other registry key value names.
+                    $valueNames = Get-RegistryKeyValueNames -RegistryKey $registryKey
+
+                    foreach ($name in $valueNames)
+                    {
+                        Write-Verbose -Message ($script:localizedData.Exclusive_RemovingRegistryValueName -f $Key, $Name)
+                        $null = Remove-ItemProperty -Path $Key -Name $name -Force
+                    }
                 }
             }
         }
@@ -410,7 +455,10 @@ function Test-TargetResource
         $Hex = $false,
 
         [Boolean]
-        $Force = $false
+        $Force = $false,
+
+        [Boolean]
+        $Exclusive = $false
     )
 
     Write-Verbose -Message ($script:localizedData.TestTargetResourceStartMessage -f $Key)
@@ -509,6 +557,27 @@ function Test-TargetResource
         {
             Write-Verbose -Message ($script:localizedData.RegistryKeyDoesNotExist -f $Key)
             $registryResourceInDesiredState = $Ensure -eq 'Absent'
+        }
+    }
+
+    if ($Exclusive)
+    {
+        # Need to get the actual registry key value since Get-TargetResource returns
+        $registryKey = Get-RegistryKey -RegistryKeyPath $Key
+                
+        # Retrieve other registry key value names.
+        $valueNames = Get-RegistryKeyValueNames -RegistryKey $registryKey
+
+        $otherValueNames = @($valueNames | Where-Object {$_ -ne $ValueName})
+
+        if ($otherValueNames.Count -gt 0)
+        {
+            Write-Verbose -Message ($script:localizedData.Exclusive_TESTIsNotExclusive -f $key, $ValueName)
+            $registryResourceInDesiredState = $false
+        }
+        else
+        {
+            Write-Verbose -Message ($script:localizedData.Exclusive_TESTIsExclusive -f $key, $ValueName)
         }
     }
 
@@ -791,6 +860,28 @@ function Get-RegistryKeyValueDisplayName
     }
 
     return $registryKeyValueDisplayName
+}
+
+<#
+    .SYNOPSIS
+        Retrieves all the values in a Registry Key.
+
+    .PARAMETER RegistryKey
+        The registry key to retrieve the values from.
+#>
+function Get-RegistryKeyValueNames
+{
+    [OutputType([Object[]])]
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [Microsoft.Win32.RegistryKey]
+        $RegistryKey
+    )
+
+    $registryKeyValue = $RegistryKey.GetValueNames()
+    return ,$registryKeyValue
 }
 
 <#

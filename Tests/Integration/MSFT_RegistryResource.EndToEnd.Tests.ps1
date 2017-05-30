@@ -40,6 +40,7 @@ try
 
             # Force is specified as true for both of these configurations
             $script:confgurationFilePathKeyAndNameOnly = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_RegistryResource_KeyAndNameOnly.config.ps1'
+            $script:confgurationFilePathKeyAndNameOnlyExclusive = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_RegistryResource_KeyAndNameOnly_Exclusive.config.ps1'
             $script:confgurationFilePathWithDataAndType = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_RegistryResource_WithDataAndType.config.ps1'
         }
 
@@ -316,6 +317,79 @@ try
             }
         }
 
+        Context 'Enforce Exclusivity using Flag Specifying ValueName' {
+            $configurationName = 'EnforceExclusivity'
+
+            New-ItemProperty -Path $script:testRegistryKeyPath -Name "Test" -Value 1
+            New-ItemProperty -Path $script:testRegistryKeyPath -Name "Test2" -Value 1
+
+            $registryParameters = @{
+                Key = $script:testRegistryKeyPath
+                Ensure = 'Present'
+                ValueName = 'Test_Exclusive'
+                Exclusive = $true
+                Force = $true
+            }
+
+            It 'Should compile and run configuration' {
+                { 
+                    . $script:confgurationFilePathKeyAndNameOnlyExclusive -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @registryParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                } | Should Not Throw
+            }
+
+            It 'Should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
+            $registryKeyValues = Get-ItemProperty -Path $registryParameters.Key -Name Test1, Test2 -ErrorAction SilentlyContinue
+
+            It 'Should have removed all the registry key value names' {
+                $registryKeyValues | Should Be $null
+            }
+
+            It 'Should return true from Test-TargetResource with the same parameters' {
+                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should Be $true
+            }
+        }
+
+        Context 'Enforce Exclusivity using Flag Specifying Empty ValueName' {
+            $configurationName = 'EnforceExclusivity'
+
+            New-ItemProperty -Path $script:testRegistryKeyPath -Name "Test" -Value 1
+            New-ItemProperty -Path $script:testRegistryKeyPath -Name "Test2" -Value 1
+
+            $registryParameters = @{
+                Key = $script:testRegistryKeyPath
+                Ensure = 'Present'
+                ValueName = ''
+                Exclusive = $true
+            }
+
+            It 'Should compile and run configuration' {
+                { 
+                    . $script:confgurationFilePathKeyAndNameOnlyExclusive -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @registryParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                } | Should Not Throw
+            }
+
+            It 'Should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
+            $registryKeyValues = Get-ItemProperty -Path $registryParameters.Key -Name * -ErrorAction 'SilentlyContinue' | Where-Object {$_.Name -ne "Test_Exclusive"}
+
+            It 'Should have removed all the registry key value names' {
+                $registryKeyValues | Should Be $null
+            }
+
+            It 'Should return true from Test-TargetResource with the same parameters' {
+                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should Be $true
+            }
+        }
+        
         Context 'Remove a registry key' {
             $configurationName = 'RemoveRegistryKey'
 
