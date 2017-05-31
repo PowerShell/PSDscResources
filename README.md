@@ -577,6 +577,8 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+### 2.7.0.0
+
 * MsiPackage
     * Parse installation date from registry using invariant culture.
     * Fix a bug in unit test failing, when regional setting differs from English-US.
