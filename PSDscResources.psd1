@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.6.0.0'
+ModuleVersion = '2.7.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -101,9 +101,9 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Archive:
-    * Fixed a minor bug in the unit tests where sometimes the incorrect DateTime format was used.
-* Added MsiPackage
+        ReleaseNotes = '* MsiPackage
+    * Parse installation date from registry using invariant culture.
+    * Fix a bug in unit test failing, when regional setting differs from English-US.
 
 '
 
@@ -118,6 +118,7 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
 
 
 

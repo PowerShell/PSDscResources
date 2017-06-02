@@ -626,7 +626,7 @@ function Get-ProductEntryInfo
     {
         try
         {
-            $installDate = '{0:d}' -f [DateTime]::ParseExact($installDate, 'yyyyMMdd',[System.Globalization.CultureInfo]::CurrentCulture).Date
+            $installDate = '{0:d}' -f [DateTime]::ParseExact($installDate, 'yyyyMMdd',[System.Globalization.CultureInfo]::InvariantCulture).Date
         }
         catch
         {

@@ -2,6 +2,7 @@
 #      environment configuration  #
 #---------------------------------#
 version: 2.4.{build}.0
+os: Previous Visual Studio 2015
 install:
     - git clone https://github.com/PowerShell/DscResource.Tests
     - ps: Import-Module -Name .\Tests\TestHelpers\WMF5Dot1Installation.psm1 -Force
