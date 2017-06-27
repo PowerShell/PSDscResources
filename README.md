@@ -577,6 +577,9 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* Archive:
+    * Added handling of directory archive entries that end with a foward slash
+
 ### 2.7.0.0
 
 * MsiPackage

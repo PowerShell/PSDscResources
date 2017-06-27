@@ -12,6 +12,9 @@ $script:dscResourcesFolderFilePath = Split-Path $PSScriptRoot -Parent
 $script:commonResourceHelperFilePath = Join-Path -Path $script:dscResourcesFolderFilePath -ChildPath 'CommonResourceHelper.psm1'
 Import-Module -Name $script:commonResourceHelperFilePath
 
+# Import Microsoft.PowerShell.Utility for Get-FileHash
+Import-Module -Name 'Microsoft.PowerShell.Utility'
+
 # Localized messages for verbose and error statements in this resource
 $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_Archive'
 
@@ -1085,6 +1088,28 @@ function Test-FileMatchesArchiveEntryByChecksum
 
 <#
     .SYNOPSIS
+        Tests if the given archive entry name represents a directory.
+
+    .PARAMETER ArchiveEntryName
+        The archive entry name to test.
+#>
+function Test-ArchiveEntryIsDirectory
+{
+    [OutputType([Boolean])]
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $ArchiveEntryName
+    )
+
+    return $ArchiveEntryName.EndsWith('\') -or $ArchiveEntryName.EndsWith('/')
+}
+
+<#
+    .SYNOPSIS
         Tests if the specified archive exists in its expanded form at the destination.
 
     .PARAMETER Archive
@@ -1150,7 +1175,7 @@ function Test-ArchiveExistsAtDestination
             {
                 Write-Verbose -Message ($script:localizedData.ItemWithArchiveEntryNameExists -f $archiveEntryPathAtDestination)
 
-                if ($archiveEntryFullName.EndsWith('\'))
+                if (Test-ArchiveEntryIsDirectory -ArchiveEntryName $archiveEntryFullName)
                 {
                     if (-not ($archiveEntryItemAtDestination -is [System.IO.DirectoryInfo]))
                     {
@@ -1261,7 +1286,7 @@ function Copy-ArchiveEntryToDestination
 
     $archiveEntryFullName = Get-ArchiveEntryFullName -ArchiveEntry $ArchiveEntry
 
-    if ($archiveEntryFullName.EndsWith('\'))
+    if (Test-ArchiveEntryIsDirectory -ArchiveEntryName $archiveEntryFullName)
     {
         $null = New-Item -Path $DestinationPath -ItemType 'Directory'
     }
@@ -1361,7 +1386,7 @@ function Expand-ArchiveToDestination
             $archiveEntryFullName = Get-ArchiveEntryFullName -ArchiveEntry $archiveEntry
             $archiveEntryPathAtDestination = Join-Path -Path $Destination -ChildPath $archiveEntryFullName
 
-            $archiveEntryIsDirectory = $archiveEntryFullName.EndsWith('\')
+            $archiveEntryIsDirectory = Test-ArchiveEntryIsDirectory -ArchiveEntryName $archiveEntryFullName
 
             $archiveEntryItemAtDestination = Get-Item -LiteralPath $archiveEntryPathAtDestination -ErrorAction 'SilentlyContinue'
 
@@ -1533,7 +1558,7 @@ function Remove-ArchiveFromDestination
             $archiveEntryFullName = Get-ArchiveEntryFullName -ArchiveEntry $archiveEntry
             $archiveEntryPathAtDestination = Join-Path -Path $Destination -ChildPath $archiveEntryFullName
 
-            $archiveEntryIsDirectory = $archiveEntryFullName.EndsWith('\')
+            $archiveEntryIsDirectory = Test-ArchiveEntryIsDirectory -ArchiveEntryName $archiveEntryFullName
 
             $itemAtDestination = Get-Item -LiteralPath $archiveEntryPathAtDestination -ErrorAction 'SilentlyContinue'
 
