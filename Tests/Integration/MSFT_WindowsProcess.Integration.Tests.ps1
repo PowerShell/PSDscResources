@@ -1,11 +1,5 @@
-﻿<#
-    These tests should only be run in AppVeyor since the second half of the tests require
-    the AppVeyor administrator account credential to run.
-
-    Also please note that some of these tests depend on each other.
-    They must be run in the order given - if one test fails, subsequent tests may
-    also fail.
-#>
+﻿$errorActionPreference = 'Stop'
+Set-StrictMode -Version 'Latest'
 
 if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -lt 1)
 {
@@ -13,596 +7,785 @@ if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -l
     return
 }
 
-$errorActionPreference = 'Stop'
-Set-StrictMode -Version 'Latest'
+Describe 'WindowsProcess Integration Tests' {
+    BeforeAll {
+        $script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+        $script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
+        Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
-$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
-$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
-Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
+        $script:testEnvironment = Enter-DscResourceTestEnvironment `
+            -DscResourceModuleName 'PSDscResources' `
+            -DscResourceName 'MSFT_WindowsProcess' `
+            -TestType 'Integration'
 
-$script:testEnvironment = Enter-DscResourceTestEnvironment `
-    -DscResourceModuleName 'PSDscResources' `
-    -DscResourceName 'MSFT_WindowsProcess' `
-    -TestType 'Integration'
+        $script:testProcessPath = Join-Path -Path $script:testHelpersPath -ChildPath 'WindowsProcessTestProcess.exe'
+        $script:testProcessName = 'WindowsProcessTestProcess'
 
-try
-{
-    Describe 'WindowsProcess Integration Tests without Credential' {
-        $testProcessPath = Join-Path -Path $script:testHelpersPath -ChildPath 'WindowsProcessTestProcess.exe'
-        $logFilePath = Join-Path -Path $script:testHelpersPath -ChildPath 'processTestLog.txt'
+        $script:logFilePath = Join-Path -Path $TestDrive -ChildPath 'ProcessTestLog.txt'
 
-        $configFile = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_WindowsProcess.config.ps1'
+        $script:configurationFilePathNoCredential = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_WindowsProcess_NoCredential.config.ps1'
+        $script:configurationFilePathWithCredential = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_WindowsProcess_WithCredential.config.ps1' 
 
-        Context 'Should stop any current instances of the testProcess running' {
-            $configurationName = 'MSFT_WindowsProcess_Setup'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+        $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
+    }
 
-            It 'Should compile without throwing' {
-                {
-                    if (Test-Path -Path $logFilePath)
-                    {
-                        Remove-Item -Path $logFilePath
-                    }
+    AfterAll {
+        $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
+        $null = Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
+    }
 
-                    .$configFile -ConfigurationName $configurationName
-                    & $configurationName -Path $testProcessPath `
-                                         -Arguments $logFilePath `
-                                         -Ensure 'Absent' `
-                                         -ErrorAction 'Stop' `
-                                         -OutputPath $configurationPath
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
+    Describe 'No credential provided' {
+        Context 'Stop a process that is already stopped or does not exist' {
+            $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
+
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+
+            $configurationName = 'StopStoppedProcess'
+
+            $processParameters = @{
+                Path = $testProcessPath
+                Ensure = 'Absent'
+                Arguments = $logFilePath
+            }
+
+            It 'Should not be able to retrieve the process before configuration' {
+                { $null = Get-Process -Name $script:testProcessName } | Should Throw
+            }
+
+            It 'Should not be able to find the log file before configuration' {
+                $pathResult = Test-Path -Path $logFilePath
+                $pathResult | Should Be $false
+            }
+
+            It 'Should compile and run configuration' {
+                { 
+                    . $script:configurationFilePathNoCredential -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @processParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
                 } | Should Not Throw
             }
+
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
             
-            It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            It 'Should not be able to retrieve the process after configuration' {
+                { $null = Get-Process -Name $script:testProcessName } | Should Throw
             }
 
-            It 'Should return the correct configuration' {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Path | Should Be $testProcessPath
-                $currentConfig.Arguments | Should Be $logFilePath
-                $currentConfig.Ensure | Should Be 'Absent'
+            It 'Should be able to call Get-DscConfiguration without throwing after configuration' {
+                { $null = Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
-            It 'Should not create a logfile' {
-                $pathResult = Test-Path $logFilePath
+            It 'Should return the correct configuration from Get-DscConfiguration after configuration' {
+                $currentConfig = Get-DscConfiguration
+                $currentConfig.Path | Should Be $processParameters.Path
+                $currentConfig.Arguments | Should Be $processParameters.Arguments
+                $currentConfig.Ensure | Should Be $processParameters.Ensure
+            }
+
+            It 'Should not be able to find the log file after configuration' {
+                $pathResult = Test-Path -Path $logFilePath
                 $pathResult | Should Be $false
             }
         }
 
-        Context 'Should start a new testProcess instance as running' {
-            $configurationName = 'MSFT_WindowsProcess_StartProcess'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+        Context 'Start a new running process' {
+            $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
 
-            It 'Should not have a logfile already present' {
-                $pathResult = Test-Path $logFilePath
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+
+            $configurationName = 'StartNewProcess'
+
+            $processParameters = @{
+                Path = $testProcessPath
+                Ensure = 'Present'
+                Arguments = $logFilePath
+            }
+
+            It 'Should not be able to retrieve the process before configuration' {
+                { $null = Get-Process -Name $script:testProcessName } | Should Throw
+            }
+
+            It 'Should not be able to find the log file before configuration' {
+                $pathResult = Test-Path -Path $logFilePath
                 $pathResult | Should Be $false
             }
 
-            It 'Should compile without throwing' {
-                {
-                    if (Test-Path -Path $logFilePath)
-                    {
-                        Remove-Item -Path $logFilePath
-                    }
-
-                    .$configFile -ConfigurationName $configurationName
-                    & $configurationName -Path $testProcessPath `
-                                         -Arguments $logFilePath `
-                                         -Ensure 'Present' `
-                                         -ErrorAction 'Stop' `
-                                         -OutputPath $configurationPath
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
+            It 'Should compile and run configuration' {
+                { 
+                    . $script:configurationFilePathNoCredential -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @processParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
                 } | Should Not Throw
             }
-       
-            It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+            
+            It 'Should be able to retrieve the process after configuration' {
+                { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
             }
 
-            It 'Should return the correct configuration' {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Path | Should Be $testProcessPath
-                $currentConfig.Arguments | Should Be $logFilePath
-                $currentConfig.Ensure | Should Be 'Present'
+            It 'Should be able to call Get-DscConfiguration without throwing after configuration' {
+                { $null = Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
+            It 'Should return the correct configuration from Get-DscConfiguration after configuration' {
+                $currentConfig = Get-DscConfiguration
+                $currentConfig.Path | Should Be $processParameters.Path
+                $currentConfig.Arguments | Should Be $processParameters.Arguments
+                $currentConfig.Ensure | Should Be $processParameters.Ensure
                 $currentConfig.ProcessCount | Should Be 1
             }
 
-            It 'Should create a logfile' {
-                $pathResult = Test-Path $logFilePath
+            It 'Should be able to find the log file after configuration' {
+                $pathResult = Test-Path -Path $logFilePath
                 $pathResult | Should Be $true
             }
         }
 
-        Context 'Should not start a second new testProcess instance when one is already running' {
-            $configurationName = 'MSFT_WindowsProcess_StartSecondProcess'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+        Context 'Start a process that is already running' {
+            $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
 
-            It 'Should have a logfile already present' {
-                $pathResult = Test-Path $logFilePath
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+
+            $configurationName = 'StartRunningProcess'
+
+            $processParameters = @{
+                Path = $testProcessPath
+                Ensure = 'Present'
+                Arguments = $logFilePath
+            }
+
+            $null = Start-Process -FilePath $processParameters.Path -ArgumentList $processParameters.Arguments -ErrorAction 'SilentlyContinue'
+
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+
+            It 'Should be able to retrieve the process before configuration' {
+                { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
+            }
+
+            It 'Should be able to find the log file before configuration' {
+                $pathResult = Test-Path -Path $logFilePath
                 $pathResult | Should Be $true
             }
- 
-            It 'Should not throw when removing the log file' {
-                { Remove-Item -Path $logFilePath } | Should not Throw
-            }
 
-            It 'Should compile without throwing' {
-                {
-                    if (Test-Path -Path $logFilePath)
-                    {
-                        Remove-Item -Path $logFilePath
-                    }
-
-                    .$configFile -ConfigurationName $configurationName
-                    & $configurationName -Path $testProcessPath `
-                                         -Arguments $logFilePath `
-                                         -Ensure 'Present' `
-                                         -ErrorAction 'Stop' `
-                                         -OutputPath $configurationPath
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
+            It 'Should compile and run configuration' {
+                { 
+                    . $script:configurationFilePathNoCredential -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @processParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
                 } | Should Not Throw
             }
-       
-            It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+            
+            It 'Should be able to retrieve the process after configuration' {
+                { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
             }
 
-            It 'Should return the correct configuration' {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Path | Should Be $testProcessPath
-                $currentConfig.Arguments | Should Be $logFilePath
-                $currentConfig.Ensure | Should Be 'Present'
+            It 'Should be able to call Get-DscConfiguration without throwing after configuration' {
+                { $null = Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
+            It 'Should return the correct configuration from Get-DscConfiguration after configuration' {
+                $currentConfig = Get-DscConfiguration
+                $currentConfig.Path | Should Be $processParameters.Path
+                $currentConfig.Arguments | Should Be $processParameters.Arguments
+                $currentConfig.Ensure | Should Be $processParameters.Ensure
                 $currentConfig.ProcessCount | Should Be 1
             }
 
-            It 'Should not create a logfile' {
-                $pathResult = Test-Path $logFilePath
+            It 'Should be able to find the log file after configuration' {
+                $pathResult = Test-Path -Path $logFilePath
+                $pathResult | Should Be $true
+            }
+        }
+
+        Context 'Stop a running process' {
+            $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
+
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+
+            $configurationName = 'StopRunningProcess'
+
+            $processParameters = @{
+                Path = $testProcessPath
+                Ensure = 'Absent'
+                Arguments = $logFilePath
+            }
+
+            $null = Start-Process -FilePath $processParameters.Path -ArgumentList $processParameters.Arguments -ErrorAction 'SilentlyContinue'
+
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+
+            It 'Should be able to retrieve the process before configuration' {
+                { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
+            }
+
+            It 'Should be able to find the log file before configuration' {
+                $pathResult = Test-Path -Path $logFilePath
+                $pathResult | Should Be $true
+            }
+
+            # Remove the created log file so that we can check that the configuration did not re-create it
+            $null = Remove-Item -Path $script:logFilePath -Force -ErrorAction 'SilentlyContinue'
+
+            It 'Should compile and run configuration' {
+                { 
+                    . $script:configurationFilePathNoCredential -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @processParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                } | Should Not Throw
+            }
+
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+            
+            It 'Should not be able to retrieve the process after configuration' {
+                { $null = Get-Process -Name $script:testProcessName } | Should Throw
+            }
+
+            It 'Should be able to call Get-DscConfiguration without throwing after configuration' {
+                { $null = Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
+            It 'Should return the correct configuration from Get-DscConfiguration after configuration' {
+                $currentConfig = Get-DscConfiguration
+                $currentConfig.Path | Should Be $processParameters.Path
+                $currentConfig.Arguments | Should Be $processParameters.Arguments
+                $currentConfig.Ensure | Should Be $processParameters.Ensure
+            }
+
+            It 'Should not be able to find the log file after configuration' {
+                $pathResult = Test-Path -Path $logFilePath
                 $pathResult | Should Be $false
             }
         }
 
-        Context 'Should stop the testProcess instance from running' {
-            $configurationName = 'MSFT_WindowsProcess_StopProcesses'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+        Context 'Get correct number of processes from Get-DscConfiguration when two of the same process are running' {
+            $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
 
-            It 'Should not have a logfile already present' {
-                $pathResult = Test-Path $logFilePath
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+
+            $configurationName = 'GetMultipleProcesses'
+
+            $processParameters = @{
+                Path = $testProcessPath
+                Ensure = 'Present'
+                Arguments = $logFilePath
+            }
+
+            It 'Should not be able to retrieve the process before configuration' {
+                { $null = Get-Process -Name $script:testProcessName } | Should Throw
+            }
+
+            It 'Should not be able to find the log file before configuration' {
+                $pathResult = Test-Path -Path $logFilePath
                 $pathResult | Should Be $false
             }
 
-            It 'Should compile without throwing' {
-                {
-                    if (Test-Path -Path $logFilePath)
-                    {
-                        Remove-Item -Path $logFilePath
-                    }
-
-                    .$configFile -ConfigurationName $configurationName
-                    & $configurationName -Path $testProcessPath `
-                                         -Arguments $logFilePath `
-                                         -Ensure 'Absent' `
-                                         -ErrorAction 'Stop' `
-                                         -OutputPath $configurationPath
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
-       
-            It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
-            }
-
-            It 'Should return the correct configuration' {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Path | Should Be $testProcessPath
-                $currentConfig.Arguments | Should Be $logFilePath
-                $currentConfig.Ensure | Should Be 'Absent'
-            }
-
-            It 'Should not create a logfile' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $false
-            }
-        }
-
-        Context 'Should return correct amount of processes running when more than 1 are running' {
-            $configurationName = 'MSFT_WindowsProcess_StartMultipleProcesses'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
-
-            It 'Should not have a logfile already present' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $false
-            }
-
-            It 'Should compile without throwing' {
-                {
-                    if (Test-Path -Path $logFilePath)
-                    {
-                        Remove-Item -Path $logFilePath
-                    }
-
-                    .$configFile -ConfigurationName $configurationName
-                    & $configurationName -Path $testProcessPath `
-                                         -Arguments $logFilePath `
-                                         -Ensure 'Present' `
-                                         -ErrorAction 'Stop' `
-                                         -OutputPath $configurationPath
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
+            It 'Should compile and run configuration' {
+                { 
+                    . $script:configurationFilePathNoCredential -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @processParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
                 } | Should Not Throw
             }
 
-            It 'Should start another process running' {
-                Start-Process -FilePath $testProcessPath -ArgumentList @($logFilePath)
-            }
-       
-            It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+
+            $null = Start-Process -FilePath $processParameters.Path -ArgumentList $processParameters.Arguments -ErrorAction 'SilentlyContinue'
+
+            # Wait a moment for the second process to stop/start
+            $null = Start-Sleep -Seconds 1
+            
+            It 'Should be able to retrieve the processes after configuration' {
+                { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
             }
 
-            It 'Should return the correct configuration' {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Path | Should Be $testProcessPath
-                $currentConfig.Arguments | Should Be $logFilePath
-                $currentConfig.Ensure | Should Be 'Present'
+            It 'Should be able to call Get-DscConfiguration without throwing after configuration' {
+                { $null = Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
+            It 'Should return the correct configuration from Get-DscConfiguration after configuration' {
+                $currentConfig = Get-DscConfiguration
+                $currentConfig.Path | Should Be $processParameters.Path
+                $currentConfig.Arguments | Should Be $processParameters.Arguments
+                $currentConfig.Ensure | Should Be $processParameters.Ensure
                 $currentConfig.ProcessCount | Should Be 2
             }
 
-            It 'Should create a logfile' {
-                $pathResult = Test-Path $logFilePath
+            It 'Should be able to find the log file after configuration' {
+                $pathResult = Test-Path -Path $logFilePath
                 $pathResult | Should Be $true
             }
-        
-        
         }
 
-        Context 'Should stop all of the testProcess instances from running' {
-            $configurationName = 'MSFT_WindowsProcess_StopAllProcesses'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+        Context 'Stop multiple running processes' {
+            $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
 
-            It 'Should have a logfile already present' {
-                $pathResult = Test-Path $logFilePath
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+
+            $configurationName = 'StopMultipleRunningProcesses'
+
+            $processParameters = @{
+                Path = $testProcessPath
+                Ensure = 'Absent'
+                Arguments = $logFilePath
+            }
+
+            $null = Start-Process -FilePath $processParameters.Path -ArgumentList $processParameters.Arguments -ErrorAction 'SilentlyContinue'
+
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+
+            $null = Start-Process -FilePath $processParameters.Path -ArgumentList $processParameters.Arguments -ErrorAction 'SilentlyContinue'
+
+            # Wait a moment for the second process to stop/start
+            $null = Start-Sleep -Seconds 1
+
+            It 'Should be able to retrieve the process before configuration' {
+                { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
+            }
+
+            It 'Should be able to find the log file before configuration' {
+                $pathResult = Test-Path -Path $logFilePath
                 $pathResult | Should Be $true
             }
 
-            It 'Should not throw when removing the log file' {
-                { Remove-Item -Path $logFilePath } | Should not Throw
-            }
+            # Remove the created log file so that we can check that the configuration did not re-create it
+            $null = Remove-Item -Path $script:logFilePath -Force -ErrorAction 'SilentlyContinue'
 
-            It 'Should compile without throwing' {
-                {
-                    if (Test-Path -Path $logFilePath)
-                    {
-                        Remove-Item -Path $logFilePath
-                    }
-
-                    .$configFile -ConfigurationName $configurationName
-                    & $configurationName -Path $testProcessPath `
-                                         -Arguments $logFilePath `
-                                         -Ensure 'Absent' `
-                                         -ErrorAction 'Stop' `
-                                         -OutputPath $configurationPath
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
+            It 'Should compile and run configuration' {
+                { 
+                    . $script:configurationFilePathNoCredential -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @processParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
                 } | Should Not Throw
             }
-       
-            It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+
+            # Wait a moment for the process to stop/start
+            $null = Start-Sleep -Seconds 1
+
+            It 'Should not be able to retrieve the processes after configuration' {
+                { $null = Get-Process -Name $script:testProcessName } | Should Throw
             }
 
-            It 'Should return the correct configuration' {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Path | Should Be $testProcessPath
-                $currentConfig.Arguments | Should Be $logFilePath
-                $currentConfig.Ensure | Should Be 'Absent'
+            It 'Should be able to call Get-DscConfiguration without throwing after configuration' {
+                { $null = Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
-            It 'Should not create a logfile' {
-                $pathResult = Test-Path $logFilePath
+            It 'Should return the correct configuration from Get-DscConfiguration after configuration' {
+                $currentConfig = Get-DscConfiguration
+                $currentConfig.Path | Should Be $processParameters.Path
+                $currentConfig.Arguments | Should Be $processParameters.Arguments
+                $currentConfig.Ensure | Should Be $processParameters.Ensure
+            }
+
+            It 'Should not be able to find the log file after configuration' {
+                $pathResult = Test-Path -Path $logFilePath
                 $pathResult | Should Be $false
             }
         }
     }
     
-    Describe 'WindowsProcess Integration Tests with Credential' {
-        $ConfigData = @{
-            AllNodes = @(
-                @{
-                    NodeName = '*'
-                    PSDscAllowPlainTextPassword = $true
+    if ($env:AppVeyor) {
+        Describe 'Credential provided - Only runs in AppVeyor' {
+             $script:testCredential = Get-AppVeyorAdministratorCredential
+
+            $script:credentialConfigurationData = @{
+                AllNodes = @(
+                    @{
+                        NodeName = '*'
+                        PSDscAllowPlainTextPassword = $true
+                    }
+                    @{
+                        NodeName = 'localhost'
+                    }
+                )
+            }
+
+            Context 'Stop a process that is already stopped or does not exist' {
+                $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
+
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
+
+                $configurationName = 'StopStoppedProcess'
+
+                $processParameters = @{
+                    Path = $testProcessPath
+                    Ensure = 'Absent'
+                    Arguments = $logFilePath
+                    Credential = $script:testCredential
                 }
-                @{
-                    NodeName = 'localhost'
+
+                It 'Should not be able to retrieve the process before configuration' {
+                    { $null = Get-Process -Name $script:testProcessName } | Should Throw
                 }
-            )
-        }
 
-        $testCredential = Get-AppVeyorAdministratorCredential
+                It 'Should not be able to find the log file before configuration' {
+                    $pathResult = Test-Path -Path $logFilePath
+                    $pathResult | Should Be $false
+                }
 
-        $testProcessPath = Join-Path -Path $script:testHelpersPath -ChildPath 'WindowsProcessTestProcess.exe'
-        $logFilePath = Join-Path -Path $script:testHelpersPath -ChildPath 'processTestLog.txt'
+                It 'Should compile and run configuration' {
+                    { 
+                        . $script:configurationFilePathWithCredential -ConfigurationName $configurationName
+                        & $configurationName -OutputPath $TestDrive -ConfigurationData $script:credentialConfigurationData @processParameters
+                        Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                    } | Should Not Throw
+                }
 
-        $configFile = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_WindowsProcessWithCredential.config.ps1'
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
+                
+                It 'Should not be able to retrieve the process after configuration' {
+                    { $null = Get-Process -Name $script:testProcessName } | Should Throw
+                }
 
-        Context 'Should stop any current instances of the testProcess running' {
-            $configurationName = 'MSFT_WindowsProcess_SetupWithCredential'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+                It 'Should be able to call Get-DscConfiguration without throwing after configuration' {
+                    { $null = Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+                }
 
-            It 'Should compile without throwing' {
-                {
-                    if (Test-Path -Path $logFilePath)
-                    {
-                        Remove-Item -Path $logFilePath
-                    }
+                It 'Should return the correct configuration from Get-DscConfiguration after configuration' {
+                    $currentConfig = Get-DscConfiguration
+                    $currentConfig.Path | Should Be $processParameters.Path
+                    $currentConfig.Arguments | Should Be $processParameters.Arguments
+                    $currentConfig.Ensure | Should Be $processParameters.Ensure
+                }
 
-                    .$configFile -ConfigurationName $configurationName
-                    & $configurationName -Path $testProcessPath `
-                                         -Arguments $logFilePath `
-                                         -Ensure 'Absent' `
-                                         -Credential $testCredential `
-                                         -ErrorAction 'Stop' `
-                                         -OutputPath $configurationPath `
-                                         -ConfigurationData $ConfigData
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
+                It 'Should not be able to find the log file after configuration' {
+                    $pathResult = Test-Path -Path $logFilePath
+                    $pathResult | Should Be $false
+                }
             }
 
-            It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            Context 'Start a new running process' {
+                $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
+
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
+
+                $configurationName = 'StartNewProcess'
+
+                $processParameters = @{
+                    Path = $testProcessPath
+                    Ensure = 'Present'
+                    Arguments = $logFilePath
+                    Credential = $script:testCredential
+                }
+
+                It 'Should not be able to retrieve the process before configuration' {
+                    { $null = Get-Process -Name $script:testProcessName } | Should Throw
+                }
+
+                It 'Should not be able to find the log file before configuration' {
+                    $pathResult = Test-Path -Path $logFilePath
+                    $pathResult | Should Be $false
+                }
+
+                It 'Should compile and run configuration' {
+                    { 
+                        . $script:configurationFilePathWithCredential -ConfigurationName $configurationName
+                        & $configurationName -OutputPath $TestDrive -ConfigurationData $script:credentialConfigurationData @processParameters
+                        Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                    } | Should Not Throw
+                }
+
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
+                
+                It 'Should be able to retrieve the process after configuration' {
+                    { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
+                }
+
+                It 'Should be able to call Get-DscConfiguration without throwing after configuration' {
+                    { $null = Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+                }
+
+                It 'Should return the correct configuration from Get-DscConfiguration after configuration' {
+                    $currentConfig = Get-DscConfiguration
+                    $currentConfig.Path | Should Be $processParameters.Path
+                    $currentConfig.Arguments | Should Be $processParameters.Arguments
+                    $currentConfig.Ensure | Should Be $processParameters.Ensure
+                    $currentConfig.ProcessCount | Should Be 1
+                }
+
+                It 'Should be able to find the log file after configuration' {
+                    $pathResult = Test-Path -Path $logFilePath
+                    $pathResult | Should Be $true
+                }
             }
 
-            It 'Should return the correct configuration' {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Path | Should Be $testProcessPath
-                $currentConfig.Arguments | Should Be $logFilePath
-                $currentConfig.Ensure | Should Be 'Absent'
+            Context 'Start a process that is already running' {
+                $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
+
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
+
+                $configurationName = 'StartRunningProcess'
+
+                $processParameters = @{
+                    Path = $testProcessPath
+                    Ensure = 'Present'
+                    Arguments = $logFilePath
+                    Credential = $script:testCredential
+                }
+
+                $null = Start-Process -FilePath $processParameters.Path -ArgumentList $processParameters.Arguments -ErrorAction 'SilentlyContinue'
+
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
+
+                It 'Should be able to retrieve the process before configuration' {
+                    { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
+                }
+
+                It 'Should be able to find the log file before configuration' {
+                    $pathResult = Test-Path -Path $logFilePath
+                    $pathResult | Should Be $true
+                }
+
+                It 'Should compile and run configuration' {
+                    { 
+                        . $script:configurationFilePathWithCredential -ConfigurationName $configurationName
+                        & $configurationName -OutputPath $TestDrive -ConfigurationData $script:credentialConfigurationData @processParameters
+                        Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                    } | Should Not Throw
+                }
+
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
+                
+                It 'Should be able to retrieve the process after configuration' {
+                    { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
+                }
+
+                It 'Should be able to call Get-DscConfiguration without throwing after configuration' {
+                    { $null = Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+                }
+
+                It 'Should return the correct configuration from Get-DscConfiguration after configuration' {
+                    $currentConfig = Get-DscConfiguration
+                    $currentConfig.Path | Should Be $processParameters.Path
+                    $currentConfig.Arguments | Should Be $processParameters.Arguments
+                    $currentConfig.Ensure | Should Be $processParameters.Ensure
+                    $currentConfig.ProcessCount | Should Be 1
+                }
+
+                It 'Should be able to find the log file after configuration' {
+                    $pathResult = Test-Path -Path $logFilePath
+                    $pathResult | Should Be $true
+                }
             }
 
-            It 'Should not create a logfile' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $false
-            }
-        }
-        
-        Context 'Should start a new testProcess instance as running' {
-            $configurationName = 'MSFT_WindowsProcess_StartProcessWithCredential'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+            Context 'Stop a running process' {
+                $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
 
-            It 'Should not have a logfile already present' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $false
-            }
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
 
-            It 'Should compile without throwing' {
-                {
-                    .$configFile -ConfigurationName $configurationName
-                    & $configurationName -Path $testProcessPath `
-                                         -Arguments $logFilePath `
-                                         -Ensure 'Present' `
-                                         -Credential $testCredential `
-                                         -ErrorAction 'Stop' `
-                                         -OutputPath $configurationPath `
-                                         -ConfigurationData $ConfigData
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
+                $configurationName = 'StopRunningProcess'
 
-            It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
-            }
+                $processParameters = @{
+                    Path = $testProcessPath
+                    Ensure = 'Absent'
+                    Arguments = $logFilePath
+                    Credential = $script:testCredential
+                }
 
-            It 'Should return the correct configuration' {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Path | Should Be $testProcessPath
-                $currentConfig.Arguments | Should Be $logFilePath
-                $currentConfig.Ensure | Should Be 'Present'
-                $currentConfig.ProcessCount | Should Be 1
-            }
+                $null = Start-Process -FilePath $processParameters.Path -ArgumentList $processParameters.Arguments -ErrorAction 'SilentlyContinue'
 
-            It 'Should create a logfile' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $true
-            }
-        }
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
 
-        Context 'Should not start a second new testProcess instance when one is already running' {
-            $configurationName = 'MSFT_WindowsProcess_StartSecondProcessWithCredential'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+                It 'Should be able to retrieve the process before configuration' {
+                    { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
+                }
 
-            It 'Should have a logfile already present' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $true
-            }
- 
-            It 'Should not throw when removing the log file' {
-                { Remove-Item -Path $logFilePath } | Should not Throw
-            }
+                It 'Should be able to find the log file before configuration' {
+                    $pathResult = Test-Path -Path $logFilePath
+                    $pathResult | Should Be $true
+                }
 
-            It 'Should compile without throwing' {
-                {
-                    if (Test-Path -Path $logFilePath)
-                    {
-                        Remove-Item -Path $logFilePath
-                    }
+                # Remove the created log file so that we can check that the configuration did not re-create it
+                $null = Remove-Item -Path $script:logFilePath -Force -ErrorAction 'SilentlyContinue'
 
-                    .$configFile -ConfigurationName $configurationName
-                    & $configurationName -Path $testProcessPath `
-                                         -Arguments $logFilePath `
-                                         -Ensure 'Present' `
-                                         -Credential $testCredential `
-                                         -ErrorAction 'Stop' `
-                                         -OutputPath $configurationPath `
-                                         -ConfigurationData $ConfigData
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
-       
-            It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+                It 'Should compile and run configuration' {
+                    { 
+                        . $script:configurationFilePathWithCredential -ConfigurationName $configurationName
+                        & $configurationName -OutputPath $TestDrive -ConfigurationData $script:credentialConfigurationData @processParameters
+                        Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                    } | Should Not Throw
+                }
+
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
+                
+                It 'Should not be able to retrieve the process after configuration' {
+                    { $null = Get-Process -Name $script:testProcessName } | Should Throw
+                }
+
+                It 'Should be able to call Get-DscConfiguration without throwing after configuration' {
+                    { $null = Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+                }
+
+                It 'Should return the correct configuration from Get-DscConfiguration after configuration' {
+                    $currentConfig = Get-DscConfiguration
+                    $currentConfig.Path | Should Be $processParameters.Path
+                    $currentConfig.Arguments | Should Be $processParameters.Arguments
+                    $currentConfig.Ensure | Should Be $processParameters.Ensure
+                }
+
+                It 'Should not be able to find the log file after configuration' {
+                    $pathResult = Test-Path -Path $logFilePath
+                    $pathResult | Should Be $false
+                }
             }
 
-            It 'Should return the correct configuration' {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Path | Should Be $testProcessPath
-                $currentConfig.Arguments | Should Be $logFilePath
-                $currentConfig.Ensure | Should Be 'Present'
-                $currentConfig.ProcessCount | Should Be 1
+            Context 'Get correct number of processes from Get-DscConfiguration when two of the same process are running' {
+                $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
+
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
+
+                $configurationName = 'GetMultipleProcesses'
+
+                $processParameters = @{
+                    Path = $testProcessPath
+                    Ensure = 'Present'
+                    Arguments = $logFilePath
+                    Credential = $script:testCredential
+                }
+
+                It 'Should not be able to retrieve the process before configuration' {
+                    { $null = Get-Process -Name $script:testProcessName } | Should Throw
+                }
+
+                It 'Should not be able to find the log file before configuration' {
+                    $pathResult = Test-Path -Path $logFilePath
+                    $pathResult | Should Be $false
+                }
+
+                It 'Should compile and run configuration' {
+                    { 
+                        . $script:configurationFilePathWithCredential -ConfigurationName $configurationName
+                        & $configurationName -OutputPath $TestDrive -ConfigurationData $script:credentialConfigurationData @processParameters
+                        Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                    } | Should Not Throw
+                }
+
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
+
+                $null = Start-Process -FilePath $processParameters.Path -ArgumentList $processParameters.Arguments -ErrorAction 'SilentlyContinue'
+
+                # Wait a moment for the second process to stop/start
+                $null = Start-Sleep -Seconds 1
+                
+                It 'Should be able to retrieve the processes after configuration' {
+                    { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
+                }
+
+                It 'Should be able to call Get-DscConfiguration without throwing after configuration' {
+                    { $null = Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+                }
+
+                It 'Should return the correct configuration from Get-DscConfiguration after configuration' {
+                    $currentConfig = Get-DscConfiguration
+                    $currentConfig.Path | Should Be $processParameters.Path
+                    $currentConfig.Arguments | Should Be $processParameters.Arguments
+                    $currentConfig.Ensure | Should Be $processParameters.Ensure
+                    $currentConfig.ProcessCount | Should Be 2
+                }
+
+                It 'Should be able to find the log file after configuration' {
+                    $pathResult = Test-Path -Path $logFilePath
+                    $pathResult | Should Be $true
+                }
             }
 
-            It 'Should not create a logfile' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $false
-            }
-        }
+            Context 'Stop multiple running processes' {
+                $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
 
-        Context 'Should stop the testProcess instance from running' {
-            $configurationName = 'MSFT_WindowsProcess_StopProcessesWithCredential'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
 
-            It 'Should not have a logfile already present' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $false
-            }
+                $configurationName = 'StopMultipleRunningProcesses'
 
-            It 'Should compile without throwing' {
-                {
-                    if (Test-Path -Path $logFilePath)
-                    {
-                        Remove-Item -Path $logFilePath
-                    }
+                $processParameters = @{
+                    Path = $testProcessPath
+                    Ensure = 'Absent'
+                    Arguments = $logFilePath
+                    Credential = $script:testCredential
+                }
 
-                    .$configFile -ConfigurationName $configurationName
-                    & $configurationName -Path $testProcessPath `
-                                         -Arguments $logFilePath `
-                                         -Ensure 'Absent' `
-                                         -Credential $testCredential `
-                                         -ErrorAction 'Stop' `
-                                         -OutputPath $configurationPath `
-                                         -ConfigurationData $ConfigData
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
-       
-            It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
-            }
+                $null = Start-Process -FilePath $processParameters.Path -ArgumentList $processParameters.Arguments -ErrorAction 'SilentlyContinue'
 
-            It 'Should return the correct configuration' {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Path | Should Be $testProcessPath
-                $currentConfig.Arguments | Should Be $logFilePath
-                $currentConfig.Ensure | Should Be 'Absent'
-            }
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
 
-            It 'Should not create a logfile' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $false
-            }
-        }
+                $null = Start-Process -FilePath $processParameters.Path -ArgumentList $processParameters.Arguments -ErrorAction 'SilentlyContinue'
 
-        Context 'Should return correct amount of processes running when more than 1 are running' {
-            $configurationName = 'MSFT_WindowsProcess_StartMultipleProcessesWithCredential'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+                # Wait a moment for the second process to stop/start
+                $null = Start-Sleep -Seconds 1
 
-            It 'Should not have a logfile already present' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $false
-            }
+                It 'Should be able to retrieve the process before configuration' {
+                    { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
+                }
 
-            It 'Should compile without throwing' {
-                {
-                    if (Test-Path -Path $logFilePath)
-                    {
-                        Remove-Item -Path $logFilePath
-                    }
+                It 'Should be able to find the log file before configuration' {
+                    $pathResult = Test-Path -Path $logFilePath
+                    $pathResult | Should Be $true
+                }
 
-                    .$configFile -ConfigurationName $configurationName
-                    & $configurationName -Path $testProcessPath `
-                                         -Arguments $logFilePath `
-                                         -Ensure 'Present' `
-                                         -ErrorAction 'Stop' `
-                                         -Credential $testCredential `
-                                         -OutputPath $configurationPath `
-                                         -ConfigurationData $ConfigData
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
+                # Remove the created log file so that we can check that the configuration did not re-create it
+                $null = Remove-Item -Path $script:logFilePath -Force -ErrorAction 'SilentlyContinue'
 
-            It 'Should start another process running' {
-                Start-Process -FilePath $testProcessPath -ArgumentList @($logFilePath)
-            }
-       
-            It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
-            }
+                It 'Should compile and run configuration' {
+                    { 
+                        . $script:configurationFilePathWithCredential -ConfigurationName $configurationName
+                        & $configurationName -OutputPath $TestDrive -ConfigurationData $script:credentialConfigurationData @processParameters
+                        Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                    } | Should Not Throw
+                }
 
-            It 'Should return the correct configuration' {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Path | Should Be $testProcessPath
-                $currentConfig.Arguments | Should Be $logFilePath
-                $currentConfig.Ensure | Should Be 'Present'
-                $currentConfig.ProcessCount | Should Be 2
-            }
+                # Wait a moment for the process to stop/start
+                $null = Start-Sleep -Seconds 1
 
-            It 'Should create a logfile' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $true
-            }
-        
-        
-        }
+                It 'Should not be able to retrieve the processes after configuration' {
+                    { $null = Get-Process -Name $script:testProcessName } | Should Throw
+                }
 
-        Context 'Should stop all of the testProcess instances from running' {
-            $configurationName = 'MSFT_WindowsProcess_StopAllProcessesWithCredential'
-            $configurationPath = Join-Path -Path $TestDrive -ChildPath $configurationName
+                It 'Should be able to call Get-DscConfiguration without throwing after configuration' {
+                    { $null = Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+                }
 
-            It 'Should have a logfile already present' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $true
-            }
- 
-            It 'Should not throw when removing the log file' {
-                { Remove-Item -Path $logFilePath } | Should not Throw
-            }
+                It 'Should return the correct configuration from Get-DscConfiguration after configuration' {
+                    $currentConfig = Get-DscConfiguration
+                    $currentConfig.Path | Should Be $processParameters.Path
+                    $currentConfig.Arguments | Should Be $processParameters.Arguments
+                    $currentConfig.Ensure | Should Be $processParameters.Ensure
+                }
 
-            It 'Should compile without throwing' {
-                {
-                    if (Test-Path -Path $logFilePath)
-                    {
-                        Remove-Item -Path $logFilePath
-                    }
-
-                    .$configFile -ConfigurationName $configurationName
-                    & $configurationName -Path $testProcessPath `
-                                         -Arguments $logFilePath `
-                                         -Ensure 'Absent' `
-                                         -Credential $testCredential `
-                                         -ErrorAction 'Stop' `
-                                         -OutputPath $configurationPath `
-                                         -ConfigurationData $ConfigData
-                    Start-DscConfiguration -Path $configurationPath -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
-       
-            It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
-            }
-
-            It 'Should return the correct configuration' {
-                $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
-                $currentConfig.Path | Should Be $testProcessPath
-                $currentConfig.Arguments | Should Be $logFilePath
-                $currentConfig.Ensure | Should Be 'Absent'
-            }
-
-            It 'Should not create a logfile' {
-                $pathResult = Test-Path $logFilePath
-                $pathResult | Should Be $false
+                It 'Should not be able to find the log file after configuration' {
+                    $pathResult = Test-Path -Path $logFilePath
+                    $pathResult | Should Be $false
+                }
             }
         }
     }
 }
-finally
-{
-    Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
-}
+    
