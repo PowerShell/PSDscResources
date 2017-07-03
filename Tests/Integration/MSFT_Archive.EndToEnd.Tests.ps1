@@ -131,7 +131,7 @@ Describe 'Archive End to End Tests' {
     }
 
     AfterAll {
-        Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
+        $null = Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
     }
 
     Context 'Expand an archive to a destination that does not yet exist' {
