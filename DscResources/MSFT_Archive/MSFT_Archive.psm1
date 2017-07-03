@@ -12,11 +12,15 @@ $script:dscResourcesFolderFilePath = Split-Path $PSScriptRoot -Parent
 $script:commonResourceHelperFilePath = Join-Path -Path $script:dscResourcesFolderFilePath -ChildPath 'CommonResourceHelper.psm1'
 Import-Module -Name $script:commonResourceHelperFilePath
 
-# Import Microsoft.PowerShell.Utility for Get-FileHash
-Import-Module -Name 'Microsoft.PowerShell.Utility'
-
 # Localized messages for verbose and error statements in this resource
 $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_Archive'
+
+# Import Microsoft.PowerShell.Utility for Get-FileHash
+$fileHashCommand = Get-Command -Name 'Get-FileHash' -Module 'Microsoft.PowerShell.Utility' -ErrorAction 'SilentlyContinue'
+if ($null -eq $fileHashCommand)
+{
+    Import-Module -Name 'Microsoft.PowerShell.Utility' -Function 'Get-FileHash'
+}
 
 Add-Type -AssemblyName 'System.IO.Compression'
 
@@ -1063,7 +1067,7 @@ function Test-FileMatchesArchiveEntryByChecksum
 
         $archiveEntryLastWriteTime = Get-ArchiveEntryLastWriteTime -ArchiveEntry $ArchiveEntry
 
-        if ($fileTimestampForChecksum.Equals($archiveEntryLastWriteTime))
+        if ([DateTime]$fileTimestampForChecksum -eq [DateTime]$archiveEntryLastWriteTime)
         {
             Write-Verbose -Message ($script:localizedData.FileMatchesArchiveEntryByChecksum -f $File.FullName, $archiveEntryFullName, $Checksum)
 
