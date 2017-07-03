@@ -944,10 +944,6 @@ function Test-FileHashMatchesArchiveEntryHash
 
     .PARAMETER Checksum
         The checksum method to retrieve the timestamp for.
-
-    .NOTES
-        The returned date is normalized to the General (G) date format.
-        https://technet.microsoft.com/en-us/library/ee692801.aspx
 #>
 function Get-TimestampForChecksum
 {
@@ -970,11 +966,11 @@ function Get-TimestampForChecksum
 
     if ($Checksum -ieq 'CreatedDate')
     {
-        $relevantTimestamp = Get-Date -Date $File.CreationTime.DateTime -Format 'G'
+        $relevantTimestamp = $File.CreationTime.DateTime
     }
     elseif ($Checksum -ieq 'ModifiedDate')
     {
-        $relevantTimestamp = Get-Date -Date $File.LastWriteTime.DateTime -Format 'G'
+        $relevantTimestamp = $File.LastWriteTime.DateTime
     }
 
     return $relevantTimestamp
@@ -987,10 +983,6 @@ function Get-TimestampForChecksum
 
     .PARAMETER ArchiveEntry
         The archive entry to retrieve the last write time of.
-
-    .NOTES
-        The returned date is normalized to the General (G) date format.
-        https://technet.microsoft.com/en-us/library/ee692801.aspx
 #>
 function Get-ArchiveEntryLastWriteTime
 {
@@ -1004,7 +996,7 @@ function Get-ArchiveEntryLastWriteTime
         $ArchiveEntry
     )
 
-    return (Get-Date -Date $ArchiveEntry.LastWriteTime.DateTime -Format 'G')
+    return $ArchiveEntry.LastWriteTime.DateTime
 }
 
 <#
@@ -1320,7 +1312,7 @@ function Copy-ArchiveEntryToDestination
             }
         }
 
-        $newArchiveFileInfo = New-Object -TypeName 'System.IO.FileInfo' -ArgumentList @( $DestinationPath )
+        $null = New-Object -TypeName 'System.IO.FileInfo' -ArgumentList @( $DestinationPath )
 
         $updatedTimestamp = Get-ArchiveEntryLastWriteTime -ArchiveEntry $ArchiveEntry
 
