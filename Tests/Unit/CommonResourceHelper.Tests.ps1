@@ -31,7 +31,7 @@ Describe 'CommonResourceHelper Unit Tests' {
             Mock -CommandName 'Test-CommandExists' -MockWith { return $true }
             Mock -CommandName 'Get-ComputerInfo' -MockWith { return $testComputerInfoNanoServer }
 
-            Context 'Get-ComputerInfo command exists' {
+            Context 'Get-ComputerInfo command exists and succeeds' {
                 Context 'Computer OS type is Server and OS server level is NanoServer' {
                     It 'Should not throw' {
                         { $null = Test-IsNanoServer } | Should Not Throw
@@ -100,6 +100,30 @@ Describe 'CommonResourceHelper Unit Tests' {
                     It 'Should return false' {
                         Test-IsNanoServer | Should Be $false
                     }
+                }
+            }
+
+            Context 'Get-ComputerInfo command exists but throws an error and returns null' {
+                Mock -CommandName 'Get-ComputerInfo' -MockWith { return $null }
+
+                It 'Should not throw' {
+                    { $null = Test-IsNanoServer } | Should Not Throw
+                }
+
+                It 'Should test if the Get-ComputerInfo command exists' {
+                    $testCommandExistsParameterFilter = {
+                        return $Name -eq 'Get-ComputerInfo'
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-CommandExists' -ParameterFilter $testCommandExistsParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should retrieve the computer info' {
+                    Assert-MockCalled -CommandName 'Get-ComputerInfo' -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should return false' {
+                    Test-IsNanoServer | Should Be $false
                 }
             }
 
