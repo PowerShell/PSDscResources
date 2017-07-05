@@ -37,6 +37,7 @@ try
 
             $script:registryKeyValueTypes = @( 'String', 'Binary', 'DWord', 'QWord', 'MultiString', 'ExpandString' )
             $script:testRegistryKeyPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\TestKey2'
+            $script:testRegistryKeyWithDrivePath = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\TestKey2\C:/Program Files (x86)/'
 
             # Force is specified as true for both of these configurations
             $script:confgurationFilePathKeyAndNameOnly = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_RegistryResource_KeyAndNameOnly.config.ps1'
@@ -243,6 +244,44 @@ try
 
             It 'Should have set the registry key value to the specified Binary value' {
                 Compare-Object -ReferenceObject $expectedRegistryKeyValue -DifferenceObject $registryKeyValue.'(default)' | Should Be $null
+            }
+
+            It 'Should return true from Test-TargetResource with the same parameters' {
+                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should Be $true
+            }
+        }
+
+        Context 'Set a registry key value with a drive in the key name' {
+            $configurationName = 'SetRegistryKeyValueString'
+
+            $registryParameters = @{
+                Key = $script:testRegistryKeyWithDrivePath
+                Ensure = 'Present'
+                ValueName = 'TestValue'
+                ValueType = 'String'
+                ValueData = '0'
+            }
+
+            It 'Should compile and run configuration' {
+                { 
+                    . $script:confgurationFilePathWithDataAndType -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @registryParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                } | Should Not Throw
+            }
+
+            It 'Should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
+            }
+
+            $registryKeyValue = Get-ItemProperty -Path $registryParameters.Key -Name $registryParameters.ValueName -ErrorAction 'SilentlyContinue'
+
+            It 'Should have created the registry key value' {
+                $registryKeyValue | Should Not Be $null
+            }
+
+            It 'Should have set the registry key value to the specified value' {
+                $registryKeyValue.($registryParameters.ValueName) | Should Be $registryParameters.ValueData
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
