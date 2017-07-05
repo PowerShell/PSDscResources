@@ -581,6 +581,7 @@ The following parameters will be the same for each process in the set:
     * Added handling of directory archive entries that end with a foward slash
 * WindowsProcess:
     * Fix unreliable tests
+* Updated Test-IsNanoServer to return false if Get-ComputerInfo fails
 
 ### 2.7.0.0
 
