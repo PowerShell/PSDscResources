@@ -579,8 +579,8 @@ The following parameters will be the same for each process in the set:
 
 * Archive:
     * Added handling of directory archive entries that end with a foward slash
-* WindowsProcess:
-    * Fix unreliable tests
+    * Removed formatting of LastWriteTime timestamp and updated comparison of timestamps to handle dates in different formats
+    * Fixed unreliable tests
 
 ### 2.7.0.0
 
