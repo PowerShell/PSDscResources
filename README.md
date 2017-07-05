@@ -579,6 +579,7 @@ The following parameters will be the same for each process in the set:
 
 * Archive:
     * Added handling of directory archive entries that end with a foward slash
+    * Removed formatting of LastWriteTime timestamp and updated comparison of timestamps to handle dates in different formats
 * WindowsProcess:
     * Fix unreliable tests
 * Updated Test-IsNanoServer to return false if Get-ComputerInfo fails
