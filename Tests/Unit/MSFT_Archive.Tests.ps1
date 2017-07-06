@@ -16,7 +16,7 @@ Describe 'Archive Unit Tests' {
     }
 
     AfterAll {
-        Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
+        $null = Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
     }
 
     InModuleScope 'MSFT_Archive' {
@@ -2095,14 +2095,10 @@ Describe 'Archive Unit Tests' {
         }
 
         Describe 'Get-TimestampForChecksum' {
-            
-
             # This is the actual file info of this file since we cannot set the properties of mock objects
             $testFileInfo = New-Object -TypeName 'System.IO.FileInfo' -ArgumentList @( $PSScriptRoot )
-            $testFileCreationTime = (Get-Date -Date $testFileInfo.CreationTime.DateTime -Format 'G')
-            $testFileLastWriteTime = (Get-Date -Date $testFileInfo.LastWriteTime.DateTime -Format 'G')
-
-            Mock -CommandName 'Get-Date' -MockWith { return $testFileCreationTime }
+            $testFileCreationTime = $testFileInfo.CreationTime.DateTime
+            $testFileLastWriteTime = $testFileInfo.LastWriteTime.DateTime
 
             Context 'Checksum specified as CreatedDate' {
                 $getTimestampForChecksumParameters = @{
@@ -2114,23 +2110,10 @@ Describe 'Archive Unit Tests' {
                     { $null = Get-TimestampForChecksum @getTimestampForChecksumParameters } | Should Not Throw
                 }
 
-                It 'Should normalize the date to the General (G) format' {
-                    $getDateParameterFilter = {
-                        $dateParameterCorrect = $Date -eq $testFileCreationTime
-                        $formatParameterCorrect = $Format -eq 'G'
-
-                        return $dateParameterCorrect -and $formatParameterCorrect
-                    }
-
-                    Assert-MockCalled -CommandName 'Get-Date' -ParameterFilter $getDateParameterFilter -Exactly 1 -Scope 'Context'
-                }
-
                 It 'Should return the creation time of the file' {
                     Get-TimestampForChecksum @getTimestampForChecksumParameters | Should Be $testFileCreationTime
                 }
             }
-
-            Mock -CommandName 'Get-Date' -MockWith { return $testFileLastWriteTime }
 
             Context 'Checksum specified as ModifiedDate' {
                 $getTimestampForChecksumParameters = @{
@@ -2140,17 +2123,6 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should not throw' {
                     { $null = Get-TimestampForChecksum @getTimestampForChecksumParameters } | Should Not Throw
-                }
-
-                It 'Should normalize the date to the General (G) format' {
-                    $getDateParameterFilter = {
-                        $dateParameterCorrect = $Date -eq $testFileLastWriteTime
-                        $formatParameterCorrect = $Format -eq 'G'
-
-                        return $dateParameterCorrect -and $formatParameterCorrect
-                    }
-
-                    Assert-MockCalled -CommandName 'Get-Date' -ParameterFilter $getDateParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should return the last write time of the file' {
@@ -2482,7 +2454,6 @@ Describe 'Archive Unit Tests' {
         Describe 'Test-ArchiveExistsAtDestination' {
             $testArchiveEntryFullName = 'TestArchiveEntryFullName'
             $testItemPathAtDestination = 'TestItemPathAtDestination'
-            $testParentDirectoryPath = 'TestParentDirectoryPath'
 
             $mockArchive = New-MockObject -Type 'System.IO.Compression.ZipArchive'
             $mockArchiveEntry = New-MockObject -Type 'System.IO.Compression.ZipArchiveEntry'
@@ -4898,7 +4869,7 @@ Describe 'Archive Unit Tests' {
                         return $fileParameterCorrect -and $archiveEntryParameterCorrect -and $checksumParameterCorrect
                     }
                     
-                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -Exactly 1 -Scope 'Context'
+                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -ParameterFilter $testFileMatchesArchiveEntryByChecksumParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should remove the existing item at the desired path of the archive entry at the destination' {
@@ -5018,7 +4989,7 @@ Describe 'Archive Unit Tests' {
                         return $fileParameterCorrect -and $archiveEntryParameterCorrect -and $checksumParameterCorrect
                     }
                     
-                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -Exactly 1 -Scope 'Context'
+                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -ParameterFilter $testFileMatchesArchiveEntryByChecksumParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to remove the existing item at the desired path of the archive entry at the destination' {
@@ -6403,7 +6374,7 @@ Describe 'Archive Unit Tests' {
                         return $fileParameterCorrect -and $archiveEntryParameterCorrect -and $checksumParameterCorrect
                     }
                     
-                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -Exactly 1 -Scope 'Context'
+                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -ParameterFilter $testFileMatchesArchiveEntryByChecksumParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to remove an existing file at the desired path of the archive entry at the destination' {
@@ -6510,7 +6481,7 @@ Describe 'Archive Unit Tests' {
                         return $fileParameterCorrect -and $archiveEntryParameterCorrect -and $checksumParameterCorrect
                     }
                     
-                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -Exactly 1 -Scope 'Context'
+                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -ParameterFilter $testFileMatchesArchiveEntryByChecksumParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should remove the file at the desired path of the archive entry at the destination' {
