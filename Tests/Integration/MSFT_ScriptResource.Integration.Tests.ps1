@@ -7,81 +7,83 @@ if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -l
     return
 }
 
-# Import CommonTestHelper for Enter-DscResourceTestEnvironment, Exit-DscResourceTestEnvironment
-$script:moduleRootPath = Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent
-$script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
-$script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
-Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
+Describe 'Script Integration Tests' {
+    BeforeAll {
+        # Import CommonTestHelper for Enter-DscResourceTestEnvironment, Exit-DscResourceTestEnvironment
+        $script:moduleRootPath = Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent
+        $script:testFolderPath = Split-Path -Path $PSScriptRoot -Parent
+        $script:testHelpersPath = Join-Path -Path $script:testFolderPath -ChildPath 'TestHelpers'
+        Import-Module -Name (Join-Path -Path $script:testHelpersPath -ChildPath 'CommonTestHelper.psm1')
 
-$script:testEnvironment = Enter-DscResourceTestEnvironment `
-    -DscResourceModuleName 'PSDscResources' `
-    -DscResourceName 'MSFT_ScriptResource' `
-    -TestType 'Integration'
+        $script:testEnvironment = Enter-DscResourceTestEnvironment `
+            -DscResourceModuleName 'PSDscResources' `
+            -DscResourceName 'MSFT_ScriptResource' `
+            -TestType 'Integration'
 
-try
-{
-    Describe 'Script Integration Tests' {
-        BeforeAll {
-            # Import Script module for Get-TargetResource, Test-TargetResource
-            $dscResourcesFolderFilePath = Join-Path -Path $script:moduleRootPath -ChildPath 'DscResources'
-            $scriptResourceFolderFilePath = Join-Path -Path $dscResourcesFolderFilePath -ChildPath 'MSFT_ScriptResource'
-            $scriptResourceModuleFilePath = Join-Path -Path $scriptResourceFolderFilePath -ChildPath 'MSFT_ScriptResource.psm1'
-            Import-Module -Name $scriptResourceModuleFilePath
+        # Import Script module for Get-TargetResource, Test-TargetResource
+        $dscResourcesFolderFilePath = Join-Path -Path $script:moduleRootPath -ChildPath 'DscResources'
+        $scriptResourceFolderFilePath = Join-Path -Path $dscResourcesFolderFilePath -ChildPath 'MSFT_ScriptResource'
+        $scriptResourceModuleFilePath = Join-Path -Path $scriptResourceFolderFilePath -ChildPath 'MSFT_ScriptResource.psm1'
+        Import-Module -Name $scriptResourceModuleFilePath
 
-            $script:configurationNoCredentialFilePath = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_ScriptResource_NoCredential.config.ps1'
-            $script:configurationWithCredentialFilePath = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_ScriptResource_WithCredential.config.ps1'
+        $script:configurationNoCredentialFilePath = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_ScriptResource_NoCredential.config.ps1'
+        $script:configurationWithCredentialFilePath = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_ScriptResource_WithCredential.config.ps1'
 
-            # Cannot use $TestDrive here because script is run outside of Pester
-            $script:testFilePath = Join-Path -Path $env:SystemDrive -ChildPath 'TestFile.txt'
+        # Cannot use $TestDrive here because script is run outside of Pester
+        $script:testFilePath = Join-Path -Path $env:SystemDrive -ChildPath 'TestFile.txt'
 
-            if (Test-Path -Path $script:testFilePath)
-            {
-                Remove-Item -Path $script:testFilePath -Force
-            }
+        if (Test-Path -Path $script:testFilePath)
+        {
+            $null = Remove-Item -Path $script:testFilePath -Force
+        }
+    }
+
+    AfterAll {
+        if (Test-Path -Path $script:testFilePath)
+        {
+            $null = Remove-Item -Path $script:testFilePath -Force
         }
 
-        AfterAll {
-            if (Test-Path -Path $script:testFilePath)
-            {
-                Remove-Item -Path $script:testFilePath -Force
-            }
+        $null = Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
+    }
+
+    Context 'Get, set, and test scripts specified and Credential not specified' {
+        if (Test-Path -Path $script:testFilePath)
+        {
+            $null = Remove-Item -Path $script:testFilePath -Force
         }
 
-        Context 'Get, set, and test scripts specified and Credential not specified' {
-            if (Test-Path -Path $script:testFilePath)
-            {
-                Remove-Item -Path $script:testFilePath -Force
-            }
+        $configurationName = 'TestScriptNoCredential'
 
-            $configurationName = 'TestScriptNoCredential'
-
-            # Cannot use $TestDrive here because script is run outside of Pester
-            $resourceParameters = @{
-                FilePath = $script:testFilePath
-                FileContent = 'Test file content' 
-            }
-
-            It 'Should have removed test file before config runs' {
-                Test-Path -Path $resourceParameters.FilePath | Should Be $false
-            }
-
-            It 'Should compile and apply the MOF without throwing' {
-                { 
-                    . $script:configurationNoCredentialFilePath -ConfigurationName $configurationName
-                    & $configurationName -OutputPath $TestDrive @resourceParameters
-                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
-
-            It 'Should have created the test file' {
-                Test-Path -Path $resourceParameters.FilePath | Should Be $true
-            }
-
-            It 'Should have set file content correctly' {
-                Get-Content -Path $resourceParameters.FilePath -Raw | Should Be "$($resourceParameters.FileContent)`r`n"
-            }
+        # Cannot use $TestDrive here because script is run outside of Pester
+        $resourceParameters = @{
+            FilePath = $script:testFilePath
+            FileContent = 'Test file content' 
         }
 
+        It 'Should have removed test file before the configuration' {
+            Test-Path -Path $resourceParameters.FilePath | Should Be $false
+        }
+
+        It 'Should compile and apply the MOF without throwing' {
+            { 
+                . $script:configurationNoCredentialFilePath -ConfigurationName $configurationName
+                & $configurationName -OutputPath $TestDrive @resourceParameters
+                Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+            } | Should Not Throw
+        }
+
+        It 'Should have created the test file' {
+            Test-Path -Path $resourceParameters.FilePath | Should Be $true
+        }
+
+        It 'Should have set file content correctly' {
+            Get-Content -Path $resourceParameters.FilePath -Raw | Should Be "$($resourceParameters.FileContent)`r`n"
+        }
+    }
+
+    if ($env:appVeyor)
+    {
         Context 'Get, set, and test scripts specified and Credential specified' {
             if (Test-Path -Path $script:testFilePath)
             {
@@ -128,8 +130,4 @@ try
             }
         }
     }
-}
-finally
-{
-    Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
 }
