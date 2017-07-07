@@ -2587,7 +2587,7 @@ try
 
                 $getPathRootResult = Get-PathRoot @getPathRootParameters
 
-                It 'Should return given path' {
+                It 'Should return the given path' {
                     $getPathRootResult | Should Be $getPathRootParameters.Path
                 }
             }

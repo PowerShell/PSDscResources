@@ -274,14 +274,15 @@ try
                 { Get-DscConfiguration -ErrorAction 'Stop' } | Should Not Throw
             }
 
-            $registryKeyValue = Get-ItemProperty -Path $registryParameters.Key -Name $registryParameters.ValueName -ErrorAction 'SilentlyContinue'
+            $parentRegistryKey = Get-Item -Path 'HKLM:'
+            $registryKey = $parentRegistryKey.OpenSubKey('SYSTEM\CurrentControlSet\Control\Session Manager\Environment\TestKey2\C:/Program Files (x86)/', $false)
 
             It 'Should have created the registry key value' {
-                $registryKeyValue | Should Not Be $null
+                $registryKey | Should Not Be $null
             }
 
             It 'Should have set the registry key value to the specified value' {
-                $registryKeyValue.($registryParameters.ValueName) | Should Be $registryParameters.ValueData
+                $registryKey.GetValue($registryParameters.ValueName) | Should Be $registryParameters.ValueData
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
