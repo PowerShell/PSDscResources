@@ -523,6 +523,10 @@ function Test-TargetResource
 
     .PARAMETER Path
         The path to retrieve the root of.
+
+    .NOTES
+        Don't use Split-Path here as it will pick up extra drives in the registry key name instead of the actual path root.
+        ex: 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\TestKey2\C:/Program Files (x86)/'
 #>
 function Get-PathRoot
 {
@@ -536,13 +540,12 @@ function Get-PathRoot
         $Path
     )
 
-    $pathParent = Split-Path -Path $Path -Parent
     $pathRoot = $Path
+    $firstIndexOfBackslash = $Path.IndexOf('\')
 
-    while (-not [String]::IsNullOrEmpty($pathParent))
+    if ($firstIndexOfBackslash -ge 0)
     {
-        $pathRoot = Split-Path -Path $pathParent -Leaf
-        $pathParent = Split-Path -Path $pathParent -Parent
+        $pathRoot = $Path.Substring(0, $firstIndexOfBackslash)
     }
 
     return $pathRoot
