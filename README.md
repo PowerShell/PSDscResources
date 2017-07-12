@@ -577,6 +577,8 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+### 2.8.0.0
+
 * Archive:
     * Added handling of directory archive entries that end with a foward slash
     * Removed formatting of LastWriteTime timestamp and updated comparison of timestamps to handle dates in different formats
