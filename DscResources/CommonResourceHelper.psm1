@@ -12,13 +12,16 @@ function Test-IsNanoServer
     
     if (Test-CommandExists -Name 'Get-ComputerInfo')
     {
-        $computerInfo = Get-ComputerInfo
+        $computerInfo = Get-ComputerInfo -ErrorAction 'SilentlyContinue'
 
-        $computerIsServer = 'Server' -ieq $computerInfo.OsProductType
-
-        if ($computerIsServer)
+        if ($null -ne $computerInfo)
         {
-            $isNanoServer = 'NanoServer' -ieq $computerInfo.OsServerLevel
+            $computerIsServer = 'Server' -ieq $computerInfo.OsProductType
+
+            if ($computerIsServer)
+            {
+                $isNanoServer = 'NanoServer' -ieq $computerInfo.OsServerLevel
+            }
         }
     }
 

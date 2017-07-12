@@ -16,7 +16,7 @@ Describe 'Archive Unit Tests' {
     }
 
     AfterAll {
-        Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
+        $null = Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
     }
 
     InModuleScope 'MSFT_Archive' {
@@ -1585,7 +1585,7 @@ Describe 'Archive Unit Tests' {
                 }
             }
 
-            Mock -CommandName 'Test-Path' -MockWith { return $false }
+            Mock -CommandName 'Test-Path' -MockWith {return $false }
 
             Context 'Specified path is not accessible, path contains a backslash but does not end with a backslash, and new PSDrive creation fails' {
                 $mountPSDriveWithCredentialParameters = @{
@@ -2095,14 +2095,10 @@ Describe 'Archive Unit Tests' {
         }
 
         Describe 'Get-TimestampForChecksum' {
-            
-
             # This is the actual file info of this file since we cannot set the properties of mock objects
             $testFileInfo = New-Object -TypeName 'System.IO.FileInfo' -ArgumentList @( $PSScriptRoot )
-            $testFileCreationTime = (Get-Date -Date $testFileInfo.CreationTime.DateTime -Format 'G')
-            $testFileLastWriteTime = (Get-Date -Date $testFileInfo.LastWriteTime.DateTime -Format 'G')
-
-            Mock -CommandName 'Get-Date' -MockWith { return $testFileCreationTime }
+            $testFileCreationTime = $testFileInfo.CreationTime.DateTime
+            $testFileLastWriteTime = $testFileInfo.LastWriteTime.DateTime
 
             Context 'Checksum specified as CreatedDate' {
                 $getTimestampForChecksumParameters = @{
@@ -2114,23 +2110,10 @@ Describe 'Archive Unit Tests' {
                     { $null = Get-TimestampForChecksum @getTimestampForChecksumParameters } | Should Not Throw
                 }
 
-                It 'Should normalize the date to the General (G) format' {
-                    $getDateParameterFilter = {
-                        $dateParameterCorrect = $Date -eq $testFileCreationTime
-                        $formatParameterCorrect = $Format -eq 'G'
-
-                        return $dateParameterCorrect -and $formatParameterCorrect
-                    }
-
-                    Assert-MockCalled -CommandName 'Get-Date' -ParameterFilter $getDateParameterFilter -Exactly 1 -Scope 'Context'
-                }
-
                 It 'Should return the creation time of the file' {
                     Get-TimestampForChecksum @getTimestampForChecksumParameters | Should Be $testFileCreationTime
                 }
             }
-
-            Mock -CommandName 'Get-Date' -MockWith { return $testFileLastWriteTime }
 
             Context 'Checksum specified as ModifiedDate' {
                 $getTimestampForChecksumParameters = @{
@@ -2140,17 +2123,6 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should not throw' {
                     { $null = Get-TimestampForChecksum @getTimestampForChecksumParameters } | Should Not Throw
-                }
-
-                It 'Should normalize the date to the General (G) format' {
-                    $getDateParameterFilter = {
-                        $dateParameterCorrect = $Date -eq $testFileLastWriteTime
-                        $formatParameterCorrect = $Format -eq 'G'
-
-                        return $dateParameterCorrect -and $formatParameterCorrect
-                    }
-
-                    Assert-MockCalled -CommandName 'Get-Date' -ParameterFilter $getDateParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should return the last write time of the file' {
@@ -2407,11 +2379,81 @@ Describe 'Archive Unit Tests' {
             }
         }
 
+        Describe 'Test-ArchiveEntryIsDirectory' {
+            Context 'Archive entry name does not contain a backslash or a foward slash' {
+                $testArchiveEntryNameIsDirectoryPathParameters = @{
+                    ArchiveEntryName = 'TestArchiveEntryName'
+                }
+
+                It 'Should not throw' {
+                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should Not Throw
+                }
+
+                It 'Should return false' {
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should Be $false
+                }
+            }
+
+            Context 'Archive entry name contains a backslash but does not end with a backslash' {
+                $testArchiveEntryNameIsDirectoryPathParameters = @{
+                    ArchiveEntryName = 'TestArchive\EntryName'
+                }
+
+                It 'Should not throw' {
+                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should Not Throw
+                }
+
+                It 'Should return false' {
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should Be $false
+                }
+            }
+
+            Context 'Archive entry name contains a foward slash but does not end with a foward slash' {
+                $testArchiveEntryNameIsDirectoryPathParameters = @{
+                    ArchiveEntryName = 'TestArchive/EntryName'
+                }
+
+                It 'Should not throw' {
+                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should Not Throw
+                }
+
+                It 'Should return false' {
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should Be $false
+                }
+            }
+            
+            Context 'Archive entry name ends with a backslash' {
+                $testArchiveEntryNameIsDirectoryPathParameters = @{
+                    ArchiveEntryName = 'TestArchiveEntryName\'
+                }
+
+                It 'Should not throw' {
+                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should Not Throw
+                }
+
+                It 'Should return true' {
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should Be $true
+                }
+            }
+
+            Context 'Archive entry name ends with a forward slash' {
+                $testArchiveEntryNameIsDirectoryPathParameters = @{
+                    ArchiveEntryName = 'TestArchiveEntryName/'
+                }
+
+                It 'Should not throw' {
+                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should Not Throw
+                }
+
+                It 'Should return true' {
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should Be $true
+                }
+            }
+        }
+
         Describe 'Test-ArchiveExistsAtDestination' {
-            $testArchiveEntryFullNameWithBackslash = 'TestArchiveEntryFullName\'
-            $testArchiveEntryFullNameNoBackslash = 'TestArchiveEntryFullName'
+            $testArchiveEntryFullName = 'TestArchiveEntryFullName'
             $testItemPathAtDestination = 'TestItemPathAtDestination'
-            $testParentDirectoryPath = 'TestParentDirectoryPath'
 
             $mockArchive = New-MockObject -Type 'System.IO.Compression.ZipArchive'
             $mockArchiveEntry = New-MockObject -Type 'System.IO.Compression.ZipArchiveEntry'
@@ -2420,9 +2462,10 @@ Describe 'Archive Unit Tests' {
             
             Mock -CommandName 'Open-Archive' -MockWith { return $mockArchive }
             Mock -CommandName 'Get-ArchiveEntries' -MockWith { return @( $mockArchiveEntry ) }
-            Mock -CommandName 'Get-ArchiveEntryFullName' -MockWith { return $testArchiveEntryFullNameWithBackslash }
+            Mock -CommandName 'Get-ArchiveEntryFullName' -MockWith { return $testArchiveEntryFullName }
             Mock -CommandName 'Join-Path' -MockWith { return $testItemPathAtDestination }
             Mock -CommandName 'Get-Item' -MockWith { return $null }
+            Mock -CommandName 'Test-ArchiveEntryIsDirectory' -MockWith { return $true }
             Mock -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -MockWith { return $false }
             Mock -CommandName 'Close-Archive' -MockWith { }
 
@@ -2466,7 +2509,7 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $testArchiveExistsAtDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
@@ -2481,6 +2524,10 @@ Describe 'Archive Unit Tests' {
                     }
 
                     Assert-MockCalled -CommandName 'Get-Item' -ParameterFilter $getItemParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should not attempt to test if the archive entry is a directory' {
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -Exactly 0 -Scope 'Context'
                 }
 
                 It 'Should not attempt to test if the file at the desired path of the archive entry at the destination matches the archive entry by the specified checksum method' {
@@ -2543,7 +2590,7 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $testArchiveExistsAtDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
@@ -2558,6 +2605,15 @@ Describe 'Archive Unit Tests' {
                     }
 
                     Assert-MockCalled -CommandName 'Get-Item' -ParameterFilter $getItemParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to test if the file at the desired path of the archive entry at the destination matches the archive entry by the specified checksum method' {
@@ -2620,7 +2676,7 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $testArchiveExistsAtDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
@@ -2635,6 +2691,15 @@ Describe 'Archive Unit Tests' {
                     }
 
                     Assert-MockCalled -CommandName 'Get-Item' -ParameterFilter $getItemParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to test if the file at the desired path of the archive entry at the destination matches the archive entry by the specified checksum method' {
@@ -2702,7 +2767,7 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $testArchiveExistsAtDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
@@ -2717,6 +2782,15 @@ Describe 'Archive Unit Tests' {
                     }
 
                     Assert-MockCalled -CommandName 'Get-Item' -ParameterFilter $getItemParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to test if the file at the desired path of the archive entry at the destination matches the archive entry by the specified checksum method' {
@@ -2737,7 +2811,7 @@ Describe 'Archive Unit Tests' {
                 }
             }
 
-            Mock -CommandName 'Get-ArchiveEntryFullName' -MockWith { return $testArchiveEntryFullNameNoBackslash }
+            Mock -CommandName 'Test-ArchiveEntryIsDirectory' -MockWith { return $false }
             Mock -CommandName 'Get-Item' -MockWith { return $null }
 
             Context 'Archive entry is a file and does not exist at destination' {
@@ -2780,7 +2854,7 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $testArchiveExistsAtDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
@@ -2795,6 +2869,10 @@ Describe 'Archive Unit Tests' {
                     }
 
                     Assert-MockCalled -CommandName 'Get-Item' -ParameterFilter $getItemParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should not attempt to test if the archive entry is a directory' {
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -Exactly 0 -Scope 'Context'
                 }
 
                 It 'Should not attempt to test if the file at the desired path of the archive entry at the destination matches the archive entry by the specified checksum method' {
@@ -2857,7 +2935,7 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $testArchiveExistsAtDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
@@ -2872,6 +2950,15 @@ Describe 'Archive Unit Tests' {
                     }
 
                     Assert-MockCalled -CommandName 'Get-Item' -ParameterFilter $getItemParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to test if the file at the desired path of the archive entry at the destination matches the archive entry by the specified checksum method' {
@@ -2934,7 +3021,7 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $testArchiveExistsAtDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
@@ -2949,6 +3036,15 @@ Describe 'Archive Unit Tests' {
                     }
 
                     Assert-MockCalled -CommandName 'Get-Item' -ParameterFilter $getItemParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to test if the file at the desired path of the archive entry at the destination matches the archive entry by the specified checksum method' {
@@ -3011,7 +3107,7 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $testArchiveExistsAtDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
@@ -3026,6 +3122,15 @@ Describe 'Archive Unit Tests' {
                     }
 
                     Assert-MockCalled -CommandName 'Get-Item' -ParameterFilter $getItemParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to test if the file at the desired path of the archive entry at the destination matches the archive entry by the specified checksum method' {
@@ -3087,7 +3192,7 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $testArchiveExistsAtDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
@@ -3102,6 +3207,15 @@ Describe 'Archive Unit Tests' {
                     }
 
                     Assert-MockCalled -CommandName 'Get-Item' -ParameterFilter $getItemParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should test if the file at the desired path of the archive entry at the destination matches the archive entry by the specified checksum method' {
@@ -3173,7 +3287,7 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $testArchiveExistsAtDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
@@ -3188,6 +3302,15 @@ Describe 'Archive Unit Tests' {
                     }
 
                     Assert-MockCalled -CommandName 'Get-Item' -ParameterFilter $getItemParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should test if the file at the desired path of the archive entry at the destination matches the archive entry by the specified checksum method' {
@@ -3218,7 +3341,7 @@ Describe 'Archive Unit Tests' {
         }
 
         Describe 'Copy-ArchiveEntryToDestination' {
-            $testArchiveEntryFullNameWithBackslash = 'TestArchiveEntryFullName\'
+            $testArchiveEntryFullName = 'TestArchiveEntryFullName'
             $testArchiveEntryLastWriteTime = Get-Date
 
             $testCopyFromStreamToStreamError = 'Test copy from stream to stream error'
@@ -3226,7 +3349,8 @@ Describe 'Archive Unit Tests' {
             $mockArchiveEntry = New-MockObject -Type 'System.IO.Compression.ZipArchiveEntry'
             $mockFileStream = New-MockObject -Type 'System.IO.FileStream'
 
-            Mock -CommandName 'Get-ArchiveEntryFullName' { return $testArchiveEntryFullNameWithBackslash }
+            Mock -CommandName 'Get-ArchiveEntryFullName' { return $testArchiveEntryFullName }
+            Mock -CommandName 'Test-ArchiveEntryIsDirectory' -MockWith { return $true }
             Mock -CommandName 'New-Item' -MockWith { }
             Mock -CommandName 'Open-ArchiveEntry' -MockWith { return $mockFileStream }
             Mock -CommandName 'New-Object' -MockWith {
@@ -3244,7 +3368,7 @@ Describe 'Archive Unit Tests' {
             Mock -CommandName 'Get-ArchiveEntryLastWriteTime' -MockWith { return $testArchiveEntryLastWriteTime }
             Mock -CommandName 'Set-ItemProperty' -MockWith { }
 
-            Context 'Archive entry name ends in a backslash (directory)' {
+            Context 'Archive entry is a directory' {
                 $copyArchiveEntryToDestinationParameters = @{
                     ArchiveEntry = $mockArchiveEntry
                     DestinationPath = 'TestDestinationPath'
@@ -3261,6 +3385,15 @@ Describe 'Archive Unit Tests' {
                     }
 
                     Assert-MockCalled -CommandName 'Get-ArchiveEntryFullName' -ParameterFilter $getArchiveEntryFullNameParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should create a new directory at the specified destination' {
@@ -3340,10 +3473,9 @@ Describe 'Archive Unit Tests' {
                 }
             }
 
-            $testArchiveEntryFullNameNoBackslash = 'TestArchiveEntryFullName'
-            Mock -CommandName 'Get-ArchiveEntryFullName' { return $testArchiveEntryFullNameNoBackslash }
+            Mock -CommandName 'Test-ArchiveEntryIsDirectory' -MockWith { return $false }
 
-            Context 'Archive entry name does not end in a backslash and copying from stream to stream fails' {
+            Context 'Archive entry is not a directory and copying from stream to stream fails' {
                 $copyArchiveEntryToDestinationParameters = @{
                     ArchiveEntry = $mockArchiveEntry
                     DestinationPath = 'TestDestinationPath'
@@ -3357,7 +3489,7 @@ Describe 'Archive Unit Tests' {
 
             Mock -CommandName 'Copy-FromStreamToStream' -MockWith { }
 
-            Context 'Archive entry name does not end in a backslash and copying from stream to stream succeeds' {
+            Context 'Archive entry is not a directory and copying from stream to stream succeeds' {
                 $copyArchiveEntryToDestinationParameters = @{
                     ArchiveEntry = $mockArchiveEntry
                     DestinationPath = 'TestDestinationPath'
@@ -3374,6 +3506,15 @@ Describe 'Archive Unit Tests' {
                     }
 
                     Assert-MockCalled -CommandName 'Get-ArchiveEntryFullName' -ParameterFilter $getArchiveEntryFullNameParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to create a new directory at the specified destination' {
@@ -3486,9 +3627,8 @@ Describe 'Archive Unit Tests' {
             }
         }
 
-        Describe 'Expand-ArchiveToDestination' {
-            $testArchiveEntryFullNameWithBackslash = 'TestArchiveEntryFullName\'
-            $testArchiveEntryFullNameNoBackslash = 'TestArchiveEntryFullName'
+        Describe 'Expand-ArchiveToDestination' { 
+            $testArchiveEntryFullName = 'TestArchiveEntryFullName'
             $testItemPathAtDestination = 'TestItemPathAtDestination'
             $testParentDirectoryPath = 'TestParentDirectoryPath'
 
@@ -3499,8 +3639,9 @@ Describe 'Archive Unit Tests' {
             
             Mock -CommandName 'Open-Archive' -MockWith { return $mockArchive }
             Mock -CommandName 'Get-ArchiveEntries' -MockWith { return @( $mockArchiveEntry ) }
-            Mock -CommandName 'Get-ArchiveEntryFullName' -MockWith { return $testArchiveEntryFullNameWithBackslash }
+            Mock -CommandName 'Get-ArchiveEntryFullName' -MockWith { return $testArchiveEntryFullName }
             Mock -CommandName 'Join-Path' -MockWith { return $testItemPathAtDestination }
+            Mock -CommandName 'Test-ArchiveEntryIsDirectory' -MockWith { return $true }
             Mock -CommandName 'Get-Item' -MockWith { return $null }
             Mock -CommandName 'Split-Path' -MockWith { return $testParentDirectoryPath }
             Mock -CommandName 'Test-Path' -MockWith { return $false }
@@ -3550,12 +3691,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $expandArchiveToDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -3621,7 +3771,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should throw an error for attempting to overwrite an existing item without specifying the Force parameter' {
-                    $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullNameWithBackslash
+                    $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullName
                     { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should Throw $errorMessage
                 }
             }
@@ -3667,12 +3817,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $expandArchiveToDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -3743,7 +3902,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should throw an error for attempting to overwrite an existing item without specifying the Force parameter' {
-                    $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullNameWithBackslash
+                    $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullName
                     { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should Throw $errorMessage
                 }
             }
@@ -3789,12 +3948,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $expandArchiveToDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -3898,12 +4066,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $expandArchiveToDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -3953,8 +4130,7 @@ Describe 'Archive Unit Tests' {
                 }
             }
 
-            Mock -CommandName 'Get-ArchiveEntryFullName' -MockWith { return $testArchiveEntryFullNameNoBackslash }
-
+            Mock -CommandName 'Test-ArchiveEntryIsDirectory' -MockWith { return $false }
             Mock -CommandName 'Get-Item' -MockWith { return $null }
 
             Context 'Archive entry is a file and does not exist at destination and the parent directory of the file does not exist' {
@@ -3997,12 +4173,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $expandArchiveToDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -4120,12 +4305,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $expandArchiveToDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -4203,7 +4397,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should throw an error for attempting to overwrite an existing item without specifying the Force parameter' {
-                    $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullNameNoBackslash
+                    $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullName
                     { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should Throw $errorMessage
                 }
             }
@@ -4249,12 +4443,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $expandArchiveToDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -4325,7 +4528,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should throw an error for attempting to overwrite an existing item without specifying the Force parameter' {
-                    $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullNameNoBackslash
+                    $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullName
                     { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should Throw $errorMessage
                 }
             }
@@ -4371,12 +4574,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $expandArchiveToDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -4480,12 +4692,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $expandArchiveToDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -4543,7 +4764,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should throw an error for attempting to overwrite an existing item without specifying the Force parameter' {
-                    $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullNameNoBackslash
+                    $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullName
                     { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should Throw $errorMessage
                 }
             }
@@ -4590,12 +4811,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $expandArchiveToDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -4639,7 +4869,7 @@ Describe 'Archive Unit Tests' {
                         return $fileParameterCorrect -and $archiveEntryParameterCorrect -and $checksumParameterCorrect
                     }
                     
-                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -Exactly 1 -Scope 'Context'
+                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -ParameterFilter $testFileMatchesArchiveEntryByChecksumParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should remove the existing item at the desired path of the archive entry at the destination' {
@@ -4708,12 +4938,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $expandArchiveToDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -4750,7 +4989,7 @@ Describe 'Archive Unit Tests' {
                         return $fileParameterCorrect -and $archiveEntryParameterCorrect -and $checksumParameterCorrect
                     }
                     
-                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -Exactly 1 -Scope 'Context'
+                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -ParameterFilter $testFileMatchesArchiveEntryByChecksumParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to remove the existing item at the desired path of the archive entry at the destination' {
@@ -4969,8 +5208,7 @@ Describe 'Archive Unit Tests' {
         }
         
         Describe 'Remove-ArchiveFromDestination' {
-            $testArchiveEntryFullNameWithBackslash = 'TestArchiveEntryFullName\'
-            $testArchiveEntryFullNameNoBackslash = 'TestArchiveEntryFullName'
+            $testArchiveEntryFullName = 'TestArchiveEntryFullName'
             $testItemPathAtDestination = 'TestItemPathAtDestination'
             $testParentDirectoryPath = 'TestParentDirectoryPath'
 
@@ -4981,8 +5219,9 @@ Describe 'Archive Unit Tests' {
             
             Mock -CommandName 'Open-Archive' -MockWith { return $mockArchive }
             Mock -CommandName 'Get-ArchiveEntries' -MockWith { return @( $mockArchiveEntry ) }
-            Mock -CommandName 'Get-ArchiveEntryFullName' -MockWith { return $testArchiveEntryFullNameWithBackslash }
+            Mock -CommandName 'Get-ArchiveEntryFullName' -MockWith { return $testArchiveEntryFullName }
             Mock -CommandName 'Join-Path' -MockWith { return $testItemPathAtDestination }
+            Mock -CommandName 'Test-ArchiveEntryIsDirectory' -MockWith { return $true }
             Mock -CommandName 'Get-Item' -MockWith { return $null }
             Mock -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -MockWith { return $false }
             Mock -CommandName 'Remove-Item' -MockWith { }
@@ -5030,12 +5269,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $removeArchiveFromDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -5119,12 +5367,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $removeArchiveFromDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -5208,12 +5465,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $removeArchiveFromDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -5297,12 +5563,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $removeArchiveFromDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -5324,7 +5599,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should attempt to find the parent directory of the desired path of the archive entry at the destination' {
                     $splitPathParameterFilter = {
-                        $pathParameterCorrect = $Path -eq $testArchiveEntryFullNameWithBackslash
+                        $pathParameterCorrect = $Path -eq $testArchiveEntryFullName
                         $parentParameterCorrect = $Parent -eq $true
                         return $pathParameterCorrect -and $parentParameterCorrect
                     }
@@ -5332,9 +5607,18 @@ Describe 'Archive Unit Tests' {
                     Assert-MockCalled -CommandName 'Split-Path' -ParameterFilter $splitPathParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
+                }
+
                 It 'Should remove the specified directory from the destination' {
                     $removeDirectoryFromDestinationParameterFilter = {
-                        $directoryParameterCorrect = $null -eq (Compare-Object -ReferenceObject @( $testArchiveEntryFullNameWithBackslash ) -DifferenceObject $Directory)
+                        $directoryParameterCorrect = $null -eq (Compare-Object -ReferenceObject @( $testArchiveEntryFullName ) -DifferenceObject $Directory)
                         $destinationParameterCorrect = $Destination -eq $removeArchiveFromDestinationParameters.Destination
                         return $directoryParameterCorrect -and $destinationParameterCorrect
                     }
@@ -5403,12 +5687,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $removeArchiveFromDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameWithBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -5430,7 +5723,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should attempt to find the parent directory of the desired path of the archive entry at the destination' {
                     $splitPathParameterFilter = {
-                        $pathParameterCorrect = $Path -eq $testArchiveEntryFullNameWithBackslash
+                        $pathParameterCorrect = $Path -eq $testArchiveEntryFullName
                         $parentParameterCorrect = $Parent -eq $true
                         return $pathParameterCorrect -and $parentParameterCorrect
                     }
@@ -5440,7 +5733,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should remove the specified directory and its parent directory from the destination' {
                     $removeDirectoryFromDestinationParameterFilter = {
-                        $directoryParameterCorrect = $null -eq (Compare-Object -ReferenceObject @( $testArchiveEntryFullNameWithBackslash, $testParentDirectoryPath ) -DifferenceObject $Directory)
+                        $directoryParameterCorrect = $null -eq (Compare-Object -ReferenceObject @( $testArchiveEntryFullName, $testParentDirectoryPath ) -DifferenceObject $Directory)
                         $destinationParameterCorrect = $Destination -eq $removeArchiveFromDestinationParameters.Destination
                         return $directoryParameterCorrect -and $destinationParameterCorrect
                     }
@@ -5462,7 +5755,7 @@ Describe 'Archive Unit Tests' {
                 }
             }
 
-            Mock -CommandName 'Get-ArchiveEntryFullName' -MockWith { return $testArchiveEntryFullNameNoBackslash }
+            Mock -CommandName 'Test-ArchiveEntryIsDirectory' -MockWith { return $false }
             Mock -CommandName 'Get-Item' -MockWith { return $null }
             Mock -CommandName 'Split-Path' -MockWith { return $null }
 
@@ -5506,12 +5799,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $removeArchiveFromDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -5595,12 +5897,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $removeArchiveFromDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -5684,12 +5995,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $removeArchiveFromDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -5773,12 +6093,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $removeArchiveFromDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -5805,12 +6134,21 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should attempt to find the parent directory of the desired path of the archive entry at the destination' {
                     $splitPathParameterFilter = {
-                        $pathParameterCorrect = $Path -eq $testArchiveEntryFullNameNoBackslash
+                        $pathParameterCorrect = $Path -eq $testArchiveEntryFullName
                         $parentParameterCorrect = $Parent -eq $true
                         return $pathParameterCorrect -and $parentParameterCorrect
                     }
                     
                     Assert-MockCalled -CommandName 'Split-Path' -ParameterFilter $splitPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to remove any directories from the destination' {
@@ -5878,12 +6216,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $removeArchiveFromDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -5910,12 +6257,21 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should attempt to find the parent directory of the desired path of the archive entry at the destination' {
                     $splitPathParameterFilter = {
-                        $pathParameterCorrect = $Path -eq $testArchiveEntryFullNameNoBackslash
+                        $pathParameterCorrect = $Path -eq $testArchiveEntryFullName
                         $parentParameterCorrect = $Parent -eq $true
                         return $pathParameterCorrect -and $parentParameterCorrect
                     }
                     
                     Assert-MockCalled -CommandName 'Split-Path' -ParameterFilter $splitPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should remove the parent directory from the destination' {
@@ -5983,12 +6339,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $removeArchiveFromDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -6009,7 +6374,7 @@ Describe 'Archive Unit Tests' {
                         return $fileParameterCorrect -and $archiveEntryParameterCorrect -and $checksumParameterCorrect
                     }
                     
-                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -Exactly 1 -Scope 'Context'
+                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -ParameterFilter $testFileMatchesArchiveEntryByChecksumParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to remove an existing file at the desired path of the archive entry at the destination' {
@@ -6081,12 +6446,21 @@ Describe 'Archive Unit Tests' {
                 It 'Should find the desired path of the archive entry at the destination' {
                     $joinPathParameterFilter = {
                         $pathParameterCorrect = $Path -eq $removeArchiveFromDestinationParameters.Destination
-                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullNameNoBackslash
+                        $childPathParameterCorrect = $ChildPath -eq $testArchiveEntryFullName
                         
                         return $pathParameterCorrect -and $childPathParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Join-Path' -ParameterFilter $joinPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should retrieve the item at the desired path of the archive entry at the destination' {
@@ -6107,7 +6481,7 @@ Describe 'Archive Unit Tests' {
                         return $fileParameterCorrect -and $archiveEntryParameterCorrect -and $checksumParameterCorrect
                     }
                     
-                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -Exactly 1 -Scope 'Context'
+                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -ParameterFilter $testFileMatchesArchiveEntryByChecksumParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should remove the file at the desired path of the archive entry at the destination' {
@@ -6121,12 +6495,21 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should attempt to find the parent directory of the desired path of the archive entry at the destination' {
                     $splitPathParameterFilter = {
-                        $pathParameterCorrect = $Path -eq $testArchiveEntryFullNameNoBackslash
+                        $pathParameterCorrect = $Path -eq $testArchiveEntryFullName
                         $parentParameterCorrect = $Parent -eq $true
                         return $pathParameterCorrect -and $parentParameterCorrect
                     }
                     
                     Assert-MockCalled -CommandName 'Split-Path' -ParameterFilter $splitPathParameterFilter -Exactly 1 -Scope 'Context'
+                }
+
+                It 'Should test if the archive entry is a directory' {
+                    $testArchiveEntryIsDirectoryParameterFilter = {
+                        $archiveEntryNameParameterCorrect = $ArchiveEntryName -eq $testArchiveEntryFullName
+                        return $archiveEntryNameParameterCorrect
+                    }
+
+                    Assert-MockCalled -CommandName 'Test-ArchiveEntryIsDirectory' -ParameterFilter $testArchiveEntryIsDirectoryParameterFilter  -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should remove the parent directory from the destination' {

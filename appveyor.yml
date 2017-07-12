@@ -2,7 +2,7 @@
 #      environment configuration  #
 #---------------------------------#
 version: 2.4.{build}.0
-os: Previous Visual Studio 2015
+os: Visual Studio 2015
 install:
     - git clone https://github.com/PowerShell/DscResource.Tests
     - ps: Import-Module -Name .\Tests\TestHelpers\WMF5Dot1Installation.psm1 -Force
@@ -11,7 +11,7 @@ install:
     - ps: Restart-Computer -Force
     - ps: Start-Sleep 5
     - ps: Write-Verbose -Message "Returned after restart with PSVersion $($PSVersionTable.PSVersion)" -Verbose
-    - ps: if ($PSVersionTable.PSVersion.Major -lt 5 -or $PSVersionTable.PSVersion.Minor -lt 1)
+    - ps: if ($PSVersionTable.PSVersion -lt [Version] '5.1')
         {
             throw 'WMF 5.1 install failed'
         }

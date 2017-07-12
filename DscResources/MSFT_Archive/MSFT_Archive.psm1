@@ -15,6 +15,13 @@ Import-Module -Name $script:commonResourceHelperFilePath
 # Localized messages for verbose and error statements in this resource
 $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_Archive'
 
+# Import Microsoft.PowerShell.Utility for Get-FileHash
+$fileHashCommand = Get-Command -Name 'Get-FileHash' -Module 'Microsoft.PowerShell.Utility' -ErrorAction 'SilentlyContinue'
+if ($null -eq $fileHashCommand)
+{
+    Import-Module -Name 'Microsoft.PowerShell.Utility' -Function 'Get-FileHash'
+}
+
 Add-Type -AssemblyName 'System.IO.Compression'
 
 # This resource has not yet been tested on a Nano server.
@@ -941,10 +948,6 @@ function Test-FileHashMatchesArchiveEntryHash
 
     .PARAMETER Checksum
         The checksum method to retrieve the timestamp for.
-
-    .NOTES
-        The returned date is normalized to the General (G) date format.
-        https://technet.microsoft.com/en-us/library/ee692801.aspx
 #>
 function Get-TimestampForChecksum
 {
@@ -967,11 +970,11 @@ function Get-TimestampForChecksum
 
     if ($Checksum -ieq 'CreatedDate')
     {
-        $relevantTimestamp = Get-Date -Date $File.CreationTime.DateTime -Format 'G'
+        $relevantTimestamp = $File.CreationTime.DateTime
     }
     elseif ($Checksum -ieq 'ModifiedDate')
     {
-        $relevantTimestamp = Get-Date -Date $File.LastWriteTime.DateTime -Format 'G'
+        $relevantTimestamp = $File.LastWriteTime.DateTime
     }
 
     return $relevantTimestamp
@@ -984,10 +987,6 @@ function Get-TimestampForChecksum
 
     .PARAMETER ArchiveEntry
         The archive entry to retrieve the last write time of.
-
-    .NOTES
-        The returned date is normalized to the General (G) date format.
-        https://technet.microsoft.com/en-us/library/ee692801.aspx
 #>
 function Get-ArchiveEntryLastWriteTime
 {
@@ -1001,7 +1000,7 @@ function Get-ArchiveEntryLastWriteTime
         $ArchiveEntry
     )
 
-    return (Get-Date -Date $ArchiveEntry.LastWriteTime.DateTime -Format 'G')
+    return $ArchiveEntry.LastWriteTime.DateTime
 }
 
 <#
@@ -1068,7 +1067,7 @@ function Test-FileMatchesArchiveEntryByChecksum
 
         $archiveEntryLastWriteTime = Get-ArchiveEntryLastWriteTime -ArchiveEntry $ArchiveEntry
 
-        if ($fileTimestampForChecksum.Equals($archiveEntryLastWriteTime))
+        if ([DateTime]$fileTimestampForChecksum -eq [DateTime]$archiveEntryLastWriteTime)
         {
             Write-Verbose -Message ($script:localizedData.FileMatchesArchiveEntryByChecksum -f $File.FullName, $archiveEntryFullName, $Checksum)
 
@@ -1081,6 +1080,28 @@ function Test-FileMatchesArchiveEntryByChecksum
     }
 
     return $fileMatchesArchiveEntry
+}
+
+<#
+    .SYNOPSIS
+        Tests if the given archive entry name represents a directory.
+
+    .PARAMETER ArchiveEntryName
+        The archive entry name to test.
+#>
+function Test-ArchiveEntryIsDirectory
+{
+    [OutputType([Boolean])]
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $ArchiveEntryName
+    )
+
+    return $ArchiveEntryName.EndsWith('\') -or $ArchiveEntryName.EndsWith('/')
 }
 
 <#
@@ -1150,7 +1171,7 @@ function Test-ArchiveExistsAtDestination
             {
                 Write-Verbose -Message ($script:localizedData.ItemWithArchiveEntryNameExists -f $archiveEntryPathAtDestination)
 
-                if ($archiveEntryFullName.EndsWith('\'))
+                if (Test-ArchiveEntryIsDirectory -ArchiveEntryName $archiveEntryFullName)
                 {
                     if (-not ($archiveEntryItemAtDestination -is [System.IO.DirectoryInfo]))
                     {
@@ -1261,7 +1282,7 @@ function Copy-ArchiveEntryToDestination
 
     $archiveEntryFullName = Get-ArchiveEntryFullName -ArchiveEntry $ArchiveEntry
 
-    if ($archiveEntryFullName.EndsWith('\'))
+    if (Test-ArchiveEntryIsDirectory -ArchiveEntryName $archiveEntryFullName)
     {
         $null = New-Item -Path $DestinationPath -ItemType 'Directory'
     }
@@ -1295,7 +1316,7 @@ function Copy-ArchiveEntryToDestination
             }
         }
 
-        $newArchiveFileInfo = New-Object -TypeName 'System.IO.FileInfo' -ArgumentList @( $DestinationPath )
+        $null = New-Object -TypeName 'System.IO.FileInfo' -ArgumentList @( $DestinationPath )
 
         $updatedTimestamp = Get-ArchiveEntryLastWriteTime -ArchiveEntry $ArchiveEntry
 
@@ -1361,7 +1382,7 @@ function Expand-ArchiveToDestination
             $archiveEntryFullName = Get-ArchiveEntryFullName -ArchiveEntry $archiveEntry
             $archiveEntryPathAtDestination = Join-Path -Path $Destination -ChildPath $archiveEntryFullName
 
-            $archiveEntryIsDirectory = $archiveEntryFullName.EndsWith('\')
+            $archiveEntryIsDirectory = Test-ArchiveEntryIsDirectory -ArchiveEntryName $archiveEntryFullName
 
             $archiveEntryItemAtDestination = Get-Item -LiteralPath $archiveEntryPathAtDestination -ErrorAction 'SilentlyContinue'
 
@@ -1533,7 +1554,7 @@ function Remove-ArchiveFromDestination
             $archiveEntryFullName = Get-ArchiveEntryFullName -ArchiveEntry $archiveEntry
             $archiveEntryPathAtDestination = Join-Path -Path $Destination -ChildPath $archiveEntryFullName
 
-            $archiveEntryIsDirectory = $archiveEntryFullName.EndsWith('\')
+            $archiveEntryIsDirectory = Test-ArchiveEntryIsDirectory -ArchiveEntryName $archiveEntryFullName
 
             $itemAtDestination = Get-Item -LiteralPath $archiveEntryPathAtDestination -ErrorAction 'SilentlyContinue'
 
