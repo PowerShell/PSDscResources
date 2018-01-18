@@ -269,7 +269,7 @@ None
 
 #### Examples
 
-* [Create a file with content through xScript](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Script.ps1)
+* [Create a file with content through Script](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Script.ps1)
 
 ### Service
 
