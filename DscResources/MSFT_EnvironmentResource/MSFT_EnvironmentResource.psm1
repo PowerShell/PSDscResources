@@ -1,3 +1,9 @@
+<#
+    .DESCRIPTION
+     Provides a mechanism to manage system environment variables.
+#>
+
+
 $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
@@ -19,6 +25,10 @@ $script:maxUserEnvVariableLength = 255
         Retrieves the state of the environment variable. If both Machine and Process Target are
         specified, only the machine value will be returned.
 
+    .DESCRIPTION
+        Provides a mechanism to manage system environment variables.
+
+
     .PARAMETER Name
         The name of the environment variable to retrieve.
 
@@ -33,11 +43,12 @@ function Get-TargetResource
     [OutputType([Hashtable])]
     param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="Indicates the name of the environment variable for which you want to ensure a specific state.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $Name,
         
+        [Parameter(HelpMessage="Indicates the target where the environment variable should be set.")]
         [ValidateSet('Process', 'Machine')]
         [ValidateNotNullOrEmpty()]
         [String[]]
@@ -117,22 +128,26 @@ function Set-TargetResource
     [CmdletBinding()]
     param
     (       
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The name of the environment variable for which you want to ensure a specific state.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $Name,
         
+        [Parameter( HelpMessage="The desired value for the environment variable.")]
         [ValidateNotNull()]
         [String]
         $Value = [String]::Empty,
         
+        [Parameter( HelpMessage="Specifies if the environment varaible should exist.")]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
         
+        [Parameter( HelpMessage="Indicates whether or not the environment variable is the Path variable.")]
         [Boolean]
         $Path = $false,
 
+        [Parameter( HelpMessage="Indicates the target where the environment variable should be set.")]
         [ValidateSet('Process', 'Machine')]
         [ValidateNotNullOrEmpty()]
         [String[]]

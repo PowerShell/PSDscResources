@@ -1,4 +1,10 @@
-﻿# Suppress Global Vars PSSA Error because $global:DSCMachineStatus must be allowed
+﻿<#
+    .DESCRIPTION
+     Installs or uninstalls the MSI file at the given path.
+#>
+
+
+# Suppress Global Vars PSSA Error because $global:DSCMachineStatus must be allowed
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
 param()
@@ -120,46 +126,56 @@ function Set-TargetResource
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The identifying number used to find the package, usually a GUID.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $ProductId,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The path to the MSI file to install or uninstall.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $Path,
 
+        [Parameter( HelpMessage="Specifies whether or not the MSI file should be installed or uninstalled.")]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter( HelpMessage="The arguments to be passed to the MSI package during installation or uninstallation.")]
         [String]
         $Arguments,
 
+        [Parameter( HelpMessage="The credential of a user account to be used to mount a UNC path if needed.")]
         [PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,
 
+        [Parameter( HelpMessage="The path to the log file to log the output from the MSI execution.")]
         [String]
         $LogPath,
 
+        [Parameter( HelpMessage="The expected hash value of the MSI file at the given path.")]
         [String]
         $FileHash,
 
+        [Parameter( HelpMessage="The algorithm used to generate the given hash value.")]
         [ValidateSet('SHA1', 'SHA256', 'SHA384', 'SHA512', 'MD5', 'RIPEMD160')]
         [String]
         $HashAlgorithm = 'SHA256',
 
+        [Parameter( HelpMessage="The subject that should match the signer certificate of the digital signature of the MSI file.")]
         [String]
         $SignerSubject,
 
+        [Parameter( HelpMessage="The certificate thumbprint that should match the signer certificate of the digital signature of the MSI file.")]
         [String]
         $SignerThumbprint,
 
+        [Parameter( HelpMessage="PowerShell code that should be used to validate SSL certificates for paths using HTTPS.")]
         [String]
         $ServerCertificateValidationCallback,
 
+        [Parameter( HelpMessage="The credential of a user account under which to run the installation or uninstallation of the MSI package.")]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.CredentialAttribute()]
         $RunAsCredential

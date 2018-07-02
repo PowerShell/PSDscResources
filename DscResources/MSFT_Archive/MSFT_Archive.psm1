@@ -1,4 +1,10 @@
-﻿$errorActionPreference = 'Stop'
+﻿<#
+.DESCRIPTION
+Provides a mechanism to unpack archive (.zip) files at a specific path.
+
+#>
+
+$errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
 <#
@@ -85,26 +91,26 @@ function Get-TargetResource
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The path to the archive file that should be expanded to or removed from the specified destination.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $Path,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The path where the specified archive file should be expanded to or removed from.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $Destination,
 
-        [Parameter()]
+        [Parameter( HelpMessage="Specifies whether or not the expanded content of the archive file at the specified path should exist at the specified destination. To update the specified destination to have the expanded content of the archive file at the specified path, specify this property as Present. To remove the expanded content of the archive file at the specified path from the specified destination, specify this property as Absent. The default value is Present.")]
         [Boolean]
         $Validate = $false,
 
-        [Parameter()]
+        [Parameter( HelpMessage="The Checksum method to use to validate whether or not a file at the destination with the same name as a file in the archive actually matches that corresponding file in the archive. An invalid argument exception will be thrown if Checksum is specified while Validate is specified as false. ModifiedDate will check that the LastWriteTime property of the file at the destination matches the LastWriteTime property of the file in the archive. CreatedDate will check that the CreationTime property of the file at the destination matches the CreationTime property of the file in the archive. SHA-1, SHA-256, and SHA-512 will check that the hash of the file at the destination by the specified SHA method matches the hash of the file in the archive by the specified SHA method. The default value is ModifiedDate.")]
         [ValidateSet('SHA-1', 'SHA-256', 'SHA-512', 'CreatedDate', 'ModifiedDate')]
         [String]
         $Checksum = 'ModifiedDate',
 
-        [Parameter()]
+        [Parameter( HelpMessage="The credential of a user account with permissions to access the specified archive path and destination if needed.")]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential
@@ -255,36 +261,36 @@ function Set-TargetResource
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The path to the archive file that should be expanded to or removed from the specified destination.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $Path,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The path where the specified archive file should be expanded to or removed from.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $Destination,
 
-        [Parameter()]
+        [Parameter(HelpMessage="Specifies whether or not the expanded content of the archive file at the specified path should exist at the specified destination. To update the specified destination to have the expanded content of the archive file at the specified path, specify this property as Present. To remove the expanded content of the archive file at the specified path from the specified destination, specify this property as Absent. The default value is Present.")]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
-        [Parameter()]
+        [Parameter(HelpMessage="Specifies whether or not to validate that a file at the destination with the same name as a file in the archive actually matches that corresponding file in the archive by the specified checksum method. If the file does not match and Ensure is specified as Present and Force is not specified, the resource will throw an error that the file at the desintation cannot be overwritten. If the file does not match and Ensure is specified as Present and Force is specified, the file at the desintation will be overwritten. If the file does not match and Ensure is specified as Absent, the file at the desintation will not be removed. The default value is false.")]        
         [Boolean]
         $Validate = $false,
 
-        [Parameter()]
+        [Parameter(HelpMessage="The Checksum method to use to validate whether or not a file at the destination with the same name as a file in the archive actually matches that corresponding file in the archive. An invalid argument exception will be thrown if Checksum is specified while Validate is specified as false. ModifiedDate will check that the LastWriteTime property of the file at the destination matches the LastWriteTime property of the file in the archive. CreatedDate will check that the CreationTime property of the file at the destination matches the CreationTime property of the file in the archive. SHA-1, SHA-256, and SHA-512 will check that the hash of the file at the destination by the specified SHA method matches the hash of the file in the archive by the specified SHA method. The default value is ModifiedDate.")]        
         [ValidateSet('SHA-1', 'SHA-256', 'SHA-512', 'CreatedDate', 'ModifiedDate')]
         [String]
         $Checksum = 'ModifiedDate',
 
-        [Parameter()]
+        [Parameter(HelpMessage="The credential of a user account with permissions to access the specified archive path and destination if needed.")]        
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,
 
-        [Parameter()]
+        [Parameter(HelpMessage="Specifies whether or not any existing files or directories at the destination with the same name as a file or directory in the archive should be overwritten to match the file or directory in the archive. When this property is false, an error will be thrown if an item at the destination needs to be overwritten. The default value is false.")]        
         [Boolean]
         $Force = $false
     )

@@ -1,4 +1,10 @@
-﻿$errorActionPreference = 'Stop'
+﻿<#
+    .DESCRIPTION
+    Installs or uninstalls a package from a windows cabinet (cab) file.
+
+#>
+
+$errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
 Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
@@ -115,21 +121,22 @@ function Set-TargetResource
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The name of the package to install or uninstall.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $Name,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="Specifies whether the package should be installed or uninstalled. To install the package, set this property to Present. To uninstall the package, set the property to Absent.")]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The path to the cab file to install or uninstall the package from.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $SourcePath,
 
+        [Parameter(HelpMessage="The path to a file to log the operation to.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $LogPath

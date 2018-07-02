@@ -1,3 +1,8 @@
+<#
+    .DESCRIPTION
+     Sets the Registry resource with the given Key to the specified state.
+#>
+
 $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
@@ -179,32 +184,37 @@ function Set-TargetResource
     [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The path of the registry key to add, modify, or remove. This path must include the registry hive/drive.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $Key,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The name of the registry value. To add or remove a registry key, specify this property as an empty string without specifying ValueType or ValueData. To modify or remove the default value of a registry key, specify this property as an empty string while also specifying ValueType or ValueData.")]
         [ValidateNotNull()]
         [String]
         [AllowEmptyString()]
         $ValueName,
 
+        [Parameter( HelpMessage="Specifies whether or not the registry key or value should exist. To add or modify a registry key or value, set this property to Present. To remove a registry key or value, set the property to Absent.")]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter( HelpMessage="The data the specified registry key value should have as a string or an array of strings (MultiString only).")]
         [ValidateNotNull()]
         [String[]]
         $ValueData = @(),
 
+        [Parameter( HelpMessage="The type the specified registry key value should have.")]
         [ValidateSet('String', 'Binary', 'DWord', 'QWord', 'MultiString', 'ExpandString')]
         [String]
         $ValueType = 'String',
 
+        [Parameter( HelpMessage="Specifies whether or not the specified DWord or QWord registry key data is provided in a hexadecimal format. Not valid for types other than DWord and QWord. The default value is false.")]
         [Boolean]
         $Hex = $false,
 
+        [Parameter( HelpMessage="Specifies whether or not to overwrite the specified registry key value if it already has a value or whether or not to delete a registry key that has subkeys. The default value is false.")]
         [Boolean]
         $Force = $false
     )

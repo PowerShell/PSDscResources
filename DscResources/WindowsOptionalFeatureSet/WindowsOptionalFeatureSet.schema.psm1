@@ -10,6 +10,9 @@ Import-Module -Name $script:resourceSetHelperFilePath
     .SYNOPSIS
         A composite DSC resource to configure a set of similar WindowsOptionalFeature resources.
 
+    .DESCRIPTION
+        A composite DSC resource to configure a set of similar WindowsOptionalFeature resources.
+
     .PARAMETER Name
         The names of the Windows optional features to enable or disable.
 
@@ -38,26 +41,33 @@ Configuration WindowsOptionalFeatureSet
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The names of the Windows optional features to enable or disable.")]
         [ValidateNotNullOrEmpty()]
         [String[]]
         $Name,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="Specifies whether the features should be enabled or disabled.
+
+        To enable a set of features, set this property to Present.
+        To disable a set of features, set this property to Absent.")]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure,
 
+        [Parameter(HelpMessage="Specifies whether or not to remove all files associated with the features when they are disabled.")]
         [Boolean]
         $RemoveFilesOnDisable,
 
+        [Parameter(HelpMessage="Specifies whether or not DISM should contact Windows Update (WU) when searching for the source files to restore Windows optional features on an online image.")]
         [Boolean]
         $NoWindowsUpdateCheck,
 
+        [Parameter(HelpMessage="The file path to which to log the opertation.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $LogPath,
 
+        [Parameter(HelpMessage="The level of detail to include in the log.")]
         [ValidateSet('ErrorsOnly', 'ErrorsAndWarning', 'ErrorsAndWarningAndInformation')]
         [String]
         $LogLevel

@@ -1,3 +1,9 @@
+<#
+    .DESCRIPTION
+    Installs or uninstalls the role or feature with the given name on the target machine with the option of installing or uninstalling all subfeatures as well.
+
+#>
+
 # Global needed to indicate if a restart is required
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 param ()
@@ -164,23 +170,27 @@ function Set-TargetResource
     [CmdletBinding()]
     param
     (
-       [Parameter(Mandatory = $true)]
+       [Parameter(Mandatory = $true, HelpMessage="The name of the role or feature to install or uninstall.")]
        [ValidateNotNullOrEmpty()]
        [String]
        $Name,
 
+       [Parameter(HelpMessage="Specifies whether the role or feature should be installed or uninstalled. To install the feature, set this property to Present. To uninstall the feature, set the property to Absent.")]
        [ValidateSet('Present', 'Absent')]
        [String]
        $Ensure = 'Present',
 
+       [Parameter(HelpMessage="Specifies whether the subfeatures of the main feature should also be installed.")]
        [Boolean]
        $IncludeAllSubFeature = $false,
 
+       [Parameter(HelpMessage="A credential, if needed, to install or uninstall the role or feature.")]
        [ValidateNotNullOrEmpty()]
        [System.Management.Automation.PSCredential]
        [System.Management.Automation.Credential()]
        $Credential,
 
+       [Parameter(HelpMessage="The path to the log file to log this operation.")]
        [ValidateNotNullOrEmpty()]
        [String]
        $LogPath

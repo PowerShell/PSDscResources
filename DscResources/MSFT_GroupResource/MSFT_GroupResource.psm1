@@ -79,6 +79,10 @@ if (-not (Test-IsNanoServer))
     .SYNOPSIS
         Retrieves the current state of the group with the specified name.
 
+    .DESCRIPTION
+        Provides a mechanism to manage local groups on the target node. Use this resource when you want to add and/or remove the same list of members to more than one group, remove more than one group, or add more than one group with the same list of members.
+
+
     .PARAMETER GroupName
         The name of the group to retrieve the current state of.
 
@@ -91,11 +95,12 @@ function Get-TargetResource
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="The name of the group to create, modify, or remove.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $GroupName,
 
+        [Parameter(HelpMessage="A credential to resolve non-local group members.")]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential

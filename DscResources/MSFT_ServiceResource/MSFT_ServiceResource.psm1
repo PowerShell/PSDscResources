@@ -1,4 +1,10 @@
 <#
+    .DESCRIPTION
+    Creates, modifies, or deletes the service with the given name.
+
+#>
+
+<#
     Error codes and their meanings for Invoke-CimMethod on a Win32_Service can be found here:
     https://msdn.microsoft.com/en-us/library/aa384901(v=vs.85).aspx
 #>
@@ -177,52 +183,64 @@ function Set-TargetResource
     [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, HelpMessage="Indicates the service name. Note that sometimes this is different from the display name. You can get a list of the services and their current state with the Get-Service cmdlet.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $Name,
 
+        [Parameter(HelpMessage="Ensures that the service is present or absent. Defaults to Present.")]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter(HelpMessage="The path to the service executable file.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $Path,
 
+        [Parameter(HelpMessage="Indicates the startup type for the service.")]
         [ValidateSet('Automatic', 'Manual', 'Disabled')]
         [String]
         $StartupType,
 
+        [Parameter(HelpMessage="Indicates the sign-in account to use for the service.")]
         [ValidateSet('LocalSystem', 'LocalService', 'NetworkService')]
         [String]
         $BuiltInAccount,
 
+        [Parameter(HelpMessage="Indicates the state you want to ensure for the service. Defaults to Running.")]
         [ValidateSet('Running', 'Stopped', 'Ignore')]
         [String]
         $State = 'Running',
 
+        [Parameter(HelpMessage="The service can create or communicate with a window on the desktop. Must be false for services not running as LocalSystem. Defaults to False.")]
         [Boolean]
         $DesktopInteract = $false,
 
+        [Parameter(HelpMessage="The display name of the service.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $DisplayName,
 
+        [Parameter(HelpMessage="The description of the service.")]
         [ValidateNotNullOrEmpty()]
         [String]
         $Description,
 
+        [Parameter(HelpMessage="An array of strings indicating the names of the dependencies of the service.")]
         [String[]]
         [AllowEmptyCollection()]
         $Dependencies,
 
+        [Parameter(HelpMessage="The time to wait for the service to start in milliseconds. Defaults to 30000.")]
         [UInt32]
         $StartupTimeout = 30000,
 
+        [Parameter(HelpMessage="The time to wait for the service to stop in milliseconds. Defaults to 30000.")]
         [UInt32]
         $TerminateTimeout = 30000,
 
+        [Parameter(HelpMessage="The credential to run the service under.")]
         [ValidateNotNull()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
