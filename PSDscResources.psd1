@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.8.0.0'
+moduleVersion = '2.9.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -101,14 +101,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Archive:
-    * Added handling of directory archive entries that end with a foward slash
-    * Removed formatting of LastWriteTime timestamp and updated comparison of timestamps to handle dates in different formats
-* WindowsProcess:
-    * Fix unreliable tests
-* Updated Test-IsNanoServer to return false if Get-ComputerInfo fails
-* Registry:
-    * Fixed bug when using the full registry drive name (e.g. HKEY\_LOCAL\_MACHINE) and using a key name that includes a drive with forward slashes (e.g. C:/)
+        ReleaseNotes = '* Added Description and Parameter description for composite resources
 
 '
 
@@ -123,6 +116,7 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
 
 
 

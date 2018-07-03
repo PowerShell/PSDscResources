@@ -269,7 +269,7 @@ None
 
 #### Examples
 
-* [Create a file with content through xScript](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Script.ps1)
+* [Create a file with content through Script](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_Script.ps1)
 
 ### Service
 
@@ -576,6 +576,10 @@ The following parameters will be the same for each process in the set:
 ## Versions
 
 ### Unreleased
+
+### 2.9.0.0
+
+* Added Description and Parameter description for composite resources
 
 ### 2.8.0.0
 
