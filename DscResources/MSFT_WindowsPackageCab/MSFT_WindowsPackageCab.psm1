@@ -1,4 +1,4 @@
-﻿﻿$errorActionPreference = 'Stop'
+﻿$errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
 Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
