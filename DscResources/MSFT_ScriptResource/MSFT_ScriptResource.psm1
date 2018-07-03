@@ -1,9 +1,3 @@
-<#
-    .DESCRIPTION
-    Runs the given set script.
-
-#>
-
 $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
@@ -112,22 +106,22 @@ function Set-TargetResource
     [CmdletBinding()]
     param 
     (       
-        [Parameter(Mandatory = $true, HelpMessage="A string that can be used to create a PowerShell script block that retrieves the current state of the resource.")]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [String]
         $GetScript,
       
-        [Parameter(Mandatory = $true, HelpMessage="A string that can be used to create a PowerShell script block that sets the resource to the desired state.")]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [String]
         $SetScript,
 
-        [Parameter(Mandatory = $true, HelpMessage="A string that can be used to create a PowerShell script block that validates whether or not the resource is in the desired state.")]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [String]
         $TestScript,
 
-        [Parameter(HelpMessage="The credential of the user account to run the script under if needed.")]
+        [Parameter()]
         [ValidateNotNull()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]

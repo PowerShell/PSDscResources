@@ -1,9 +1,3 @@
-<#
-    .DESCRIPTION
-    Creates, modifies, or deletes a user.
-
-#>
-
 # User name and password needed for this resource and Write-Verbose Used in helper functions
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingUserNameAndPassWordParams', '')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSDSCUseVerboseMessageInDSCResource', '')]

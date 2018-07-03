@@ -1,9 +1,3 @@
-<#
-    .DESCRIPTION
-    Sets the Windows process with the specified executable path and arguments to the specified state. If multiple process are found, the specified state will be set for all of them.
-
-#>
-
 $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
@@ -155,40 +149,34 @@ function Set-TargetResource
     [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
-        [Parameter(Mandatory = $true, HelpMessage="The full path or file name to the process executable to start or stop.")]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [String]
         $Path,
 
-        [Parameter(Mandatory = $true, HelpMessage="A string of arguments to pass to the process executable. Pass in an empty string if no arguments are needed.")]
+        [Parameter(Mandatory = $true)]
         [AllowEmptyString()]
         [String]
         $Arguments,
 
-        [Parameter(HelpMessage="The credential to run the process under.")]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,
 
-        [Parameter(HelpMessage="Indicates whether the process is present (running) or absent (not running).")]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
-        [Parameter(HelpMessage="The path to write the standard output stream to.")]
         [String]
         $StandardOutputPath,
 
-        [Parameter(HelpMessage="The path to write the standard error stream to.")]
         [String]
         $StandardErrorPath,
 
-        [Parameter(HelpMessage="The path to receive standard input from.")]
         [String]
         $StandardInputPath,
 
-        [Parameter(HelpMessage="The directory to run the processes under.")]
         [String]
         $WorkingDirectory
     )

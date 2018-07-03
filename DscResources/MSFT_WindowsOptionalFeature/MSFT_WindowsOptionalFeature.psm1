@@ -1,9 +1,3 @@
-<#
-    .DESCRIPTION
-    Enables or disables a Windows optional feature
-
-#>
-
 # PSSA global rule suppression is allowed here because $global:DSCMachineStatus must be set
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 param ()
@@ -111,28 +105,23 @@ function Set-TargetResource
     [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
-        [Parameter(Mandatory = $true, HelpMessage="The name of the feature to enable or disable.")]
+        [Parameter(Mandatory = $true)]
         [String]
         $Name,
 
-        [Parameter(HelpMessage="Specifies whether the feature should be enabled or disabled. To enable the feature, set this property to Present. To disable the feature, set the property to Absent.")]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
-        [Parameter(HelpMessage="Specifies that all files associated with the feature should be removed if the feature is being disabled.")]
         [Boolean]
         $RemoveFilesOnDisable,
 
-        [Parameter(HelpMessage="Specifies whether or not DISM contacts Windows Update (WU) when searching for the source files to enable the feature. If true, DISM will not contact WU.")]
         [Boolean]
         $NoWindowsUpdateCheck,
 
-        [Parameter(HelpMessage="The path to the log file to log this operation.")]
         [String]
         $LogPath,
 
-        [Parameter(HelpMessage="The maximum output level to show in the log. Accepted values are: ErrorsOnly (only errors are logged), ErrorsAndWarning (errors and warnings are logged), and ErrorsAndWarningAndInformation (errors, warnings, and debug information are logged).")]
         [ValidateSet('ErrorsOnly', 'ErrorsAndWarning', 'ErrorsAndWarningAndInformation')]
         [String]
         $LogLevel = 'ErrorsAndWarningAndInformation'
