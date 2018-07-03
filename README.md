@@ -577,6 +577,8 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* Added Description and Parameter description for composite resources
+
 ### 2.8.0.0
 
 * Archive:
