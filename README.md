@@ -577,6 +577,9 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* WindowsPackageCab
+    * Made the LogPath parameter optional as it is supposed to be.
+
 ### 2.9.0.0
 
 * Added Description and Parameter description for composite resources
