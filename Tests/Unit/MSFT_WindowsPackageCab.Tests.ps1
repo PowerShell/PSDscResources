@@ -104,6 +104,14 @@ try
                     Set-TargetResource -Name $script:testPackageName -SourcePath $script:testSourcePath -Ensure 'Absent' -LogPath $script:testLogPath
                     Assert-MockCalled -CommandName 'Dism\Remove-WindowsPackage' -ParameterFilter { $LogPath -eq $script:testLogPath }
                 }
+                It 'Should not throw when a log path is not specified to Remove-WindowsPackage' {
+                    Set-TargetResource -Name $script:testPackageName -SourcePath $script:testSourcePath -Ensure 'Absent'
+                    Assert-MockCalled -CommandName 'Dism\Remove-WindowsPackage'  -ParameterFilter { $null -eq $LogPath }
+                }
+                It 'Should not throw when a log path is not specified to Add-WindowsPackage' {
+                    Set-TargetResource -Name $script:testPackageName -SourcePath $script:testSourcePath -Ensure 'Present'
+                    Assert-MockCalled -CommandName 'Dism\Add-WindowsPackage' -ParameterFilter { $null -eq $LogPath }
+                }
             }
 
             Context 'Test-TargetResource' {
