@@ -57,6 +57,7 @@ function Get-TargetResource
         Name = $Name
         Ensure = 'Present'
         SourcePath = $SourcePath
+        LogPath = $LogPath
     }
 
     $getWindowsPackageParams = @{
@@ -75,6 +76,7 @@ function Get-TargetResource
     try
     {
         $windowsPackageInfo = Dism\Get-WindowsPackage @getWindowsPackageParams
+        $windowsPackageCab['LogPath'] = $windowsPackageInfo.LogPath
     }
     catch
     {
