@@ -71,7 +71,8 @@ try
                     Assert-MockCalled -CommandName 'Dism\Get-WindowsPackage' -ParameterFilter { $LogPath -eq $script:testLogPath }
                 }
                 It 'Should return an empty log path when it was not specified' {
-                    (Get-TargetResource -Name $script:testPackageName @getTargetResourceCommonParams)['LogPath'] -eq [string]::Empty| Should be $true
+                    $getTargetResourceResult = Get-TargetResource -Name $script:testPackageName @getTargetResourceCommonParams
+                    $getTargetResourceResult.LogPath | Should be [string]::Empty
                 }
             }
 
@@ -87,12 +88,12 @@ try
 
                 It 'Should call Add-WindowsPackage when Ensure is Present' {
                     Set-TargetResource -Name $script:testPackageName -SourcePath $script:testSourcePath -Ensure 'Present'
-                    Assert-MockCalled -CommandName 'Dism\Add-WindowsPackage'
+                    Assert-MockCalled -CommandName 'Dism\Add-WindowsPackage' -ParameterFilter { $null -eq $LogPath }
                 }
 
                 It 'Should call Remove-WindowsPackage when Ensure is Absent' {
                     Set-TargetResource -Name $script:testPackageName -SourcePath $script:testSourcePath -Ensure 'Absent'
-                    Assert-MockCalled -CommandName 'Dism\Remove-WindowsPackage'
+                    Assert-MockCalled -CommandName 'Dism\Remove-WindowsPackage' -ParameterFilter { $null -eq $LogPath }
                 }
 
                 It 'Should pass specified log path to Add-WindowsPackage' {
@@ -103,14 +104,6 @@ try
                 It 'Should pass specified log path to Remove-WindowsPackage' {
                     Set-TargetResource -Name $script:testPackageName -SourcePath $script:testSourcePath -Ensure 'Absent' -LogPath $script:testLogPath
                     Assert-MockCalled -CommandName 'Dism\Remove-WindowsPackage' -ParameterFilter { $LogPath -eq $script:testLogPath }
-                }
-                It 'Should not throw when a log path is not specified to Remove-WindowsPackage' {
-                    Set-TargetResource -Name $script:testPackageName -SourcePath $script:testSourcePath -Ensure 'Absent'
-                    Assert-MockCalled -CommandName 'Dism\Remove-WindowsPackage'  -ParameterFilter { $null -eq $LogPath }
-                }
-                It 'Should not throw when a log path is not specified to Add-WindowsPackage' {
-                    Set-TargetResource -Name $script:testPackageName -SourcePath $script:testSourcePath -Ensure 'Present'
-                    Assert-MockCalled -CommandName 'Dism\Add-WindowsPackage' -ParameterFilter { $null -eq $LogPath }
                 }
             }
 
