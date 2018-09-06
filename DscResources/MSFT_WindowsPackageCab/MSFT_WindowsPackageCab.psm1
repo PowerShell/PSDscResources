@@ -68,7 +68,6 @@ function Get-TargetResource
     if ($PSBoundParameters.ContainsKey('LogPath'))
     {
         $getWindowsPackageParams['LogPath'] = $LogPath
-        $windowsPackageCab['LogPath'] = $LogPath
     }
 
     Write-Verbose -Message ($script:localizedData.RetrievingPackage -f $Name)
