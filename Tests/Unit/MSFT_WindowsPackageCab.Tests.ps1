@@ -72,7 +72,7 @@ try
                 }
                 It 'Should return an empty log path when it was not specified' {
                     $getTargetResourceResult = Get-TargetResource -Name $script:testPackageName @getTargetResourceCommonParams
-                    $getTargetResourceResult.LogPath | Should be [string]::Empty
+                    $getTargetResourceResult.LogPath | Should be ''
                 }
             }
 
