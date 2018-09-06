@@ -4,9 +4,10 @@
 
     Please prefix the PR title with the resource name,
     e.g. 'ResourceName: My short description'.
-    If this is a breaking change, then also prefix the PR title
-    with 'BREAKING CHANGE:',
-    e.g. 'BREAKING CHANGE: ResourceName: My short description'.
+
+    Note: Breaking changes are not allowed in PSDScResources. If your
+          pull request contain breaking changes, then please update the
+          resource module xPSDesiredStateConfiguration instead.
 
     You may remove this comment block, and the other comment blocks, but please
     keep the headers and the task list.
