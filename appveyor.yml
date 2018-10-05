@@ -1,7 +1,7 @@
 #---------------------------------#
 #      environment configuration  #
 #---------------------------------#
-version: 2.4.{build}.0
+version: 2.9.{build}.0
 os: Visual Studio 2015
 install:
     - git clone https://github.com/PowerShell/DscResource.Tests

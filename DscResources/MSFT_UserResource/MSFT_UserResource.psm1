@@ -1390,17 +1390,42 @@ function Test-UserPasswordOnFullSku
         $Password
     )
 
-    $principalContext = New-Object `
-                -TypeName 'System.DirectoryServices.AccountManagement.PrincipalContext' `
-                -ArgumentList @( [System.DirectoryServices.AccountManagement.ContextType]::Machine )
-    try
-    {
-        $credentailsValid = $principalContext.ValidateCredentials($UserName, $Password.GetNetworkCredential().Password)
-        return $credentailsValid
-    }
-    finally
-    {
-        $principalContext.Dispose()
+    $logonUserSignature =
+@'
+[DllImport( "advapi32.dll" )]
+public static extern bool LogonUser( String lpszUserName,
+                                        String lpszDomain,
+                                        String lpszPassword,
+                                        int dwLogonType,
+                                        int dwLogonProvider,
+                                        ref IntPtr phToken );
+'@
+    
+      $closeHandleSignature =
+@'
+[DllImport( "kernel32.dll", CharSet = CharSet.Auto )]
+public static extern bool CloseHandle( IntPtr handle );
+'@
+    
+    $AdvApi32 = Add-Type -MemberDefinition $logonUserSignature -Name "AdvApi32" -Namespace "PsInvoke.NativeMethods" -PassThru
+    $Kernel32 = Add-Type -MemberDefinition $closeHandleSignature -Name "Kernel32" -Namespace "PsInvoke.NativeMethods" -PassThru
+    [Reflection.Assembly]::LoadWithPartialName("System.Security") | Out-Null
+
+    $Logon32ProviderDefault = 0
+    $Logon32LogonInteractive = 2
+    $tokenHandle = [IntPtr]::Zero
+    $success = $false
+    $DomainName = $null
+
+    #Attempt a logon using this credential
+    $success = $AdvApi32::LogonUser($UserName, $DomainName, $Password.GetNetworkCredential().Password, $Logon32LogonInteractive, $Logon32ProviderDefault, [Ref] $tokenHandle)
+
+    if (-not $success)
+    {        
+        return $false
+    } else {     
+        $Kernel32::CloseHandle( $tokenHandle ) | Out-Null
+        return $True
     }
 }
 
