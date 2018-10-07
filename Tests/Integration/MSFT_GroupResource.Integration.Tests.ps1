@@ -29,7 +29,9 @@ try
             $script:confgurationNoMembersFilePath = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_GroupResource_NoMembers.config.ps1'
             $script:confgurationWithMembersFilePath = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_GroupResource_Members.config.ps1'
             $script:confgurationWithMembersToIncludeExcludeFilePath = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_GroupResource_MembersToIncludeExclude.config.ps1'
-                                                                            
+            $script:testAdministratorsGroupName = Get-LocalAdministratorsGroupName
+            $script:testLocalAdministrator = Get-LocalAdministratorName
+
             # Fake users for testing
             $testUsername1 = 'TestUser1'
             $testUsername2 = 'TestUser2'
@@ -80,7 +82,7 @@ try
 
             try
             {
-                { 
+                {
                     . $script:confgurationWithMembersFilePath -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @resourceParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -108,7 +110,7 @@ try
 
             Test-GroupExists -GroupName $testGroupName | Should Be $true
 
-            { 
+            {
                 . $script:confgurationNoMembersFilePath -ConfigurationName $configurationName
                 & $configurationName -OutputPath $TestDrive @resourceParameters
                 Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -129,7 +131,7 @@ try
 
             Test-GroupExists -GroupName $testGroupName | Should Be $true
 
-            { 
+            {
                 . $script:confgurationWithMembersToIncludeExcludeFilePath -ConfigurationName $configurationName
                 & $configurationName -OutputPath $TestDrive @resourceParameters
                 Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -154,7 +156,7 @@ try
 
             try
             {
-                { 
+                {
                     . $script:confgurationWithMembersFilePath -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @resourceParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -191,7 +193,7 @@ try
 
             try
             {
-                { 
+                {
                     . $script:confgurationWithMembersToIncludeExcludeFilePath -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @resourceParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -228,7 +230,7 @@ try
 
             try
             {
-                { 
+                {
                     . $script:confgurationWithMembersToIncludeExcludeFilePath -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @resourceParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -262,7 +264,7 @@ try
 
             try
             {
-                { 
+                {
                     . $script:confgurationWithMembersFilePath -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @resourceParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -277,6 +279,47 @@ try
                     Remove-Group -GroupName $testGroupName
                 }
             }
+        }
+
+        It 'Should not exclude the local Administrator account from the Administrators group via MembersToExclude' {
+            $configurationName = 'ExcludeAdminitratorFromAdministratorsGroup'
+            $testGroupName =  $script:testAdministratorsGroupName
+            $membersToExclude = @( $script:testLocalAdministrator )
+
+            Test-GroupExists -GroupName $testGroupName | Should Be $true
+
+            {
+                $resourceParameters = @{
+                    Ensure = 'Present'
+                    GroupName = $testGroupName
+                    MembersToExclude = $membersToExclude
+                }
+
+                . $script:confgurationWithMembersToIncludeExcludeFilePath -ConfigurationName $configurationName
+                & $configurationName -OutputPath $TestDrive @resourceParameters
+                Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+            } | Should Not Throw
+        }
+
+        It 'Should not remove the local Administrator account from the Administrators group using Members assignment' {
+            $configurationName = 'RemoveAdminitratorFromAdministratorsGroup'
+            $testGroupName =  $script:testAdministratorsGroupName
+            $members = @() # empty list
+
+            Test-GroupExists -GroupName $testGroupName | Should Be $true
+
+            {
+                $resourceParameters = @{
+                    Ensure = 'Present'
+                    GroupName = $testGroupName
+                    Members = $members
+                }
+
+                . $script:confgurationWithMembersFilePath -ConfigurationName $configurationName
+                & $configurationName -OutputPath $TestDrive @resourceParameters
+                Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+            } | Should Not Throw
+
         }
     }
 }

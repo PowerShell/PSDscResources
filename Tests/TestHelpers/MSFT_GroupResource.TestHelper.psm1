@@ -829,4 +829,78 @@ function Remove-UserOnNanoServer
     $null = Remove-LocalUser -Name $UserName
 }
 
-Export-ModuleMember -Function @( 'New-Group', 'Remove-Group', 'Test-GroupExists', 'New-User', 'Remove-User' )
+<#
+    .SYNOPSIS
+        Returns the account name of the local administrator account.
+
+    .NOTES
+        https://support.microsoft.com/en-us/help/157234/how-to-deal-with-localized-and-renamed-user-and-group-names
+#>
+function Get-LocalAdministratorName
+{
+    [CmdletBinding()]
+    param
+    ()
+
+    if (Test-IsNanoServer)
+    {
+        (Get-LocalUser | Where-Object SID -like "S-1-5-21-*-500").Name
+    }
+    else
+    {
+        $testPrincipalContext = New-Object -TypeName 'System.DirectoryServices.AccountManagement.PrincipalContext' -ArgumentList @( [System.DirectoryServices.AccountManagement.ContextType]::Machine )
+
+        $searcher = New-Object System.DirectoryServices.AccountManagement.PrincipalSearcher
+        $userPrincipal = New-Object System.DirectoryServices.AccountManagement.UserPrincipal($testPrincipalContext)
+        try {
+            $searcher.QueryFilter = $userPrincipal
+            $testLocalAdministratorPrincipal = $Searcher.FindAll() | Where-Object SID -like "S-1-5-21-*-500"
+            if (-not $testLocalAdministratorPrincipal) {
+                throw "Unable to find local Administrator principal"
+            }
+            $testLocalAdministratorPrincipal.Name
+        } finally {
+            $userPrincipal.Dispose()
+            $searcher.Dispose()
+        }
+
+    }
+}
+
+<#
+    .SYNOPSIS
+        Returns the name of the local administrators group.
+
+    .NOTES
+        https://support.microsoft.com/en-us/help/157234/how-to-deal-with-localized-and-renamed-user-and-group-names
+#>
+function Get-LocalAdministratorsGroupName
+{
+    [CmdletBinding()]
+    param
+    ()
+
+
+    if (Test-IsNanoServer)
+    {
+        (Get-LocalGroup | Where-Object SID -eq 'S-1-5-32-544').Name
+    }
+    else
+    {
+        $testPrincipalContext = New-Object -TypeName 'System.DirectoryServices.AccountManagement.PrincipalContext' -ArgumentList @( [System.DirectoryServices.AccountManagement.ContextType]::Machine )
+
+        # https://support.microsoft.com/en-us/help/157234/how-to-deal-with-localized-and-renamed-user-and-group-names
+        $localAdministratorsGroup = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($testPrincipalContext, 'Sid', 'S-1-5-32-544')
+        if (-not $localAdministratorsGroup) {
+            throw "Unable to find local Administrators group"
+        }
+        try {
+            $localAdministratorsGroup.Name
+        } finally {
+            $localAdministratorsGroup.Dispose()
+        }
+    }
+}
+
+Export-ModuleMember -Function @( 'New-Group', 'Remove-Group', 'Test-GroupExists', 'New-User', 'Remove-User', 'Get-LocalAdministratorName', 'Get-LocalAdministratorsGroupName' )
+

@@ -127,7 +127,7 @@ function Get-TargetResource
 
         To ensure that the group does exist, set this property to present.
         To ensure that the group does not exist, set this property to Absent.
-        
+
         The default value is Present.
 
     .PARAMETER Description
@@ -138,10 +138,10 @@ function Get-TargetResource
 
         This property will replace all the current group members with the specified members.
 
-        Members should be specified as strings in the format of their domain qualified name 
+        Members should be specified as strings in the format of their domain qualified name
         (domain\username), their UPN (username@domainname), their distinguished name (CN=username,DC=...),
-        or their username (for local machine accounts).  
-        
+        or their username (for local machine accounts).
+
         Using either the MembersToExclude or MembersToInclude properties in the same configuration
         as this property will generate an error.
 
@@ -150,7 +150,7 @@ function Get-TargetResource
 
         This property will only add members to a group.
 
-        Members should be specified as strings in the format of their domain qualified name 
+        Members should be specified as strings in the format of their domain qualified name
         (domain\username), their UPN (username@domainname), their distinguished name (CN=username,DC=...),
         or their username (for local machine accounts).
 
@@ -161,7 +161,7 @@ function Get-TargetResource
 
         This property will only remove members from a group.
 
-        Members should be specified as strings in the format of their domain qualified name 
+        Members should be specified as strings in the format of their domain qualified name
         (domain\username), their UPN (username@domainname), their distinguished name (CN=username,DC=...),
         or their username (for local machine accounts).
 
@@ -244,10 +244,10 @@ function Set-TargetResource
 
     .PARAMETER Members
         The list of members the group should have.
-        
-        The value of this property is an array of strings of the formats domain qualified name 
+
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
-        a unqualified (username) for local machine accounts.  
+        a unqualified (username) for local machine accounts.
 
         If you set this property in a configuration, do not use either the MembersToExclude or
         MembersToInclude property. Doing so will generate an error.
@@ -255,9 +255,9 @@ function Set-TargetResource
     .PARAMETER MembersToInclude
         A list of members that should be in the group.
 
-        The value of this property is an array of strings of the formats domain qualified name 
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
-        a unqualified (username) for local machine accounts.  
+        a unqualified (username) for local machine accounts.
 
         If you set this property in a configuration, do not use the Members property.
         Doing so will generate an error.
@@ -265,7 +265,7 @@ function Set-TargetResource
     .PARAMETER MembersToExclude
         A list of members that should not be in the group.
 
-        The value of this property is an array of strings of the formats domain qualified name 
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
         a unqualified (username) for local machine accounts.
 
@@ -454,10 +454,10 @@ function Get-TargetResourceOnNanoServer
 
     .PARAMETER Ensure
         Indicates if the group should exist or not.
-        
+
         Set this property to Present to ensure that the group exists.
         Set this property to Absent to ensure that the group does not exist.
-        
+
         The default value is Present.
 
     .PARAMETER Description
@@ -465,31 +465,31 @@ function Get-TargetResourceOnNanoServer
 
     .PARAMETER Members
         Use this property to replace the current group membership with the specified members.
-        
-        The value of this property is an array of strings of the formats domain qualified name 
+
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
         an unqualified (username) for local machine accounts.
-        
-        If you set this property in a configuration, do not use either the MembersToExclude or 
+
+        If you set this property in a configuration, do not use either the MembersToExclude or
         MembersToInclude property. Doing so will generate an error.
 
     .PARAMETER MembersToInclude
         Use this property to add members to the existing membership of the group.
-        
-        The value of this property is an array of strings of the formats domain qualified name 
+
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
-        a unqualified (username) for local machine accounts. 
-        
+        a unqualified (username) for local machine accounts.
+
         If you set this property in a configuration, do not use the Members property.
         Doing so will generate an error.
 
     .PARAMETER MembersToExclude
         Use this property to remove members from the existing membership of the group.
-        
-        The value of this property is an array of strings of the formats domain qualified name 
+
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
-        a unqualified (username) for local machine accounts. 
-        
+        a unqualified (username) for local machine accounts.
+
         If you set this property in a configuration, do not use the Members property.
         Doing so will generate an error.
 
@@ -806,10 +806,10 @@ function Set-TargetResourceOnFullSKU
 
     .PARAMETER Ensure
         Indicates if the group should exist or not.
-        
+
         Set this property to Present to ensure that the group exists.
         Set this property to Absent to ensure that the group does not exist.
-        
+
         The default value is Present.
 
     .PARAMETER Description
@@ -817,31 +817,31 @@ function Set-TargetResourceOnFullSKU
 
     .PARAMETER Members
         Use this property to replace the current group membership with the specified members.
-        
-        The value of this property is an array of strings of the formats domain qualified name 
+
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
         a unqualified (username) for local machine accounts.
-        
-        If you set this property in a configuration, do not use either the MembersToExclude or 
+
+        If you set this property in a configuration, do not use either the MembersToExclude or
         MembersToInclude property. Doing so will generate an error.
 
     .PARAMETER MembersToInclude
         Use this property to add members to the existing membership of the group.
 
-        The value of this property is an array of strings of the formats domain qualified name 
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
         a unqualified (username) for local machine accounts.
-        
+
         If you set this property in a configuration, do not use the Members property.
         Doing so will generate an error.
 
     .PARAMETER MembersToExclude
         Use this property to remove members from the existing membership of the group.
 
-        The value of this property is an array of strings of the formats domain qualified name 
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
         a unqualified (username) for local machine accounts.
-        
+
         If you set this property in a configuration, do not use the Members property.
         Doing so will generate an error.
 
@@ -923,7 +923,7 @@ function Set-TargetResourceOnNanoServer
             }
 
             # Set the group properties.
-            if ($PSBoundParameters.ContainsKey('Description') -and 
+            if ($PSBoundParameters.ContainsKey('Description') -and
                 ((-not $groupOriginallyExists) -or ($Description -ne $group.Description)))
             {
                 Set-LocalGroup -Name $GroupName -Description $Description
@@ -950,7 +950,14 @@ function Set-TargetResourceOnNanoServer
                 {
                     if ($uniqueMembers -notcontains $groupMember)
                     {
-                        Remove-LocalGroupMember -Group $GroupName -Member $groupMember
+                        if (Test-AdministratorAndAdministratorsGroup -Group $group -MemberAsPrincipal $groupMember)
+                        {
+                            Write-Verbose ($script:localizedData.SkipLocalAdmin -f $groupMember, $group)
+                        }
+                        else
+                        {
+                            Remove-LocalGroupMember -Group $GroupName -Member $groupMember
+                        }
                     }
                 }
 
@@ -999,7 +1006,14 @@ function Set-TargetResourceOnNanoServer
                 {
                     if ($groupMembers -contains $excludedMember)
                     {
-                        Remove-LocalGroupMember -Group $GroupName -Member $excludedMember
+                        if (Test-AdministratorAndAdministratorsGroup -Group $group -MemberAsPrincipal $excludedMember)
+                        {
+                            Write-Verbose ($script:localizedData.SkipLocalAdmin -f $groupMember, $group)
+                        }
+                        else
+                        {
+                            Remove-LocalGroupMember -Group $GroupName -Member $excludedMember
+                        }
                     }
                 }
             }
@@ -1036,10 +1050,10 @@ function Set-TargetResourceOnNanoServer
 
     .PARAMETER Ensure
         Indicates if the group should exist or not.
-        
+
         Set this property to Present to ensure that the group exists.
         Set this property to Absent to ensure that the group does not exist.
-        
+
         The default value is Present.
 
     .PARAMETER Description
@@ -1048,8 +1062,8 @@ function Set-TargetResourceOnNanoServer
     .PARAMETER Members
         Use this property to test if the existing membership of the group matches
         the list provided.
-        
-        The value of this property is an array of strings of the formats domain qualified name 
+
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
         a unqualified (username) for local machine accounts.
 
@@ -1058,9 +1072,9 @@ function Set-TargetResourceOnNanoServer
 
     .PARAMETER MembersToInclude
         Use this property to test if members need to be added to the existing membership
-        of the group. 
+        of the group.
 
-        The value of this property is an array of strings of the formats domain qualified name 
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
         a unqualified (username) for local machine accounts.
 
@@ -1071,7 +1085,7 @@ function Set-TargetResourceOnNanoServer
         Use this property to test if members need to removed from the existing membership
         of the group.
 
-        The value of this property is an array of strings of the formats domain qualified name 
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
         a unqualified (username) for local machine accounts.
 
@@ -1297,10 +1311,10 @@ function Test-TargetResourceOnFullSKU
 
     .PARAMETER Ensure
         Indicates if the group should exist or not.
-        
+
         Set this property to Present to ensure that the group exists.
         Set this property to Absent to ensure that the group does not exist.
-        
+
         The default value is Present.
 
     .PARAMETER Description
@@ -1310,7 +1324,7 @@ function Test-TargetResourceOnFullSKU
         Use this property to test if the existing membership of the group matches
         the list provided.
 
-        The value of this property is an array of strings of the formats domain qualified name 
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
         a unqualified (username) for local machine accounts.
 
@@ -1321,7 +1335,7 @@ function Test-TargetResourceOnFullSKU
         Use this property to test if members need to be added to the existing membership
         of the group.
 
-        The value of this property is an array of strings of the formats domain qualified name 
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
         a unqualified (username) for local machine accounts.
 
@@ -1332,7 +1346,7 @@ function Test-TargetResourceOnFullSKU
         Use this property to test if members need to removed from the existing membership
         of the group.
 
-        The value of this property is an array of strings of the formats domain qualified name 
+        The value of this property is an array of strings of the formats domain qualified name
         (domain\username), UPN (username@domainname), distinguished name (CN=username,DC=...) and/or
         a unqualified (username) for local machine accounts.
 
@@ -2117,7 +2131,7 @@ function Get-PrincipalContext
         }
 
         $principalContext = New-Object -TypeName 'System.DirectoryServices.AccountManagement.PrincipalContext' `
-            -ArgumentList @( [System.DirectoryServices.AccountManagement.ContextType]::Domain, $Scope, 
+            -ArgumentList @( [System.DirectoryServices.AccountManagement.ContextType]::Domain, $Scope,
                 $principalContextName, $Credential.GetNetworkCredential().Password )
 
         # Cache the PrincipalContext for this scope for subsequent calls.
@@ -2341,7 +2355,7 @@ function Find-Principal
     {
         return [System.DirectoryServices.AccountManagement.Principal]::FindByIdentity($PrincipalContext, $IdentityValue)
     }
-    
+
 }
 
 <#
@@ -2427,7 +2441,8 @@ function Get-GroupMembersFromDirectoryEntry
 #>
 function Clear-GroupMembers
 {
-    [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '')]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
         [Parameter(Mandatory = $true)]
@@ -2435,8 +2450,10 @@ function Clear-GroupMembers
         [System.DirectoryServices.AccountManagement.GroupPrincipal]
         $Group
     )
-    
-    $Group.Members.Clear()
+
+    @($Group.Members) | ForEach-Object {
+        Remove-GroupMember -Group $Group -MemberAsPrincipal $_
+    }
 }
 
 <#
@@ -2482,7 +2499,7 @@ function Add-GroupMember
 #>
 function Remove-GroupMember
 {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
         [Parameter(Mandatory = $true)]
@@ -2496,7 +2513,18 @@ function Remove-GroupMember
         $MemberAsPrincipal
     )
 
-    $Group.Members.Remove($MemberAsPrincipal)
+    if (Test-AdministratorAndAdministratorsGroup -Group $Group -MemberAsPrincipal $MemberAsPrincipal)
+    {
+        Write-Verbose ($script:localizedData.SkipLocalAdmin -f $MemberAsPrincipal, $Group)
+    }
+    else
+    {
+        if ($PSCmdlet.ShouldProcess(($script:localizedData.PrincipalInGroup -f $MemberAsPrincipal.Name, $Group.Name), $script:localizedData.RemoveOperation))
+        {
+            Write-Verbose ($script:localizedData.RemovePrincipalFromGroup -f $MemberAsPrincipal.Name, $Group.Name)
+            $Group.Members.Remove($MemberAsPrincipal)
+        }
+    }
 }
 
 <#
@@ -2509,6 +2537,7 @@ function Remove-GroupMember
 #>
 function Remove-Group
 {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
     [CmdletBinding()]
     param
     (
@@ -2517,7 +2546,7 @@ function Remove-Group
         [System.DirectoryServices.AccountManagement.GroupPrincipal]
         $Group
     )
-    
+
     $Group.Delete()
 }
 
@@ -2552,6 +2581,7 @@ function Save-Group
 #>
 function Remove-DisposableObject
 {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
     [CmdletBinding()]
     param
     (
@@ -2569,4 +2599,36 @@ function Remove-DisposableObject
             $disposable.Dispose()
         }
     }
+}
+
+<#
+    .SYNOPSIS
+        Tests if the given principal is the local administrator account and if the group is the group of local administrators.
+        The functions returns true if both conditions are true. Otherwise false
+
+    .PARAMETER Group
+        The group to test
+
+    .PARAMETER MemberAsPrincipal
+        The principal to test
+#>
+
+function Test-AdministratorAndAdministratorsGroup
+{
+    [OutputType([bool])]
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNull()]
+        [System.DirectoryServices.AccountManagement.GroupPrincipal]
+        $Group,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNull()]
+        [System.DirectoryServices.AccountManagement.Principal]
+        $MemberAsPrincipal
+    )
+
+    $Group.Sid -eq "S-1-5-32-544" -and $MemberAsPrincipal.Sid -like "S-1-5-21-*-500"
 }

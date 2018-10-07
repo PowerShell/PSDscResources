@@ -33,4 +33,7 @@ ConvertFrom-StringData @'
     SetTargetResourceEndMessage = End executing Set functionality on the group {0}.
     MembersToIncludeEmpty = MembersToInclude is empty. No group member additions are needed.
     MembersToExcludeEmpty = MembersToExclude is empty. No group member removals are needed.
+    SkipLocalAdmin = Skipping local admin account {0} for administrators group {1}.
+    RemovePrincipalFromGroup = Removing principal {0} from group {1}.
+    PrincipalInGroup = Principal: {0}, Group {1}
 '@
