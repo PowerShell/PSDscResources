@@ -597,9 +597,9 @@ The following parameters will be the same for each process in the set:
 * Fixed style guideline violations in `CommonResourceHelper.psm1`.
 * Updated 'appveyor.yml' to meet more recent standards.
 * Removed OS image version from 'appveyor.yml' to use default image
-  ([Issue #127](https://github.com/PowerShell/PSDscResources/issues/127).
+  ([Issue #127](https://github.com/PowerShell/PSDscResources/issues/127)).
 * Removed code to install WMF5.1 from 'appveyor.yml' because it is already
-  installed in AppVeyor images ([Issue #128](https://github.com/PowerShell/PSDscResources/issues/128).
+  installed in AppVeyor images ([Issue #128](https://github.com/PowerShell/PSDscResources/issues/128)).
 * Removed .vscode from .gitignore so that Visual Studio code environment
   settings can be committed.
 
