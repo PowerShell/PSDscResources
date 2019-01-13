@@ -577,8 +577,7 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
-* Update LICENSE file to match the Microsoft Open Source Team standard.
-    * Fixes [Issue #120](https://github.com/PowerShell/PSDscResources/issues/120)
+* Update LICENSE file to match the Microsoft Open Source Team standard - Fixes [Issue #120](https://github.com/PowerShell/PSDscResources/issues/120)
 
 ### 2.9.0.0
 
