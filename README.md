@@ -577,6 +577,8 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* Fixed URLs in the Examples sections in the WindowsPackage, WindowsProcess and ProcessSet resources.
+
 ### 2.9.0.0
 
 * Added Description and Parameter description for composite resources
