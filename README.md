@@ -583,8 +583,9 @@ The following parameters will be the same for each process in the set:
     * Update integration tests to meet Pester 4.0.0 standards.
     * Update end-to-end tests to meet Pester 4.0.0 standards.
     * Update unit and integration tests to meet Pester 4.0.0 standards.
-    * Wrapped all verbose message parameters with quotes to make identifying
-      actual paths possible.
+    * Wrapped all path and identifier strings in verbose messages with
+      quotes to make it easier to identify the limit of the string when
+      debugging.
     * Refactored date/time checksum code to improve testability and ensure
       tests can run on machines with localized datetime formats that are not
       US.

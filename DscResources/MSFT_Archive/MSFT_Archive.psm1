@@ -1042,7 +1042,7 @@ function Get-TimestampFromFile
         $Timestamp
     )
 
-    return $File.$Timestamp.DateTime
+    return $File.$Timestamp
 }
 
 <#
