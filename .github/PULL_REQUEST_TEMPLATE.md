@@ -6,8 +6,9 @@
     e.g. 'ResourceName: My short description'.
 
     Note: Breaking changes are not allowed in PSDScResources. If your
-          pull request contain breaking changes, then please update the
-          resource module xPSDesiredStateConfiguration instead.
+          pull request contains breaking changes, then please make this
+          change to the xPSDesiredStateConfiguration resource module
+          instead.
 
     You may remove this comment block, and the other comment blocks, but please
     keep the headers and the task list.
