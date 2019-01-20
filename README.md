@@ -577,6 +577,10 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* Update `CommonResourceHelper` unit tests to meet Pester 4.0.0
+  standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
+* Update `ResourceHelper` unit tests to meet Pester 4.0.0
+  standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
 * Ported fixes from [xPSDesiredStateConfiguration](https://github.com/PowerShell/xPSDesiredStateConfiguration):
   * xArchive
     * Fix end-to-end tests.
