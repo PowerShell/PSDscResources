@@ -577,6 +577,12 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* Update LICENSE file to match the Microsoft Open Source Team
+  standard - Fixes [Issue #120](https://github.com/PowerShell/PSDscResources/issues/120).
+* Update `CommonResourceHelper` unit tests to meet Pester 4.0.0
+  standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
+* Update `ResourceHelper` unit tests to meet Pester 4.0.0
+  standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
 * Ported fixes from [xPSDesiredStateConfiguration](https://github.com/PowerShell/xPSDesiredStateConfiguration):
   * xArchive
     * Fix end-to-end tests.
@@ -660,8 +666,8 @@ The following parameters will be the same for each process in the set:
 ### 2.2.0.0
 
 * WindowsFeature:
-  * Added Catch to ignore RuntimeException when importing ServerManager module. This solves the issue described [here](https://social.technet.microsoft.com/Forums/en-US/9fc314e1-27bf-4f03-ab78-5e0f7a662b8f/importmodule-servermanager-some-or-all-identity-references-could-not-be-translated?forum=winserverpowershell).
-  * Updated unit tests.
+    * Added Catch to ignore RuntimeException when importing ServerManager module. This solves the issue described [here](https://social.technet.microsoft.com/Forums/en-US/9fc314e1-27bf-4f03-ab78-5e0f7a662b8f/importmodule-servermanager-some-or-all-identity-references-could-not-be-translated?forum=winserverpowershell).
+    * Updated unit tests.
 * Added WindowsProcess
 * CommonTestHelper:
   * Added Get-AppVeyorAdministratorCredential.
