@@ -609,6 +609,8 @@ The following parameters will be the same for each process in the set:
   installed in AppVeyor images ([Issue #128](https://github.com/PowerShell/PSDscResources/issues/128)).
 * Removed .vscode from .gitignore so that Visual Studio code environment
   settings can be committed.
+* Environment
+  * Update unit tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
 
 ### 2.9.0.0
 
