@@ -31,7 +31,7 @@ Configuration $ConfigurationName
         [Parameter()]
         [ValidateSet('Process', 'Machine')]
         [System.String[]]
-        $Target = ('Process', 'Machine')
+        $Target = @('Process', 'Machine')
     )
 
     Import-DscResource -ModuleName 'PSDscResources'
