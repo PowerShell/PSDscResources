@@ -584,7 +584,7 @@ The following parameters will be the same for each process in the set:
 * Update `ResourceHelper` unit tests to meet Pester 4.0.0
   standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
 * Ported fixes from [xPSDesiredStateConfiguration](https://github.com/PowerShell/xPSDesiredStateConfiguration):
-  * xArchive
+  * xArchive:
     * Fix end-to-end tests.
     * Update integration tests to meet Pester 4.0.0 standards.
     * Update end-to-end tests to meet Pester 4.0.0 standards.
@@ -609,7 +609,11 @@ The following parameters will be the same for each process in the set:
   installed in AppVeyor images ([Issue #128](https://github.com/PowerShell/PSDscResources/issues/128)).
 * Removed .vscode from .gitignore so that Visual Studio code environment
   settings can be committed.
-* Environment
+* Environment:
+  * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
+* Group:
+  * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
+* GroupSet:
   * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
 
 ### 2.9.0.0
