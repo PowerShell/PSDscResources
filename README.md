@@ -584,7 +584,7 @@ The following parameters will be the same for each process in the set:
 * Update `ResourceHelper` unit tests to meet Pester 4.0.0
   standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
 * Ported fixes from [xPSDesiredStateConfiguration](https://github.com/PowerShell/xPSDesiredStateConfiguration):
-  * xArchive:
+  * xArchive
     * Fix end-to-end tests.
     * Update integration tests to meet Pester 4.0.0 standards.
     * Update end-to-end tests to meet Pester 4.0.0 standards.
@@ -609,11 +609,11 @@ The following parameters will be the same for each process in the set:
   installed in AppVeyor images ([Issue #128](https://github.com/PowerShell/PSDscResources/issues/128)).
 * Removed .vscode from .gitignore so that Visual Studio code environment
   settings can be committed.
-* Environment:
+* Environment
   * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
-* Group:
+* Group
   * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
-* GroupSet:
+* GroupSet
   * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
 
 ### 2.9.0.0
@@ -622,13 +622,13 @@ The following parameters will be the same for each process in the set:
 
 ### 2.8.0.0
 
-* Archive:
+* Archive
   * Added handling of directory archive entries that end with a foward slash
   * Removed formatting of LastWriteTime timestamp and updated comparison of timestamps to handle dates in different formats
-* WindowsProcess:
+* WindowsProcess
   * Fix unreliable tests
 * Updated Test-IsNanoServer to return false if Get-ComputerInfo fails
-* Registry:
+* Registry
   * Fixed bug when using the full registry drive name (e.g. HKEY\_LOCAL\_MACHINE) and using a key name that includes a drive with forward slashes (e.g. C:/)
 
 ### 2.7.0.0
@@ -639,7 +639,7 @@ The following parameters will be the same for each process in the set:
 
 ### 2.6.0.0
 
-* Archive:
+* Archive
   * Fixed a minor bug in the unit tests where sometimes the incorrect DateTime format was used.
 * Added MsiPackage
 
