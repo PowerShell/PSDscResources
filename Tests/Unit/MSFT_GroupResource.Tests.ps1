@@ -410,8 +410,8 @@ Describe 'GroupResource Unit Tests' {
                         }
                     }
 
-                    Context 'When Get-LocalGroup throws a GroupNotFound exception' {
-                        It 'Should throw an error' {
+                    Context 'When Get-LocalGroup throws an exception other than GroupNotFound' {
+                        It 'Should throw expected exception' {
                             Mock -CommandName 'Get-LocalGroup' -MockWith { Write-Error -Message $script:testErrorMessage -CategoryReason 'OtherException' }
 
                             { $getTargetResourceResult = Get-TargetResourceOnNanoServer -GroupName $script:testGroupName } | Should -Throw $script:testErrorMessage
@@ -421,7 +421,7 @@ Describe 'GroupResource Unit Tests' {
                     }
 
                     Context 'When Get-LocalGroup returns a valid, existing group without members' {
-                        It 'Should return correct hashtable values' {
+                        It 'Should return expected values and call expected mocks' {
                             $script:testLocalGroup.Description = $script:testGroupDescription
 
                             Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
@@ -441,7 +441,7 @@ Describe 'GroupResource Unit Tests' {
                     }
 
                     Context 'When Get-LocalGroup returns a valid, existing group with members' {
-                        It 'Should return correct hashtable values' {
+                        It 'Should return expected values and call expected mocks' {
                             $script:testLocalGroup.Description = $script:testGroupDescription
 
                             Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
@@ -471,14 +471,28 @@ Describe 'GroupResource Unit Tests' {
                     Mock -CommandName 'Add-LocalGroupMember' -MockWith { }
                     Mock -CommandName 'Remove-LocalGroupMember' -MockWith { }
 
-                    Context 'When called with Ensure is Absent' {
+                    function Assert-GroupMembersNotChangedOnNanoServer
+                    {
+                        [CmdletBinding()]
+                        param
+                        (
+                        )
+
+                        Assert-MockCalled -CommandName 'Set-LocalGroup' -Times 0 -Scope 'It'
+                        Assert-MockCalled -CommandName 'Add-LocalGroupMember' -Times 0 -Scope 'It'
+                        Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -Times 0 -Scope 'It'
+                    }
+
+                    Context 'When Ensure is absent and the group does not exist' {
                         It 'Should not attempt to remove an absent group' {
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Absent'
 
                             Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                             Assert-MockCalled -CommandName 'Remove-LocalGroup' -Times 0 -Scope 'It'
                         }
+                    }
 
+                    Context 'When Ensure is absent and the group exists' {
                         It 'Should remove an existing group' {
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Absent'
 
@@ -487,14 +501,16 @@ Describe 'GroupResource Unit Tests' {
                         }
                     }
 
-                    Context 'When called with Ensure is Present' {
+                    Context 'When Ensure is present and the group does not exist' {
                         It 'Should create an empty group' {
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Present'
 
                             Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                             Assert-MockCalled -CommandName 'New-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         }
+                    }
 
+                    Context 'When Ensure is present and the group does not exist and Description is passed' {
                         It 'Should create an empty group with a description' {
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Description $script:testGroupDescription -Ensure 'Present'
 
@@ -502,8 +518,10 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'New-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                             Assert-MockCalled -CommandName 'Set-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName -and $Description -eq $script:testGroupDescription }
                         }
+                    }
 
-                        It 'Should create a group with one local member using Members' {
+                    Context 'When Ensure is present and the group does not exist and Members is passed with one local member' {
+                        It 'Should create a group with one local member' {
                             $testMembers = @( $script:testMemberName1 )
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present'
@@ -513,8 +531,10 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName1 }
                         }
+                    }
 
-                        It 'Should create a group with two local members using Members' {
+                    Context 'When Ensure is present and the group does not exist and Members is passed with two local members' {
+                        It 'Should create a group with two local members' {
                             $testMembers = @( $script:testMemberName1, $script:testMemberName2 )
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present'
@@ -525,8 +545,10 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName1 }
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName2 }
                         }
+                    }
 
-                        It 'Should create a group with one local member using MembersToInclude' {
+                    Context 'When Ensure is present and the group does not exist and MembersToInclude is passed with one local member' {
+                        It 'Should create a group with one local member' {
                             $testMembers = @( $script:testMemberName1 )
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present'
@@ -536,7 +558,9 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName1 }
                         }
+                    }
 
+                    Context 'When Ensure is present and the group does not exist and MembersToInclude is passed with two local members' {
                         It 'Should create a group with two local members using MembersToInclude' {
                             $testMembers = @( $script:testMemberName1, $script:testMemberName2 )
 
@@ -548,17 +572,21 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName1 }
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName2 }
                         }
+                    }
 
-                        Mock -CommandName 'Get-LocalGroup' -MockWith { Write-Error -Message $script:testErrorMessage -CategoryReason 'OtherException' }
+                    Context 'When Get-LocalGroup throws an exception other than GroupNotFound' {
+                        It 'Should throw expected exception' {
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { Write-Error -Message $script:testErrorMessage -CategoryReason 'OtherException' }
 
-                        It 'Should throw from group retrieval if exception is not a GroupNotFoundException' {
                             { Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Present' } | Should -Throw $script:testErrorMessage
                         }
+                    }
 
-                        Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
-
-                        It 'Should add a member to an existing group with no members using Members' {
+                    Context 'When Ensure is present and the group exists with no members and Members is passed with one member' {
+                        It 'Should add a member to an existing group' {
                             $testMembers = @( $script:testMemberName1 )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present'
 
@@ -566,9 +594,13 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName1 }
                         }
+                    }
 
-                        It 'Should add two members to an existing group with one of the members using Members' {
+                    Context 'When Ensure is present and the group exists with one member missing from Members list passed' {
+                        It 'Should add a member to an existing group' {
                             $testMembers = @( $script:testMemberName1, $script:testMemberName2 )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present'
 
@@ -577,18 +609,13 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName1 }
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName2 }
                         }
+                    }
 
-                        It 'Should not modify group with no members if Members is empty' {
-                            $testMembers = @( )
-
-                            Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present'
-
-                            Assert-MockCalled -CommandName 'Add-LocalGroupMember' -Times 0 -Scope 'It'
-                            Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -Times 0 -Scope 'It'
-                        }
-
-                        It 'Should add a member to an existing group with no members using MembersToInclude' {
+                    Context 'When Ensure is present and the group exists with no members and MembersToInclude is passed with one member' {
+                        It 'Should add a member to an existing group' {
                             $testMembers = @( $script:testMemberName1 )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present'
 
@@ -596,9 +623,13 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName1 }
                         }
+                    }
 
-                        It 'Should add two members to an existing group with one of the members using MembersToInclude' {
+                    Context 'When Ensure is present and the group exists with two members missing from MembersToInclude list passed' {
+                        It 'Should add two members to an existing group' {
                             $testMembers = @( $script:testMemberName1, $script:testMemberName2 )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present'
 
@@ -607,11 +638,14 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName1 }
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName2 }
                         }
+                    }
 
-                        Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
-
-                        It 'Should remove a member from an existing group using Members' {
+                    Context 'When Ensure is present and the group exists with one member not in the Members list passed' {
+                        It 'Should remove a member from an existing group' {
                             $testMembers = @( $script:testMemberName1 )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present'
 
@@ -619,9 +653,14 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
                             Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName2 }
                         }
+                    }
 
-                        It 'Should clear group members from an existing group using Members' {
+                    Context 'When Ensure is present and the group exists with containing members and an empty Members list passed' {
+                        It 'Should clear all members from an existing group' {
                             $testMembers = @( )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present'
 
@@ -630,9 +669,14 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName1 }
                             Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName2 }
                         }
+                    }
 
-                        It 'Should remove a member from an existing group using MembersToExclude' {
+                    Context 'When Ensure is present and the group exists with a member contained in the MembersToExclude list passed' {
+                        It 'Should remove a member from an existing group' {
                             $testMembers = @( $script:testMemberName2 )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present'
 
@@ -640,9 +684,14 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
                             Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName2 }
                         }
+                    }
 
-                        It 'Should add a user and remove a user using Members' {
+                    Context 'When Ensure is present and the group exists with Members passed that require one member to be added and one removed' {
+                        It 'Should add a user and remove a user' {
                             $testMembers = @( $script:testMemberName1, $script:testMemberName3 )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present'
 
@@ -651,10 +700,15 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName3 }
                             Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName2 }
                         }
+                    }
 
-                        It 'Should add a user and remove a user using MembersToInclude and MembersToExclude at the same time' {
+                    Context 'When Ensure is present and the group exists with MembersToInclude and MembersToExclude passed that require one member to be added and one removed' {
+                        It 'Should add a user and remove a user' {
                             $testMembersToInclude = @( $script:testMemberName3 )
                             $testMembersToExclude = @( $script:testMemberName2 )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMemberstoInclude -MembersToExclude $testMemberstoExclude -Ensure 'Present'
 
@@ -663,94 +717,148 @@ Describe 'GroupResource Unit Tests' {
                             Assert-MockCalled -CommandName 'Add-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName3 }
                             Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName -and $Member.Name -eq $script:testMemberName2 }
                         }
+                    }
 
-                        It 'Should throw if Members and MembersToInclude are both specified' {
+                    Context 'When Members and MembersToInclude are both specified' {
+                        It 'Should throw expected exception' {
                             $testMembers = @( $script:testMemberName1, $script:testMemberName2 )
                             $testMembersToInclude = @( $script:testMemberName3 )
 
                             $errorMessage = $script:localizedData.MembersAndIncludeExcludeConflict -f 'Members', 'MembersToInclude'
 
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
+
                             { Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -MembersToInclude $testMembersToInclude -Ensure 'Present' } | Should -Throw $errorMessage
                         }
+                    }
 
-                        It 'Should throw if Members and MembersToExclude are both specified' {
+                    Context 'When Members and MembersToExclude are both specified' {
+                        It 'Should throw expected exception' {
                             $testMembers = @( $script:testMemberName1, $script:testMemberName2 )
                             $testMembersToExclude = @( $script:testMemberName3 )
 
                             $errorMessage = $script:localizedData.MembersAndIncludeExcludeConflict -f 'Members', 'MembersToExclude'
 
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
+
                             { Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw $errorMessage
                         }
+                    }
 
-                        It 'Should throw if MembersToInclude and MembersToExclude contain the same member' {
+                    Context 'When MembersToInclude and MembersToExclude both contain the same member' {
+                        It 'Should throw expected exception' {
                             $testMembersToInclude = @( $script:testMemberName1 )
                             $testMembersToExclude = @( $script:testMemberName1 )
 
                             $errorMessage = $script:localizedData.IncludeAndExcludeConflict -f $script:testMemberName1, 'MembersToInclude', 'MembersToExclude'
 
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
+
                             { Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembersToInclude -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw $errorMessage
                         }
+                    }
 
-                        It 'Should not modify group if member specified by MembersToInclude is already in group' {
+                    Context 'When Ensure is present and the group exists with members already containing all principals in the MembersToInclude' {
+                        It 'Should not modify the group' {
                             $testMembers = @( $script:testMemberName1 )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present'
 
-                            Assert-MockCalled -CommandName 'Add-LocalGroupMember' -Times 0 -Scope 'It'
-                            Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -Times 0 -Scope 'It'
+                            Assert-GroupMembersNotChangedOnNanoServer
                         }
+                    }
 
-                        It 'Should not modify group if member specified by MembersToExclude is not in group' {
+                    Context 'When Ensure is present and the group exists with members not containing any of the principals in the MembersToExclude' {
+                        It 'Should not modify the group' {
                             $testMembers = @( $script:testMemberName3 )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present'
 
-                            Assert-MockCalled -CommandName 'Add-LocalGroupMember' -Times 0 -Scope 'It'
-                            Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -Times 0 -Scope 'It'
+                            Assert-GroupMembersNotChangedOnNanoServer
                         }
+                    }
 
-                        It 'Should not modify group if members specified by Members match group members' {
+                    Context 'When Ensure is present and the group exists with members that match the Members' {
+                        It 'Should not modify the group' {
                             $testMembers = @( $script:testMemberName1, $script:testMemberName2 )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present'
 
-                            Assert-MockCalled -CommandName 'Add-LocalGroupMember' -Times 0 -Scope 'It'
-                            Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -Times 0 -Scope 'It'
+                            Assert-GroupMembersNotChangedOnNanoServer
                         }
+                    }
 
-                        It 'Should not modify group if MembersToInclude is empty' {
+                    Context 'When Ensure is present and the group exists with no members and the MembersToInclude is specified but Empty' {
+                        It 'Should not modify the group' {
                             $testMembers = @( )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present'
 
-                            Assert-MockCalled -CommandName 'Add-LocalGroupMember' -Times 0 -Scope 'It'
-                            Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -Times 0 -Scope 'It'
+                            Assert-GroupMembersNotChangedOnNanoServer
                         }
+                    }
 
-                        It 'Should not modify group if MembersToExclude is empty' {
+                    Context 'When Ensure is present and the group exists with no members and the MembersToExclude is specified but Empty' {
+                        It 'Should not modify the group' {
                             $testMembers = @( )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present'
 
-                            Assert-MockCalled -CommandName 'Add-LocalGroupMember' -Times 0 -Scope 'It'
-                            Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -Times 0 -Scope 'It'
+                            Assert-GroupMembersNotChangedOnNanoServer
                         }
+                    }
 
-                        It 'Should not modify group if both MembersToInclude and MembersToExclude are empty' {
+                    Context 'When Ensure is present and the group exists with no members and both MembersToInclude and MembersToExclude are empty' {
+                        It 'Should not modify the group' {
                             $testMembers = @( )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembers -MembersToExclude $testMembers -Ensure 'Present'
 
-                            Assert-MockCalled -CommandName 'Add-LocalGroupMember' -Times 0 -Scope 'It'
-                            Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -Times 0 -Scope 'It'
+                            Assert-GroupMembersNotChangedOnNanoServer
                         }
+                    }
 
-                        It 'Should not modify group if no changes were made' {
+                    Context 'When Ensure is present and the group exists with no members and empty Members passed' {
+                        It 'Should not modify the group' {
+                            $testMembers = @( )
+
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+
+                            Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present'
+
+                            Assert-GroupMembersNotChangedOnNanoServer
+                        }
+                    }
+
+                    Context 'When Ensure is present and the group exists and no changes are made to the group' {
+                        It 'Should not save group' {
+                            Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
+                            Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
+
                             Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Present'
 
-                            Assert-MockCalled -CommandName 'Set-LocalGroup' -Times 0 -Scope 'It'
-                            Assert-MockCalled -CommandName 'Add-LocalGroupMember' -Times 0 -Scope 'It'
-                            Assert-MockCalled -CommandName 'Remove-LocalGroupMember' -Times 0 -Scope 'It'
+                            Assert-GroupMembersNotChangedOnNanoServer
                         }
                     }
                 }
@@ -915,30 +1023,30 @@ Describe 'GroupResource Unit Tests' {
                 }
 
                 Describe 'GroupResource\Get-MembersOnNanoServer' {
-                    Context 'When called with a Group that has no members' {
-                        Mock -CommandName 'Get-LocalGroupMember' -MockWith { }
-
+                    Context 'When called with a group that does not have any members' {
                         It 'Should return nothing' {
+                            Mock -CommandName 'Get-LocalGroupMember' -MockWith { }
+
                             Get-MembersOnNanoServer -Group $script:testLocalGroup | Should -Be $null
 
                             Assert-MockCalled -CommandName 'Get-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName }
                         }
                     }
 
-                    Context 'When called with a Group that has local and domain members' {
-                        $testDomainUser1 = @{
-                            Name = 'TestDomainUser1'
-                            PrincipalSource = 'NotLocal'
-                        }
+                    Context 'When called with a group that has local and domain members' {
+                        It 'Should return all local members and no domain members' {
+                            $testDomainUser1 = @{
+                                Name = 'TestDomainUser1'
+                                PrincipalSource = 'NotLocal'
+                            }
 
-                        $testDomainUser2 = @{
-                            Name = 'TestDomainUser2'
-                            PrincipalSource = 'Local'
-                        }
+                            $testDomainUser2 = @{
+                                Name = 'TestDomainUser2'
+                                PrincipalSource = 'Local'
+                            }
 
-                        Mock -CommandName 'Get-LocalGroupMember' -MockWith { return @( $testDomainUser1, $testDomainUser2 ) }
+                            Mock -CommandName 'Get-LocalGroupMember' -MockWith { return @( $testDomainUser1, $testDomainUser2 ) }
 
-                        It 'Should return all local members and ignore domain members' {
                             Get-MembersOnNanoServer -Group $script:testLocalGroup | Should -Be @( $testDomainUser2.Name )
 
                             Assert-MockCalled -CommandName 'Get-LocalGroupMember' -ParameterFilter { $Group.Name -eq $script:testGroupName }
@@ -1014,7 +1122,7 @@ Describe 'GroupResource Unit Tests' {
                     }
                 }
 
-                Context 'GroupResource\Set-TargetResourceOnFullSKU' {
+                Describe 'GroupResource\Set-TargetResourceOnFullSKU' {
                     Mock -CommandName 'Get-Group' -MockWith { }
                     Mock -CommandName 'Get-MembersAsPrincipalsList' -MockWith { }
                     Mock -CommandName 'ConvertTo-UniquePrincipalsList' -MockWith {
@@ -1047,7 +1155,7 @@ Describe 'GroupResource Unit Tests' {
                     Mock -CommandName 'Get-PrincipalContext' -MockWith { return $script:testPrincipalContext }
                     Mock -CommandName 'Get-Group' -MockWith { }
 
-                    function Assert-GroupMembersNotChanged
+                    function Assert-GroupMembersNotChangedOnFullSKU
                     {
                         [CmdletBinding()]
                         param
@@ -1397,7 +1505,7 @@ Describe 'GroupResource Unit Tests' {
 
                             Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present'
 
-                            Assert-GroupMembersNotChanged
+                            Assert-GroupMembersNotChangedOnFullSKU
                         }
                     }
 
@@ -1410,7 +1518,7 @@ Describe 'GroupResource Unit Tests' {
 
                             Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present'
 
-                            Assert-GroupMembersNotChanged
+                            Assert-GroupMembersNotChangedOnFullSKU
                         }
                     }
 
@@ -1423,7 +1531,7 @@ Describe 'GroupResource Unit Tests' {
 
                             Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present'
 
-                            Assert-GroupMembersNotChanged
+                            Assert-GroupMembersNotChangedOnFullSKU
                         }
                     }
 
@@ -1435,7 +1543,7 @@ Describe 'GroupResource Unit Tests' {
 
                             Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present'
 
-                            Assert-GroupMembersNotChanged
+                            Assert-GroupMembersNotChangedOnFullSKU
                         }
                     }
 
@@ -1447,7 +1555,7 @@ Describe 'GroupResource Unit Tests' {
 
                             Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present'
 
-                            Assert-GroupMembersNotChanged
+                            Assert-GroupMembersNotChangedOnFullSKU
                         }
                     }
 
@@ -1459,7 +1567,7 @@ Describe 'GroupResource Unit Tests' {
 
                             Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToInclude $testMembers -MembersToExclude $testMembers -Ensure 'Present'
 
-                            Assert-GroupMembersNotChanged
+                            Assert-GroupMembersNotChangedOnFullSKU
                         }
                     }
 
@@ -1471,7 +1579,7 @@ Describe 'GroupResource Unit Tests' {
 
                             Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present'
 
-                            Assert-GroupMembersNotChanged
+                            Assert-GroupMembersNotChangedOnFullSKU
                         }
                     }
 
@@ -1814,14 +1922,14 @@ Describe 'GroupResource Unit Tests' {
                     }
                 }
 
-                Context 'GroupResource\Get-MembersOnFullSKU' {
+                Describe 'GroupResource\Get-MembersOnFullSKU' {
                     $principalContextCache = @{}
                     $disposables = New-Object -TypeName 'System.Collections.ArrayList'
 
                     Context 'When called with a group that does not have any members' {
-                        Mock -CommandName 'Get-MembersAsPrincipalsList' -MockWith { }
-
                         It 'Should return nothing' {
+                            Mock -CommandName 'Get-MembersAsPrincipalsList' -MockWith { }
+
                             Get-MembersOnFullSKU -Group $script:testGroup -PrincipalContextCache $principalContextCache -Disposables $disposables | Should -Be $null
 
                             Assert-MockCalled -CommandName 'Get-MembersAsPrincipalsList' -ParameterFilter { $Group.Name -eq $script:testGroupName }
@@ -1829,9 +1937,9 @@ Describe 'GroupResource Unit Tests' {
                     }
 
                     Context 'When called with a group that has only local memebers' {
-                        Mock -CommandName 'Get-MembersAsPrincipalsList' -MockWith { return @( $script:testUserPrincipal1, $script:testUserPrincipal2 ) }
-
                         It 'Should return principal names' {
+                            Mock -CommandName 'Get-MembersAsPrincipalsList' -MockWith { return @( $script:testUserPrincipal1, $script:testUserPrincipal2 ) }
+
                             Get-MembersOnFullSKU -Group $script:testGroup -PrincipalContextCache $principalContextCache -Disposables $disposables | Should -Be @( $script:testUserPrincipal1.Name, $script:testUserPrincipal2.Name )
 
                             Assert-MockCalled -CommandName 'Get-MembersAsPrincipalsList' -ParameterFilter { $Group.Name -eq $script:testGroupName }
