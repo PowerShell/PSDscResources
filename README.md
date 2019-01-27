@@ -613,6 +613,9 @@ The following parameters will be the same for each process in the set:
   * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
 * Group
   * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
+  * Fix unit tests to run on Nano Server.
+  * Refactored unit tests to enclude Context fixtures and change functions
+    to Describe fixtures.
 * GroupSet
   * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
 
