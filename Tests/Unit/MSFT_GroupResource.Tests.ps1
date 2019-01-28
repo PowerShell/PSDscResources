@@ -89,6 +89,10 @@ Describe 'GroupResource Unit Tests' {
         <#
             .SYNOPSIS
                 Reset a test group object prior to running each test.
+
+            .DESCRIPTION
+                Resets the test group prior to executing tests to ensure
+                it is in a known state.
         #>
         function Reset-TestGroup {
             [CmdletBinding()]
@@ -485,6 +489,14 @@ Describe 'GroupResource Unit Tests' {
             }
 
             Describe 'GroupResource\Set-TargetResourceOnNanoServer' {
+                <#
+                    .SYNOPSIS
+                        Assert that Group Members have not changed on Nano Server.
+
+                    .DESCRIPTION
+                        This helper asserts that none of the calls to update a group
+                        have been made.
+                #>
                 function Assert-GroupMembersNotChangedOnNanoServer
                 {
                     [CmdletBinding()]
@@ -1198,6 +1210,14 @@ Describe 'GroupResource Unit Tests' {
             }
 
             Describe 'GroupResource\Set-TargetResourceOnFullSKU' {
+                <#
+                    .SYNOPSIS
+                        Assert that Group Members have not changed on Full SKU.
+
+                    .DESCRIPTION
+                        This helper asserts that none of the calls to update a group
+                        have been made.
+                #>
                 function Assert-GroupMembersNotChangedOnFullSKU
                 {
                     [CmdletBinding()]
