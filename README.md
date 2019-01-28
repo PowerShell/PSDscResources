@@ -611,6 +611,13 @@ The following parameters will be the same for each process in the set:
   settings can be committed.
 * Environment
   * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
+* Group
+  * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
+  * Fix unit tests to run on Nano Server.
+  * Refactored unit tests to enclude Context fixtures and change functions
+    to Describe fixtures.
+* GroupSet
+  * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
 
 ### 2.9.0.0
 
@@ -618,13 +625,13 @@ The following parameters will be the same for each process in the set:
 
 ### 2.8.0.0
 
-* Archive:
+* Archive
   * Added handling of directory archive entries that end with a foward slash
   * Removed formatting of LastWriteTime timestamp and updated comparison of timestamps to handle dates in different formats
-* WindowsProcess:
+* WindowsProcess
   * Fix unreliable tests
 * Updated Test-IsNanoServer to return false if Get-ComputerInfo fails
-* Registry:
+* Registry
   * Fixed bug when using the full registry drive name (e.g. HKEY\_LOCAL\_MACHINE) and using a key name that includes a drive with forward slashes (e.g. C:/)
 
 ### 2.7.0.0
@@ -635,7 +642,7 @@ The following parameters will be the same for each process in the set:
 
 ### 2.6.0.0
 
-* Archive:
+* Archive
   * Fixed a minor bug in the unit tests where sometimes the incorrect DateTime format was used.
 * Added MsiPackage
 
