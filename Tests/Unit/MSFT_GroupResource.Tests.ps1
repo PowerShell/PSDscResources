@@ -234,7 +234,7 @@ Describe 'GroupResource Unit Tests' {
             }
         }
 
-        Describe 'GroupResource\Assert-GroupNameValid' {
+        Describe 'GroupResource\Assert-GroupNameValid' -Tag 'Helper' {
             Context 'When called with an invalid group name' {
                 $invalidCharacters = @( '\', '/', '"', '[', ']', ':', '|', '<', '>', '+', '=', ';', ',', '?', '*', '@' ) |
                     ForEach-Object { @{ InvalidCharacter = $_ } }
@@ -290,7 +290,7 @@ Describe 'GroupResource Unit Tests' {
             }
         }
 
-        Describe 'GroupResource\Test-IsLocalMachine' {
+        Describe 'GroupResource\Test-IsLocalMachine' -Tag 'Helper' {
             BeforeEach {
                 Mock -CommandName 'Get-CimInstance' -MockWith { }
             }
@@ -338,7 +338,7 @@ Describe 'GroupResource Unit Tests' {
             }
         }
 
-        Describe 'GroupResource\Split-MemberName' {
+        Describe 'GroupResource\Split-MemberName' -Tag 'Helper' {
             Context 'When called with the MemberName in the domain\username format with the local scope' {
                 It 'Should return the local scope and the username' {
                     Mock -CommandName 'Test-IsLocalMachine' -MockWith { return $true }
@@ -412,7 +412,7 @@ Describe 'GroupResource Unit Tests' {
 
         if ($script:onNanoServer)
         {
-            Describe 'GroupResource\Get-TargetResourceOnNanoServer' {
+            Describe 'GroupResource\Get-TargetResourceOnNanoServer' -Tag 'Helper' {
                 $testMembers = @('User1', 'User2')
 
                 BeforeEach {
@@ -488,7 +488,7 @@ Describe 'GroupResource Unit Tests' {
                 }
             }
 
-            Describe 'GroupResource\Set-TargetResourceOnNanoServer' {
+            Describe 'GroupResource\Set-TargetResourceOnNanoServer' -Tag 'Helper' {
                 <#
                     .SYNOPSIS
                         Assert that Group Members have not changed on Nano Server.
@@ -891,7 +891,7 @@ Describe 'GroupResource Unit Tests' {
                 }
             }
 
-            Describe 'GroupResource\Test-TargetResourceOnNanoServer' {
+            Describe 'GroupResource\Test-TargetResourceOnNanoServer' -Tag 'Helper' {
                 BeforeEach {
                     Reset-TestGroup
 
@@ -1103,7 +1103,7 @@ Describe 'GroupResource Unit Tests' {
                 }
             }
 
-            Describe 'GroupResource\Get-MembersOnNanoServer' {
+            Describe 'GroupResource\Get-MembersOnNanoServer' -Tag 'Helper' {
                 Context 'When called with a group that does not have any members' {
                     It 'Should return nothing' {
                         Mock -CommandName 'Get-LocalGroupMember' -MockWith { }
@@ -1139,7 +1139,7 @@ Describe 'GroupResource Unit Tests' {
         }
         else
         {
-            Describe 'GroupResource\Get-TargetResourceOnFullSKU' {
+            Describe 'GroupResource\Get-TargetResourceOnFullSKU' -Tag 'Helper' {
                 BeforeEach {
                     Reset-TestGroup
 
@@ -1209,7 +1209,7 @@ Describe 'GroupResource Unit Tests' {
                 }
             }
 
-            Describe 'GroupResource\Set-TargetResourceOnFullSKU' {
+            Describe 'GroupResource\Set-TargetResourceOnFullSKU' -Tag 'Helper' {
                 <#
                     .SYNOPSIS
                         Assert that Group Members have not changed on Full SKU.
@@ -1735,7 +1735,7 @@ Describe 'GroupResource Unit Tests' {
                 }
             }
 
-            Describe 'GroupResource\Test-TargetResourceOnFullSKU' {
+            Describe 'GroupResource\Test-TargetResourceOnFullSKU' -Tag 'Helper' {
                 BeforeEach {
                     Reset-TestGroup
 
@@ -2025,7 +2025,7 @@ Describe 'GroupResource Unit Tests' {
                 }
             }
 
-            Describe 'GroupResource\Get-MembersOnFullSKU' {
+            Describe 'GroupResource\Get-MembersOnFullSKU' -Tag 'Helper' {
                 BeforeEach {
                     $principalContextCache = @{}
                     $disposables = New-Object -TypeName 'System.Collections.ArrayList'
@@ -2090,7 +2090,7 @@ Describe 'GroupResource Unit Tests' {
                 }
             }
 
-            Describe 'GroupResource\Get-MembersAsPrincipalsList' {
+            Describe 'GroupResource\Get-MembersAsPrincipalsList' -Tag 'Helper' {
                 BeforeEach {
                     $principalContextCache = @{}
                     $disposables = New-Object -TypeName 'System.Collections.ArrayList'
@@ -2217,7 +2217,7 @@ Describe 'GroupResource Unit Tests' {
                 }
             }
 
-            Describe 'GroupResource\ConvertTo-UniquePrincipalsList' {
+            Describe 'GroupResource\ConvertTo-UniquePrincipalsList' -Tag 'Helper' {
                 BeforeEach {
                     $principalContextCache = @{}
                     $disposables = New-Object -TypeName 'System.Collections.ArrayList'
@@ -2281,7 +2281,7 @@ Describe 'GroupResource Unit Tests' {
                 }
             }
 
-            Describe 'GroupResource\ConvertTo-Principal' {
+            Describe 'GroupResource\ConvertTo-Principal' -Tag 'Helper' {
                 BeforeEach {
                     $principalContextCache = @{}
                     $disposables = New-Object -TypeName 'System.Collections.ArrayList'
@@ -2355,7 +2355,7 @@ Describe 'GroupResource Unit Tests' {
                 }
             }
 
-            Describe 'GroupResource\Resolve-SidToPrincipal' {
+            Describe 'GroupResource\Resolve-SidToPrincipal' -Tag 'Helper' {
                 BeforeEach {
                     $testSidValue = 'S-1-0-0'
                     $testSid = New-Object -TypeName 'System.Security.Principal.SecurityIdentifier' -ArgumentList @( $testSidValue )
