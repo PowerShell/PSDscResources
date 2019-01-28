@@ -2398,7 +2398,7 @@ Describe 'GroupResource Unit Tests' {
                 }
             }
 
-            Describe 'GroupResource\Get-PrincipalContext' {
+            Describe 'GroupResource\Get-PrincipalContext' -Tag 'Helper' {
                 BeforeEach {
                     $fakePrincipalContext = 'FakePrincipalContext'
                     $localMachineContext = [System.DirectoryServices.AccountManagement.ContextType]::Machine
