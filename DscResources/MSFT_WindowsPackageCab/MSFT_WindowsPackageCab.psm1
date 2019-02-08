@@ -151,7 +151,7 @@ function Set-TargetResource
     {
         $setTargetResourceParams['LogPath'] = $LogPath
     }
-        
+
     if ($Ensure -ieq 'Present')
     {
         Write-Verbose -Message ($script:localizedData.AddingPackage -f $SourcePath) 
