@@ -1,7 +1,7 @@
 ﻿param
 (
     [Parameter(Mandatory = $true)]
-    [String]
+    [System.String]
     $ConfigurationName
 )
 
@@ -11,18 +11,21 @@ Configuration $ConfigurationName
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String[]]
+        [System.String[]]
         $GroupName,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
-        [String[]]
+        [Parameter()]
+        [System.String[]]
         $MembersToInclude = @(),
 
-        [String[]]
+        [Parameter()]
+        [System.String[]]
         $MembersToExclude = @()
     )
 

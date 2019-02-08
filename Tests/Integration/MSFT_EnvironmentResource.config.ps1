@@ -1,7 +1,7 @@
 ﻿param
 (
     [Parameter(Mandatory = $true)]
-    [String]
+    [System.String]
     $ConfigurationName
 )
 
@@ -11,23 +11,27 @@ Configuration $ConfigurationName
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Name,
-        
+
+        [Parameter()]
         [ValidateNotNull()]
-        [String]
-        $Value = [String]::Empty,
-        
+        [System.String]
+        $Value = [System.String]::Empty,
+
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
-        
-        [Boolean]
+
+        [Parameter()]
+        [System.Boolean]
         $Path = $false,
 
+        [Parameter()]
         [ValidateSet('Process', 'Machine')]
-        [String[]]
-        $Target = ('Process', 'Machine')
+        [System.String[]]
+        $Target = @('Process', 'Machine')
     )
 
     Import-DscResource -ModuleName 'PSDscResources'
@@ -41,4 +45,3 @@ Configuration $ConfigurationName
         Target = $Target
     }
 }
-
