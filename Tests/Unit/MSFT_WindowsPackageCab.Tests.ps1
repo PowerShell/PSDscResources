@@ -70,6 +70,7 @@ try
                     $null = Get-TargetResource -Name $script:testPackageName -LogPath $script:testLogPath @getTargetResourceCommonParams
                     Assert-MockCalled -CommandName 'Dism\Get-WindowsPackage' -ParameterFilter { $LogPath -eq $script:testLogPath }
                 }
+
                 It 'Should return an empty log path when it was not specified' {
                     $getTargetResourceResult = Get-TargetResource -Name $script:testPackageName @getTargetResourceCommonParams
                     $getTargetResourceResult.LogPath | Should be ''
