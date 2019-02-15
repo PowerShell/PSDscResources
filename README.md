@@ -235,6 +235,7 @@ None
 * **[String] ValueType** _(Write)_: The type the specified registry key value should have. { *String* | Binary | DWord | QWord | MultiString | ExpandString }
 * **[Boolean] Hex** _(Write)_: Specifies whether or not the specified DWord or QWord registry key data is provided in a hexadecimal format. Not valid for types other than DWord and QWord. The default value is $false.
 * **[Boolean] Force** _(Write)_: Specifies whether or not to overwrite the specified registry key value if it already has a value or whether or not to delete a registry key that has subkeys. The default value is $false.
+* **[Boolean] Exclusive** _(Write)_: Specifies whether the specified value should be made to be the ONLY value in a Key (support for **delvals). The default value is $false.
 
 #### Read-Only Properties from Get-TargetResource
 
