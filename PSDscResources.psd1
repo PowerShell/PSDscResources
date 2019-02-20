@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-moduleVersion = '2.9.0.0'
+moduleVersion = '2.10.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -16,7 +16,7 @@ GUID = '7b750b98-bc2c-4059-80b9-f7228941a34f'
 Author = 'Microsoft Corporation'
 
 # Company or vendor of this module
-CompanyName = 'MicrosoftCorporation'
+CompanyName = 'Microsoft Corporation'
 
 # Copyright statement for this module
 Copyright = '(c) 2016 Microsoft Corporation. All rights reserved.'
@@ -101,7 +101,48 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Added Description and Parameter description for composite resources
+        ReleaseNotes = '* Fixed CompanyName typo - Fixes [Issue 100](https://github.com/PowerShell/PSDscResources/issues/100)
+* Update LICENSE file to match the Microsoft Open Source Team
+  standard - Fixes [Issue 120](https://github.com/PowerShell/PSDscResources/issues/120).
+* Update `CommonResourceHelper` unit tests to meet Pester 4.0.0
+  standards ([issue 129](https://github.com/PowerShell/PSDscResources/issues/129)).
+* Update `ResourceHelper` unit tests to meet Pester 4.0.0
+  standards ([issue 129](https://github.com/PowerShell/PSDscResources/issues/129)).
+* Ported fixes from [xPSDesiredStateConfiguration](https://github.com/PowerShell/xPSDesiredStateConfiguration):
+  * xArchive
+    * Fix end-to-end tests.
+    * Update integration tests to meet Pester 4.0.0 standards.
+    * Update end-to-end tests to meet Pester 4.0.0 standards.
+    * Update unit and integration tests to meet Pester 4.0.0 standards.
+    * Wrapped all path and identifier strings in verbose messages with
+      quotes to make it easier to identify the limit of the string when
+      debugging.
+    * Refactored date/time checksum code to improve testability and ensure
+      tests can run on machines with localized datetime formats that are not
+      US.
+    * Fix "Get-ArchiveEntryLastWriteTime" to return `[datetime]`.
+    * Improved verbose logging to make debugging path issues easier.
+* Added .gitattributes file to ensure CRLF settings are configured correctly
+  for the repository.
+* Updated ".vscode\settings.json" to refer to AnalyzerSettings.psd1 so that
+  custom syntax problems are highlighted in Visual Studio Code.
+* Fixed style guideline violations in `CommonResourceHelper.psm1`.
+* Updated "appveyor.yml" to meet more recent standards.
+* Removed OS image version from "appveyor.yml" to use default image
+  ([Issue 127](https://github.com/PowerShell/PSDscResources/issues/127)).
+* Removed code to install WMF5.1 from "appveyor.yml" because it is already
+  installed in AppVeyor images ([Issue 128](https://github.com/PowerShell/PSDscResources/issues/128)).
+* Removed .vscode from .gitignore so that Visual Studio code environment
+  settings can be committed.
+* Environment
+  * Update tests to meet Pester 4.0.0 standards ([issue 129](https://github.com/PowerShell/PSDscResources/issues/129)).
+* Group
+  * Update tests to meet Pester 4.0.0 standards ([issue 129](https://github.com/PowerShell/PSDscResources/issues/129)).
+  * Fix unit tests to run on Nano Server.
+  * Refactored unit tests to enclude Context fixtures and change functions
+    to Describe fixtures.
+* GroupSet
+  * Update tests to meet Pester 4.0.0 standards ([issue 129](https://github.com/PowerShell/PSDscResources/issues/129)).
 
 '
 
@@ -116,6 +157,7 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
 
 
 
