@@ -577,6 +577,8 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+### 2.10.0.0
+
 * Fixed CompanyName typo - Fixes [Issue #100](https://github.com/PowerShell/PSDscResources/issues/100)
 * Update LICENSE file to match the Microsoft Open Source Team
   standard - Fixes [Issue #120](https://github.com/PowerShell/PSDscResources/issues/120).
