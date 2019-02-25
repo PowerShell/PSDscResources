@@ -577,6 +577,9 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* WindowsPackageCab
+    * Changed LogPath parameter to be optional (issue [#109](https://github.com/PowerShell/PSDscResources/issues/109)).
+
 ### 2.10.0.0
 
 * Fixed CompanyName typo - Fixes [Issue #100](https://github.com/PowerShell/PSDscResources/issues/100)

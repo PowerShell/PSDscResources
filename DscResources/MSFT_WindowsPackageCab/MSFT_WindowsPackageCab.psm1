@@ -62,7 +62,7 @@ function Get-TargetResource
 
     $getWindowsPackageParams = @{
         PackageName = $Name
-        Online = $true
+        Online =  [switch]::Present
     }
 
     if ($PSBoundParameters.ContainsKey('LogPath'))
@@ -141,16 +141,26 @@ function Set-TargetResource
     {
         New-InvalidArgumentException -ArgumentName 'SourcePath' -Message ($script:localizedData.SourcePathDoesNotExist -f $SourcePath)
     }
-        
+
+    $setTargetResourceParams = @{
+        PackagePath = $SourcePath
+        Online = [switch]::Present
+    }
+
+    if ($PSBoundParameters.ContainsKey('LogPath'))
+    {
+        $setTargetResourceParams['LogPath'] = $LogPath
+    }
+
     if ($Ensure -ieq 'Present')
     {
         Write-Verbose -Message ($script:localizedData.AddingPackage -f $SourcePath) 
-        Dism\Add-WindowsPackage -PackagePath $SourcePath -LogPath $LogPath -Online
+        Dism\Add-WindowsPackage @setTargetResourceParams
     }
     else
     {
         Write-Verbose -Message ($script:localizedData.RemovingPackage  -f $SourcePath)
-        Dism\Remove-WindowsPackage -PackagePath $SourcePath -LogPath $LogPath -Online
+        Dism\Remove-WindowsPackage @setTargetResourceParams
     }
 
     Write-Verbose -Message ($script:localizedData.SetTargetResourceFinished -f $Name)
