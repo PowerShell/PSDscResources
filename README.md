@@ -579,6 +579,11 @@ The following parameters will be the same for each process in the set:
 
 * WindowsPackageCab
     * Changed LogPath parameter to be optional (issue [#109](https://github.com/PowerShell/PSDscResources/issues/109)).
+
+### 2.10.0.0
+
+* Fixed CompanyName typo - Fixes [Issue #100](https://github.com/PowerShell/PSDscResources/issues/100)
+
 * Update LICENSE file to match the Microsoft Open Source Team
   standard - Fixes [Issue #120](https://github.com/PowerShell/PSDscResources/issues/120).
 * Update `CommonResourceHelper` unit tests to meet Pester 4.0.0
