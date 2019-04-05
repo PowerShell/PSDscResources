@@ -1402,22 +1402,24 @@ public static extern bool LogonUser(String lpszUserName, String lpszDomain, Stri
 public static extern bool CloseHandle(IntPtr handle);
 '@
 
-    $advApi32 = Add-Type -MemberDefinition $logonUserSignature -Name "AdvApi32" -Namespace "PsInvoke.NativeMethods" -PassThru
-    $kernel32 = Add-Type -MemberDefinition $closeHandleSignature -Name "Kernel32" -Namespace "PsInvoke.NativeMethods" -PassThru
-    $null = [Reflection.Assembly]::LoadWithPartialName("System.Security")
-
-    #LOGON32_PROVIDER_DEFAULT, Use the standard logon provider for the system
-    #Constant = 0, reference WinSDK\WinBase.h
-    #For more details on advapi32.dll LogonUser parameter values
-    #  see - https://docs.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-logonusera
+    $advApi32 = Add-Type -MemberDefinition $logonUserSignature -Name 'AdvApi32' -Namespace 'PsInvoke.NativeMethods' -PassThru
+    $kernel32 = Add-Type -MemberDefinition $closeHandleSignature -Name 'Kernel32' -Namespace 'PsInvoke.NativeMethods' -PassThru
+    $null = [Reflection.Assembly]::LoadWithPartialName('System.Security')
+<#
+    LOGON32_PROVIDER_DEFAULT, Use the standard logon provider for the system
+    Constant = 0, reference WinSDK\WinBase.h
+    For more details on advapi32.dll LogonUser parameter values
+     see - https://docs.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-logonusera
+#>
     $logon32ProviderDefault = 0
-
-    #LOGON32_LOGON_INTERACTIVE, This logon type is intended for users who will
-    #  be interactively using the computer, such as a user being logged on by
-    #  a terminal server, remote shell, or similar process.
-    #Constant = 2, reference WinSDK\WinBase.h
-    #For more details on advapi32.dll LogonUser parameter values
-    #  see - https://docs.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-logonusera
+<#
+    LOGON32_LOGON_INTERACTIVE, This logon type is intended for users who will
+     be interactively using the computer, such as a user being logged on by
+     a terminal server, remote shell, or similar process.
+    Constant = 2, reference WinSDK\WinBase.h
+    For more details on advapi32.dll LogonUser parameter values
+     see - https://docs.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-logonusera
+#>
     $Logon32LogonInteractive = 2
 
     $tokenHandle = [IntPtr]::Zero

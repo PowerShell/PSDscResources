@@ -576,6 +576,8 @@ The following parameters will be the same for each process in the set:
 ## Versions
 
 ### Unreleased
+* User
+  * Fixed Test-TargetResource throws System.InvalidOperationException when defined user lacks login permissions - Fixes [Issue #116](https://github.com/PowerShell/PSDscResources/issues/116)
 
 ### 2.10.0.0
 
