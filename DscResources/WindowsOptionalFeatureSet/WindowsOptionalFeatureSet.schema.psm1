@@ -41,7 +41,7 @@ Configuration WindowsOptionalFeatureSet
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true, HelpMessage="The names of the Windows optional features to enable or disable.")]
+        [Parameter(Mandatory = $true, HelpMessage = "[Example: ('TelnetClient','NetFx3')] The names of the Windows optional features to enable or disable.")]
         [ValidateNotNullOrEmpty()]
         [String[]]
         $Name,
@@ -79,7 +79,7 @@ Configuration WindowsOptionalFeatureSet
         KeyParameterName = 'Name'
         Parameters = $PSBoundParameters
     }
-    
+
     $configurationScriptBlock = New-ResourceSetConfigurationScriptBlock @newResourceSetConfigurationParams
 
     # This script block must be run directly in this configuration in order to resolve variables

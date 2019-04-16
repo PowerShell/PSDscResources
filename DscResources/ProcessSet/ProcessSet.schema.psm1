@@ -51,7 +51,7 @@ Configuration ProcessSet
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true, HelpMessage="The file paths to the executables of the processes to start or stop. Only the names of the files may be specified if they are all accessible through the environment path. Relative paths are not supported.")]
+        [Parameter(Mandatory = $true, HelpMessage = "[Example: ('Group1','Group2')] The file paths to the executables of the processes to start or stop. Only the names of the files may be specified if they are all accessible through the environment path. Relative paths are not supported.")]
         [ValidateNotNullOrEmpty()]
         [String[]]
         $Path,
@@ -87,7 +87,7 @@ Configuration ProcessSet
         [String]
         $WorkingDirectory
     )
-    
+
     $newResourceSetConfigurationParams = @{
         ResourceName = 'WindowsProcess'
         ModuleName = 'PSDscResources'
@@ -97,7 +97,7 @@ Configuration ProcessSet
 
     # Arguments is a key parameter in WindowsProcess resource. Adding it as a common parameter with an empty value string
     $newResourceSetConfigurationParams['Parameters']['Arguments'] = ''
-    
+
     $configurationScriptBlock = New-ResourceSetConfigurationScriptBlock @newResourceSetConfigurationParams
 
     # This script block must be run directly in this configuration in order to resolve variables

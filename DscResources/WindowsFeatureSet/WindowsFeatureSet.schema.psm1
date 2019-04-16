@@ -41,7 +41,7 @@ Configuration WindowsFeatureSet
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true, HelpMessage="The name of the roles or features to install or uninstall.")]
+        [Parameter(Mandatory = $true, HelpMessage = "[Example: ('Web-Server','RSAT-File-Services')] The name of the roles or features to install or uninstall.")]
         [ValidateNotNullOrEmpty()]
         [String[]]
         $Name,
@@ -73,7 +73,7 @@ Configuration WindowsFeatureSet
         [System.Management.Automation.Credential()]
         $Credential,
 
-        [Parameter(HelpMessage="The custom file path to which to log this operation. 
+        [Parameter(HelpMessage="The custom file path to which to log this operation.
         If not passed in, the default log path will be used (%windir%\logs\ServerManager.log).")]
         [ValidateNotNullOrEmpty()]
         [String]
@@ -86,7 +86,7 @@ Configuration WindowsFeatureSet
         KeyParameterName = 'Name'
         Parameters = $PSBoundParameters
     }
-    
+
     $configurationScriptBlock = New-ResourceSetConfigurationScriptBlock @newResourceSetConfigurationParams
 
     # This script block must be run directly in this configuration in order to resolve variables

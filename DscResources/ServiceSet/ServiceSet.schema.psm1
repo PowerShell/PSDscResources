@@ -18,7 +18,7 @@ Import-Module -Name $script:resourceSetHelperFilePath
 
     .PARAMETER Ensure
         Specifies whether or not the set of services should exist.
-        
+
         Set this property to Present to modify a set of services.
         Set this property to Absent to remove a set of services.
 
@@ -51,7 +51,7 @@ Configuration ServiceSet
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true, HelpMessage="An array of the names of the services to configure.")]
+        [Parameter(Mandatory = $true, HelpMessage = "[Example: ('TestService','TestService2')] An array of the names of the services to configure.")]
         [ValidateNotNullOrEmpty()]
         [String[]]
         $Name,
@@ -89,7 +89,7 @@ Configuration ServiceSet
         KeyParameterName = 'Name'
         Parameters = $PSBoundParameters
     }
-    
+
     $configurationScriptBlock = New-ResourceSetConfigurationScriptBlock @newResourceSetConfigurationParams
 
     # This script block must be run directly in this configuration in order to resolve variables
