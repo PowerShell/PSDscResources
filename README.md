@@ -577,6 +577,8 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* Improved speed of Test-IsNanoServer function
+
 ### 2.10.0.0
 
 * Fixed CompanyName typo - Fixes [Issue #100](https://github.com/PowerShell/PSDscResources/issues/100)
@@ -621,7 +623,6 @@ The following parameters will be the same for each process in the set:
     to Describe fixtures.
 * GroupSet
   * Update tests to meet Pester 4.0.0 standards ([issue #129](https://github.com/PowerShell/PSDscResources/issues/129)).
-* Improved speed of Test-IsNanoServer function
 
 ### 2.9.0.0
 
