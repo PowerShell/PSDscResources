@@ -39,7 +39,7 @@ Describe 'CommonResourceHelper Unit Tests' {
             Context 'Computer OS type is Server and OS server level is not NanoServer' {
                 Mock -CommandName 'Test-Path' -MockWith { return $true }
                 Mock -CommandName 'Get-ItemProperty' -MockWith { return $testComputerInfoServerNotNano }
-                
+
                 It 'Should not throw' {
                     { $null = Test-IsNanoServer } | Should -Not -Throw
                 }
