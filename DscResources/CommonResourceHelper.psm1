@@ -8,20 +8,20 @@ function Test-IsNanoServer
     [CmdletBinding()]
     param ()
 
-    $ServerLevelsRegKey = 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels'
-    If (Test-Path $ServerLevelsRegKey)
+    $serverLevelsRegKey = 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels'
+    if (Test-Path -Path $serverLevelsRegKey)
     {
-        $ServerLevels = Get-ItemProperty -Path $ServerLevelsRegKey
-        If ($ServerLevels.NanoServer -eq 1)
+        $serverLevels = Get-ItemProperty -Path $serverLevelsRegKey
+        if ($serverLevels.NanoServer -eq 1)
         {
             $isNanoServer = $true
         }
-        Else
+        else
         {
             $isNanoServer = $false
         }
     }
-    Else {
+    else {
         $isNanoServer = $false
     }
     return $isNanoServer
