@@ -796,7 +796,6 @@ function Exit-DscResourceTestEnvironment
 #>
 function Enable-StrongCryptoForDotNetFour
 {
-    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param()
 

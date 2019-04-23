@@ -14,10 +14,10 @@ if ($PSVersionTable.PSVersion -lt [Version] '5.1')
 }
 
 # Import CommonTestHelper
-$script:testsFolderFilePath = Split-Path -Path $PSScriptRoot -Parent
+$testsFolderFilePath = Split-Path -Path $PSScriptRoot -Parent
 $testHelperFolderFilePath = Join-Path -Path $testsFolderFilePath -ChildPath 'TestHelpers'
 $commonTestHelperFilePath = Join-Path -Path $testHelperFolderFilePath -ChildPath 'CommonTestHelper.psm1'
-Import-Module -Name $script:commonTestHelperFilePath
+Import-Module -Name $commonTestHelperFilePath
 
 # Make sure strong crypto is enabled in .NET for HTTPS tests
 Enable-StrongCryptoForDotNetFour
