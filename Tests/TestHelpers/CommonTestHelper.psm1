@@ -790,6 +790,46 @@ function Exit-DscResourceTestEnvironment
     Restore-TestEnvironment -TestEnvironment $TestEnvironment
 }
 
+<#
+    .SYNOPSIS
+        Enables strong crypto for .NET v4.0.30319
+#>
+function Enable-StrongCryptoForDotNetFour
+{
+    [OutputType([System.Boolean])]
+    [CmdletBinding()]
+    param()
+
+    $regBases = @(
+        'HKLM:\SOFTWARE\Microsoft'
+        'HKLM:\SOFTWARE\Wow6432Node'
+    )
+
+    $net4Suffix = 'Microsoft\.NetFramework\v4.0.30319'
+
+    foreach ($regBase in $regBases)
+    {
+        $regPath = Join-Path -Path $regBase -ChildPath $net4Suffix
+
+        if ($null -ne (Get-Item -Path $regPath -ErrorAction SilentlyContinue))
+        {
+            $useStrongCryptoProp = Get-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -ErrorAction SilentlyContinue
+
+            if ($null -eq $useStrongCryptoProp -or $useStrongCryptoProp.SchUseStrongCrypto -ne 1)
+            {
+                Write-Verbose -Message "Setting property SchUseStrongCrypto at path '$regPath' to 1"
+
+                Set-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -ErrorAction Stop
+            }
+        }
+        else
+        {
+            Write-Warning -Message "Failed to find registry key at path: $regPath. Skipping setting SchUseStrongCrypto to 1."
+            continue
+        }
+    }
+}
+
 Export-ModuleMember -Function @(
     'Test-GetTargetResourceResult', `
     'Wait-ScriptBlockReturnTrue', `
@@ -802,5 +842,6 @@ Export-ModuleMember -Function @(
     'Invoke-SetTargetResourceUnitTest', `
     'Invoke-TestTargetResourceUnitTest', `
     'Invoke-ExpectedMocksAreCalledTest', `
-    'Invoke-GenericUnitTest'
+    'Invoke-GenericUnitTest',
+    'Enable-StrongCryptoForDotNetFour'
 )
