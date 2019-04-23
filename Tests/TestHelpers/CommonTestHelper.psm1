@@ -801,7 +801,7 @@ function Enable-StrongCryptoForDotNetFour
     param()
 
     $regBases = @(
-        'HKLM:\SOFTWARE\Microsoft'
+        'HKLM:\SOFTWARE'
         'HKLM:\SOFTWARE\Wow6432Node'
     )
 
