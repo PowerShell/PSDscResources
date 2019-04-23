@@ -13,6 +13,14 @@ if ($PSVersionTable.PSVersion -lt [Version] '5.1')
     return
 }
 
+$script:testsFolderFilePath = Split-Path $PSScriptRoot -Parent
+$testHelperFolderFilePath = Join-Path -Path $testsFolderFilePath -ChildPath 'TestHelpers'
+$commonTestHelperFilePath = Join-Path -Path $testHelperFolderFilePath -ChildPath 'CommonTestHelper.psm1'
+Import-Module -Name $script:commonTestHelperFilePath
+
+# Make sure strong crypto is enabled in .NET for HTTPS tests
+Enable-StrongCryptoForDotNetFour
+
 Describe 'MsiPackage End to End Tests' {
     BeforeAll {
         # Import CommonTestHelper

@@ -17,6 +17,9 @@ $script:testEnvironment = Enter-DscResourceTestEnvironment `
     -DscResourceName 'MSFT_MsiPackage' `
     -TestType 'Unit'
 
+# Make sure strong crypto is enabled in .NET for HTTPS tests
+Enable-StrongCryptoForDotNetFour
+
 try
 {
     InModuleScope 'MSFT_MsiPackage' {
