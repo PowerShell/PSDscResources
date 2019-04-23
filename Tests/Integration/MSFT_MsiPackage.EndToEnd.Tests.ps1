@@ -13,7 +13,8 @@ if ($PSVersionTable.PSVersion -lt [Version] '5.1')
     return
 }
 
-$script:testsFolderFilePath = Split-Path $PSScriptRoot -Parent
+# Import CommonTestHelper
+$script:testsFolderFilePath = Split-Path -Path $PSScriptRoot -Parent
 $testHelperFolderFilePath = Join-Path -Path $testsFolderFilePath -ChildPath 'TestHelpers'
 $commonTestHelperFilePath = Join-Path -Path $testHelperFolderFilePath -ChildPath 'CommonTestHelper.psm1'
 Import-Module -Name $script:commonTestHelperFilePath
