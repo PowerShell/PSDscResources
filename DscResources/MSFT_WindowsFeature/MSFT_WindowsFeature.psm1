@@ -39,6 +39,7 @@ function Get-TargetResource
        [String]
        $Name,
        
+       [Parameter()]
        [ValidateNotNullOrEmpty()]
        [System.Management.Automation.PSCredential]
        [System.Management.Automation.Credential()]
@@ -169,18 +170,22 @@ function Set-TargetResource
        [String]
        $Name,
 
+       [Parameter()]
        [ValidateSet('Present', 'Absent')]
        [String]
        $Ensure = 'Present',
 
+       [Parameter()]
        [Boolean]
        $IncludeAllSubFeature = $false,
 
+       [Parameter()]
        [ValidateNotNullOrEmpty()]
        [System.Management.Automation.PSCredential]
        [System.Management.Automation.Credential()]
        $Credential,
 
+       [Parameter()]
        [ValidateNotNullOrEmpty()]
        [String]
        $LogPath
@@ -339,18 +344,22 @@ function Test-TargetResource
         [String]
         $Name,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [Boolean]
         $IncludeAllSubFeature = $false,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [String]
         $LogPath
@@ -466,9 +475,11 @@ function Assert-SingleFeatureExists
     [CmdletBinding()]
     param
     (
+        [Parameter()]
         [PSObject]
         $Feature,
 
+        [Parameter()]
         [String]
         $Name
     )
