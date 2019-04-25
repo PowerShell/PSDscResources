@@ -76,7 +76,6 @@ function Get-TargetResource
     {
         foreach ($currentSubFeatureName in $feature.SubFeatures)
         {
-
             $getWindowsFeatureParameters = @{
                 Name = $currentSubFeatureName
             }
@@ -531,7 +530,8 @@ function Import-ServerManager
     {
         Import-Module -Name 'ServerManager' -ErrorAction Stop
     }
-    catch [System.Management.Automation.RuntimeException] {
+    catch [System.Management.Automation.RuntimeException]
+    {
         if ($_.Exception.Message -like "*Some or all identity references could not be translated*")
         {
             Write-Verbose -Message $script:localizedData.IdentityNotFoundMessage

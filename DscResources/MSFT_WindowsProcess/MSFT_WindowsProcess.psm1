@@ -599,7 +599,6 @@ function Get-ProcessCimInstance
 
     if ($getProcessResult.Count -ge $UseGetCimInstanceThreshold)
     {
-
         $escapedPathForWqlFilter = ConvertTo-EscapedStringForWqlFilter -FilterString $Path
         $wqlFilter = "ExecutablePath = '$escapedPathForWqlFilter'"
 
@@ -1121,8 +1120,8 @@ function Assert-PsDscContextNotRunAsUser
         for a user from the local system.
         Currently Start-Process, which is the command used otherwise, cannot do this.
 #>
-function Import-DscNativeMethods  
-{  
+function Import-DscNativeMethods
+{
 $dscNativeMethodsSource = @"  
   
 using System;  

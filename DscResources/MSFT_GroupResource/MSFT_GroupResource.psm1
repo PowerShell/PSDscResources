@@ -2105,6 +2105,7 @@ function Get-PrincipalContext
         [String]
         $Scope,
 
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,

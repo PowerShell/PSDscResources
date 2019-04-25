@@ -1357,6 +1357,7 @@ function Add-UserOnFullSku
         [String]
         $UserName,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
