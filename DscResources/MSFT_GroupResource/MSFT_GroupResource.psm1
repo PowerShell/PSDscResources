@@ -2050,7 +2050,6 @@ function Resolve-SidToPrincipal
         [System.DirectoryServices.AccountManagement.PrincipalContext]
         $PrincipalContext,
 
-        [Parameter()]
         [Parameter(Mandatory = $true)]
         [String]
         $Scope
