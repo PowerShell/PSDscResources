@@ -1,4 +1,4 @@
-<#
+﻿<#
     .SYNOPSIS
         If the group named GroupName1 does not exist, creates a group named GroupName1.
         

@@ -1,4 +1,4 @@
-<#
+﻿<#
     .SYNOPSIS
         Creates a custom configuration for installing or uninstalling a Windows role or feature.
 

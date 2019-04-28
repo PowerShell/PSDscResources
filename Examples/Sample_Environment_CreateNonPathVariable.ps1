@@ -1,4 +1,4 @@
-<#
+﻿<#
     .SYNOPSIS
         Creates the environment variable 'TestEnvironmentVariable' and sets the value to 'TestValue'
         both on the machine and within the process.
