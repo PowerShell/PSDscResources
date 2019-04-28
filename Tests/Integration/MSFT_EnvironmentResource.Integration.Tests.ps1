@@ -1,4 +1,4 @@
-﻿# These tests must be run with elevated access
+# These tests must be run with elevated access
 
 $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'

@@ -1,4 +1,4 @@
-﻿<#
+<#
     Integration tests for installing/uninstalling a Windows Feature. Currently Telnet-Client is
     set as the feature to test since it's fairly small and doesn't require a restart. ADRMS
     is set as the feature to test installing/uninstalling a feature with subfeatures,

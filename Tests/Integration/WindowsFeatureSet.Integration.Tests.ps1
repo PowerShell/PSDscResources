@@ -1,4 +1,4 @@
-﻿if ($PSVersionTable.PSVersion -lt [Version] '5.1')
+if ($PSVersionTable.PSVersion -lt [Version] '5.1')
 {
     Write-Warning -Message 'Cannot run PSDscResources integration tests on PowerShell versions lower than 5.1'
     return
