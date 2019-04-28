@@ -17,11 +17,13 @@ Because PSDscResources overwrites in-box resources, it is only available for WMF
 Many of the resource updates provided here are also included in the [xPSDesiredStateConfiguration](https://github.com/PowerShell/xPSDesiredStateConfiguration) module which is still compatible with WMF 4 and WMF 5 (though this module is not supported and may be removed in the future).
 
 To update your in-box resources to the newest versions provided by PSDscResources, first install PSDscResources from the PowerShell Gallery:
+
 ```powershell
 Install-Module PSDscResources
 ```
 
 Then, simply add this line to your DSC configuration:
+
 ```powershell
 Import-DscResource -ModuleName PSDscResources
 ```
@@ -680,8 +682,8 @@ The following parameters will be the same for each process in the set:
 ### 2.2.0.0
 
 * WindowsFeature:
-    * Added Catch to ignore RuntimeException when importing ServerManager module. This solves the issue described [here](https://social.technet.microsoft.com/Forums/en-US/9fc314e1-27bf-4f03-ab78-5e0f7a662b8f/importmodule-servermanager-some-or-all-identity-references-could-not-be-translated?forum=winserverpowershell).
-    * Updated unit tests.
+  * Added Catch to ignore RuntimeException when importing ServerManager module. This solves the issue described [here](https://social.technet.microsoft.com/Forums/en-US/9fc314e1-27bf-4f03-ab78-5e0f7a662b8f/importmodule-servermanager-some-or-all-identity-references-could-not-be-translated?forum=winserverpowershell).
+  * Updated unit tests.
 * Added WindowsProcess
 * CommonTestHelper:
   * Added Get-AppVeyorAdministratorCredential.
