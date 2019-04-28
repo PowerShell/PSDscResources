@@ -594,6 +594,7 @@ The following parameters will be the same for each process in the set:
 ### Unreleased
 
 * Fix Custom DSC Resource Kit PSSA Rule Failures
+* Fix README markdownlint validation failures
 
 ### 2.10.0.0
 
