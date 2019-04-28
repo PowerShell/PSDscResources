@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
         Tests if the current machine is a Nano server.
 #>
