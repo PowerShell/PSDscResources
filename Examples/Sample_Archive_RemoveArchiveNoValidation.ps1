@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
         Removes the expansion of the archive located at 'C:\ExampleArchivePath\Archive.zip' from the
         destination path 'C:\ExampleDestinationPath\Destination'.
