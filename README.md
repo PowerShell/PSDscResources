@@ -1,10 +1,10 @@
+# PSDscResources
+
 master: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/master)
 [![codecov](https://codecov.io/gh/PowerShell/PSDscResources/branch/master/graph/badge.svg)](https://codecov.io/gh/PowerShell/PSDscResources)
 
 dev: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/dev?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/dev)
 [![codecov](https://codecov.io/gh/PowerShell/PSDscResources/branch/dev/graph/badge.svg)](https://codecov.io/gh/PowerShell/PSDscResources)
-
-# PSDscResources
 
 PSDscResources is the new home of the in-box resources from PSDesiredStateConfiguration.
 
