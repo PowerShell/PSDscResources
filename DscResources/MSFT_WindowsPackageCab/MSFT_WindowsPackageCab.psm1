@@ -48,6 +48,7 @@ function Get-TargetResource
         [String]
         $SourcePath,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [String]
         $LogPath
@@ -130,6 +131,7 @@ function Set-TargetResource
         [String]
         $SourcePath,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [String]
         $LogPath
@@ -196,6 +198,7 @@ function Test-TargetResource
         [String]
         $SourcePath,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [String]
         $LogPath

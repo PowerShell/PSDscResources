@@ -38,6 +38,7 @@ function Get-TargetResource
         [String]
         $Name,
         
+        [Parameter()]
         [ValidateSet('Process', 'Machine')]
         [ValidateNotNullOrEmpty()]
         [String[]]
@@ -47,7 +48,7 @@ function Get-TargetResource
     $valueToReturn = $null
 
     if ($Target -contains 'Machine')
-    {   
+    {
         $environmentVaraible = Get-EnvironmentVariableWithoutExpanding -Name $Name -ErrorAction 'SilentlyContinue'
 
         if ($null -ne $environmentVaraible)
@@ -67,9 +68,9 @@ function Get-TargetResource
     }
     
     if ($null -eq $valueToReturn)
-    {        
+    {
         Write-Verbose -Message ($script:localizedData.EnvVarNotFound -f $Name)
-    }    
+    }
     else
     {
         Write-Verbose -Message ($script:localizedData.EnvVarFound -f $Name, $valueToReturn)
@@ -122,17 +123,21 @@ function Set-TargetResource
         [String]
         $Name,
         
+        [Parameter()]
         [ValidateNotNull()]
         [String]
         $Value = [String]::Empty,
         
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
         
+        [Parameter()]
         [Boolean]
         $Path = $false,
 
+        [Parameter()]
         [ValidateSet('Process', 'Machine')]
         [ValidateNotNullOrEmpty()]
         [String[]]
@@ -192,7 +197,6 @@ function Set-TargetResource
 
         if ($createMachineVariable -and $createProcessVariable)
         {
-
             if (-not $valueSpecified)
             {
                 <#
@@ -430,17 +434,21 @@ function Test-TargetResource
         [String]
         $Name,
         
+        [Parameter()]
         [ValidateNotNull()]
         [String]
         $Value,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
         
+        [Parameter()]
         [Boolean]
         $Path = $false,
 
+        [Parameter()]
         [ValidateSet('Process', 'Machine')]
         [ValidateNotNullOrEmpty()]
         [String[]]
@@ -525,9 +533,9 @@ function Test-TargetResource
 
     # If the control reaches here, the expected environment variable exists, it is a path variable and a $Value is specified to test against
     if ($Ensure -eq 'Present')
-    {                   
+    {
         if ($checkMachineTarget)
-        {        
+        {
             if (-not (Test-PathsInValue -ExistingPaths $currentValueFromMachine -QueryPaths $Value -FindCriteria 'All'))
             {
                 # If the control reached here some part of the specified path ($Value) was not found in the existing variable, return failure       
@@ -693,8 +701,8 @@ function Add-PathsToValue
     $currentPaths = $CurrentValue -split ';'
     $newPaths = $NewValue -split ';'
 
-    foreach ($path in $newPaths)            
-    {            
+    foreach ($path in $newPaths)
+    {
         if ($currentPaths -notcontains $path)
         {
             <#
@@ -703,8 +711,8 @@ function Add-PathsToValue
             #>
 
             $finalValue += ($path + ';')
-        }                            
-    }  
+        }
+    }
 
     # Remove any extraneous ';' at the end (and potentially start - as a side-effect) of the value to be set
     return $finalValue.Trim(';')
@@ -803,6 +811,7 @@ function Set-EnvironmentVariable
         [String]
         $Name,
 
+        [Parameter()]
         [String]
         $Value,
 
@@ -931,6 +940,7 @@ function Set-ProcessEnvironmentVariable
         [String]
         $Name,
 
+        [Parameter()]
         [String]
         $Value = [String]::Empty
     )
@@ -1023,7 +1033,7 @@ function Test-PathsInValue
         'Any'
         {
             foreach ($queryPath in $queryPathList)
-            {            
+            {
                 if ($existingPathList -contains $queryPath)
                 {
                     # Found this $queryPath in the existing paths, return $true
