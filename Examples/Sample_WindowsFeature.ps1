@@ -30,7 +30,7 @@
         in this configuration file currently.
 #>
 
-Configuration 'Install_Feature_Telnet_Client'
+Configuration Sample_WindowsFeature
 {
     param 
     (       

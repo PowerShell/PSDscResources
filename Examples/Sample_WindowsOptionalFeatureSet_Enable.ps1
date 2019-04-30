@@ -4,7 +4,7 @@
         Internet-Explorer-Optional-amd64 and outputs a log of the operations to a file at the path
         'C:\LogPath\Log.txt'.
 #>
-Configuration WindowsOptionalFeatureSet_Enable
+Configuration Sample_WindowsOptionalFeatureSet_Enable
 {
     Import-DscResource -ModuleName 'PSDscResources'
 

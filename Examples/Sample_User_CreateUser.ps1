@@ -1,4 +1,4 @@
-﻿Configuration UserExample
+﻿Configuration Sample_User_CreateUser
 {
     param (
         [System.Management.Automation.PSCredential]

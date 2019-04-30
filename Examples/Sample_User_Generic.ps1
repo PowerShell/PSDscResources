@@ -1,11 +1,4 @@
-﻿param 
-(
-    [Parameter(Mandatory)]
-    [System.String]
-    $ConfigurationName
-)
-        
-<#
+﻿<#
     Create a custom configuration by passing in whatever
     values you need. $Password is the only param that is
     required since it must be a PSCredential object.
@@ -14,7 +7,7 @@
     are optional.
 #>
 
-Configuration $ConfigurationName
+Configuration Sample_User_Generic
 {
     param 
     (        
