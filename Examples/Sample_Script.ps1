@@ -8,7 +8,7 @@
     .PARAMETER FileContent
         The content to set for the new file.
 #>
-Configuration ScriptExample {
+Configuration Sample_Script {
     [CmdletBinding()]
     param
     (

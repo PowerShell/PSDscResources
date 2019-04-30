@@ -2,7 +2,7 @@
     .SYNOPSIS
         Ensures that the DHCP Client and Windows Firewall services are running.
 #>
-Configuration ServiceSetStartExample
+Configuration Sample_ServiceSet_StartServices
 {
     Import-DscResource -ModuleName 'PSDscResources'
 
