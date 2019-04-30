@@ -22,7 +22,7 @@ Import-Module -Name $commonTestHelperFilePath
 try
 {
     # Make sure strong crypto is enabled in .NET for HTTPS tests
-    Enable-StrongCryptoForDotNetFour
+    $originalStrongCryptoSettings = Enable-StrongCryptoForDotNetFour
 
     Describe 'MsiPackage End to End Tests' {
         BeforeAll {

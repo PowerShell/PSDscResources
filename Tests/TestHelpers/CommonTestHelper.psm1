@@ -836,6 +836,8 @@ function Enable-StrongCryptoForDotNetFour
             continue
         }
     }
+
+    return $originalValues
 }
 
 <#
