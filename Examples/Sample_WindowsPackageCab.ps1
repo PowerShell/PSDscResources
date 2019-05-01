@@ -37,13 +37,14 @@ Configuration Sample_WindowsPackageCab
 
     Import-DscResource -ModuleName 'PSDscResources'
 
-    WindowsPackageCab WindowsPackageCab1
+    Node localhost
     {
-        Name = $Name
-        Ensure = 'Present'
-        SourcePath = $SourcePath
-        LogPath = $LogPath
+        WindowsPackageCab WindowsPackageCab1
+        {
+            Name       = $Name
+            Ensure     = 'Present'
+            SourcePath = $SourcePath
+            LogPath    = $LogPath
+        }
     }
 }
-
-Sample_WindowsPackageCab
