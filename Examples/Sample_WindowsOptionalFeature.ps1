@@ -17,22 +17,25 @@ Configuration Sample_WindowsOptionalFeature
     param
     (
         [Parameter (Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [String]
         $FeatureName,
 
         [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [String]
         $LogPath
     )
 
     Import-DscResource -ModuleName 'PSDscResources'
 
-    WindowsOptionalFeature TelnetClient
+    Node localhost
     {
-        Name = $FeatureName
-        Ensure = 'Present'
-        LogPath = $LogPath
+        WindowsOptionalFeature FeatureExample
+        {
+            Name    = $FeatureName
+            Ensure  = 'Present'
+            LogPath = $LogPath
+        }
     }
 }
-
-Sample_WindowsOptionalFeature
