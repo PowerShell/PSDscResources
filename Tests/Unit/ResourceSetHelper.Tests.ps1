@@ -11,11 +11,11 @@ $script:dscResourcesFolderFilePath = Join-Path -Path $script:moduleRootFilePath 
 $script:resourceSetHelperFilePath = Join-Path -Path $script:dscResourcesFolderFilePath -ChildPath ($resourceSetHelperName + '.psm1')
 
 # Remove module if it is already imported before re-import.
-If (Get-Module $resourceSetHelperName)
-{
-    Remove-Module $resourceSetHelperName
-}
-Import-Module -Name $script:resourceSetHelperFilePath
+#If (Get-Module $resourceSetHelperName)
+#{
+#    Remove-Module $resourceSetHelperName
+#}
+#Import-Module -Name $script:resourceSetHelperFilePath
 
 InModuleScope 'ResourceSetHelper' {
     Describe 'ResourceSetHelper\New-ResourceSetCommonParameterString' {
