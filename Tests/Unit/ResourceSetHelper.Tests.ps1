@@ -10,7 +10,7 @@ $script:moduleRootFilePath = Split-Path -Path $script:testsFolderFilePath -Paren
 $script:dscResourcesFolderFilePath = Join-Path -Path $script:moduleRootFilePath -ChildPath 'DscResources'
 $script:resourceSetHelperFilePath = Join-Path -Path $script:dscResourcesFolderFilePath -ChildPath $resourceSetHelperName+'.psm1'
 
-# Remove module if it is already imported before re-import
+# Remove module if it is already imported before re-import.
 If (Get-Module $resourceSetHelperName)
 {
     Remove-Module $resourceSetHelperName
