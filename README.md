@@ -578,6 +578,7 @@ The following parameters will be the same for each process in the set:
 ### Unreleased
 
 * Fix Custom DSC Resource Kit PSSA Rule Failures
+* Add text to composite resources to display in Azure Automation authoring
 
 ### 2.10.0.0
 
