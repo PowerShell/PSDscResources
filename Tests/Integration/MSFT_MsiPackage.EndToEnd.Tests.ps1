@@ -655,7 +655,5 @@ try
 }
 finally
 {
-    Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
-
     Undo-ChangesToStrongCryptoForDotNetFour -OriginalSettings $originalStrongCryptoSettings
 }

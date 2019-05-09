@@ -817,14 +817,26 @@ function Enable-StrongCryptoForDotNetFour
 
         if ($null -ne (Get-Item -Path $regPath -ErrorAction SilentlyContinue))
         {
-            $originalValues.Add($regPath, $null)
-
             $useStrongCryptoProp = Get-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -ErrorAction SilentlyContinue
+            $needsUpdate = $false
 
-            if ($null -eq $useStrongCryptoProp -or $useStrongCryptoProp.SchUseStrongCrypto -ne 1)
+            if ($null -eq $useStrongCryptoProp)
             {
-                $originalValues[$regPath] = $useStrongCryptoProp.SchUseStrongCrypto
+                $originalValues.Add($regPath, $null)
+                $needsUpdate = $true
+            }
+            else
+            {
+                $originalValues.Add($regPath, $useStrongCryptoProp.SchUseStrongCrypto)
 
+                if ($useStrongCryptoProp.SchUseStrongCrypto -ne 1)
+                {
+                    $needsUpdate = $true
+                }
+            }
+
+            if ($needsUpdate)
+            {
                 Write-Verbose -Message "Setting property SchUseStrongCrypto at path '$regPath' to 1"
 
                 Set-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -ErrorAction Stop
@@ -870,9 +882,9 @@ function Undo-ChangesToStrongCryptoForDotNetFour
             Remove-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -ErrorAction Stop
         }
         # The SchUseStrongCrypto value previously existed but had a different value.
-        elseif($OriginalSettings[$regPath] -ne $useStrongCryptoProp)
+        elseif($OriginalSettings[$regPath] -ne $useStrongCryptoProp.SchUseStrongCrypto)
         {
-            Set-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -ErrorAction Stop
+            Set-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -Value $OriginalSettings[$regPath] -Type DWord -ErrorAction Stop
         }
     }
 }
