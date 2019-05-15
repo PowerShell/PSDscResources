@@ -53,9 +53,11 @@ function Get-TargetResource
         [AllowEmptyString()]
         $ValueName,
 
+        [Parameter()]
         [String[]]
         $ValueData,
 
+        [Parameter()]
         [ValidateSet('String', 'Binary', 'DWord', 'QWord', 'MultiString', 'ExpandString')]
         [String]
         $ValueType
@@ -190,21 +192,26 @@ function Set-TargetResource
         [AllowEmptyString()]
         $ValueName,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [ValidateNotNull()]
         [String[]]
         $ValueData = @(),
 
+        [Parameter()]
         [ValidateSet('String', 'Binary', 'DWord', 'QWord', 'MultiString', 'ExpandString')]
         [String]
         $ValueType = 'String',
 
+        [Parameter()]
         [Boolean]
         $Hex = $false,
 
+        [Parameter()]
         [Boolean]
         $Force = $false
     )
@@ -394,21 +401,26 @@ function Test-TargetResource
         [String]
         $ValueName,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [ValidateNotNull()]
         [String[]]
         $ValueData = @(),
 
+        [Parameter()]
         [ValidateSet('String', 'Binary', 'DWord', 'QWord', 'MultiString', 'ExpandString')]
         [String]
         $ValueType = 'String',
 
+        [Parameter()]
         [Boolean]
         $Hex = $false,
 
+        [Parameter()]
         [Boolean]
         $Force = $false
     )
@@ -735,6 +747,7 @@ function Get-RegistryKey
         [String]
         $RegistryKeyPath,
 
+        [Parameter()]
         [Switch]
         $WriteAccessAllowed
     )

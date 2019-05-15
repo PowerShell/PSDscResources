@@ -46,6 +46,7 @@ function Get-TargetResource
         [String]
         $Arguments,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -159,24 +160,30 @@ function Set-TargetResource
         [String]
         $Arguments,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [String]
         $StandardOutputPath,
 
+        [Parameter()]
         [String]
         $StandardErrorPath,
 
+        [Parameter()]
         [String]
         $StandardInputPath,
 
+        [Parameter()]
         [String]
         $WorkingDirectory
     )
@@ -436,24 +443,30 @@ function Test-TargetResource
         [String]
         $Arguments,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [String]
         $StandardOutputPath,
 
+        [Parameter()]
         [String]
         $StandardErrorPath,
 
+        [Parameter()]
         [String]
         $StandardInputPath,
 
+        [Parameter()]
         [String]
         $WorkingDirectory
     )
@@ -562,14 +575,17 @@ function Get-ProcessCimInstance
         [String]
         $Path,
 
+        [Parameter()]
         [String]
         $Arguments,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,
 
+        [Parameter()]
         [ValidateRange(0, [Int]::MaxValue)]
         [Int]
         $UseGetCimInstanceThreshold = 8
@@ -583,7 +599,6 @@ function Get-ProcessCimInstance
 
     if ($getProcessResult.Count -ge $UseGetCimInstanceThreshold)
     {
-
         $escapedPathForWqlFilter = ConvertTo-EscapedStringForWqlFilter -FilterString $Path
         $wqlFilter = "ExecutablePath = '$escapedPathForWqlFilter'"
 
@@ -748,6 +763,7 @@ function Get-ArgumentsFromCommandLineInput
     [CmdletBinding()]
     param
     (
+        [Parameter()]
         [String]
         $CommandLineInput
     )
@@ -844,6 +860,7 @@ function Wait-ProcessCount
         [Int]
         $ProcessCount,
 
+        [Parameter()]
         [Int]
         $WaitTime = 200000
     )
@@ -1103,8 +1120,8 @@ function Assert-PsDscContextNotRunAsUser
         for a user from the local system.
         Currently Start-Process, which is the command used otherwise, cannot do this.
 #>
-function Import-DscNativeMethods  
-{  
+function Import-DscNativeMethods
+{
 $dscNativeMethodsSource = @"  
   
 using System;  

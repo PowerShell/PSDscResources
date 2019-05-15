@@ -182,47 +182,59 @@ function Set-TargetResource
         [String]
         $Name,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [String]
         $Path,
 
+        [Parameter()]
         [ValidateSet('Automatic', 'Manual', 'Disabled')]
         [String]
         $StartupType,
 
+        [Parameter()]
         [ValidateSet('LocalSystem', 'LocalService', 'NetworkService')]
         [String]
         $BuiltInAccount,
 
+        [Parameter()]
         [ValidateSet('Running', 'Stopped', 'Ignore')]
         [String]
         $State = 'Running',
 
+        [Parameter()]
         [Boolean]
         $DesktopInteract = $false,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [String]
         $DisplayName,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [String]
         $Description,
 
+        [Parameter()]
         [String[]]
         [AllowEmptyCollection()]
         $Dependencies,
 
+        [Parameter()]
         [UInt32]
         $StartupTimeout = 30000,
 
+        [Parameter()]
         [UInt32]
         $TerminateTimeout = 30000,
 
+        [Parameter()]
         [ValidateNotNull()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -393,47 +405,59 @@ function Test-TargetResource
         [String]
         $Name,
       
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [String]
         $Path,
 
+        [Parameter()]
         [ValidateSet('Automatic', 'Manual', 'Disabled')]
         [String]
         $StartupType,
 
+        [Parameter()]
         [ValidateSet('LocalSystem', 'LocalService', 'NetworkService')]
         [String]
         $BuiltInAccount,
 
+        [Parameter()]
         [Boolean]
         $DesktopInteract = $false,
 
+        [Parameter()]
         [ValidateSet('Running', 'Stopped', 'Ignore')]
         [String]
         $State = 'Running',
 
+        [Parameter()]
         [ValidateNotNull()]
         [String]
         $DisplayName,
 
+        [Parameter()]
         [String]
         [AllowEmptyString()]
         $Description,
 
+        [Parameter()]
         [String[]]
         [AllowEmptyCollection()]
         $Dependencies,
 
+        [Parameter()]
         [UInt32]
         $StartupTimeout = 30000,
 
+        [Parameter()]
         [UInt32]
         $TerminateTimeout = 30000,
 
+        [Parameter()]
         [ValidateNotNull()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]

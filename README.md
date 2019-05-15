@@ -577,6 +577,10 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+### 2.11.0.0
+
+* Fix Custom DSC Resource Kit PSSA Rule Failures
+
 ### 2.10.0.0
 
 * Fixed CompanyName typo - Fixes [Issue #100](https://github.com/PowerShell/PSDscResources/issues/100)

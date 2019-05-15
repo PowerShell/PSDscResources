@@ -109,19 +109,24 @@ function Set-TargetResource
         [String]
         $Name,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [Boolean]
         $RemoveFilesOnDisable,
 
+        [Parameter()]
         [Boolean]
         $NoWindowsUpdateCheck,
 
+        [Parameter()]
         [String]
         $LogPath,
 
+        [Parameter()]
         [ValidateSet('ErrorsOnly', 'ErrorsAndWarning', 'ErrorsAndWarningAndInformation')]
         [String]
         $LogLevel = 'ErrorsAndWarningAndInformation'
@@ -237,19 +242,24 @@ function Test-TargetResource
         [String]
         $Name,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [Boolean]
         $RemoveFilesOnDisable,
 
+        [Parameter()]
         [Boolean]
         $NoWindowsUpdateCheck,
 
+        [Parameter()]
         [String]
         $LogPath,
 
+        [Parameter()]
         [ValidateSet('ErrorsOnly', 'ErrorsAndWarning', 'ErrorsAndWarningAndInformation')]
         [String]
         $LogLevel = 'ErrorsAndWarningAndInformation'
@@ -291,6 +301,7 @@ function Convert-CustomPropertyArrayToStringArray
     [OutputType([String[]])]
     param
     (
+        [Parameter()]
         [PSCustomObject[]]
         $CustomProperties
     )

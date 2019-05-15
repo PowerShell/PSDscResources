@@ -39,6 +39,7 @@ function Get-TargetResource
        [String]
        $Name,
        
+       [Parameter()]
        [ValidateNotNullOrEmpty()]
        [System.Management.Automation.PSCredential]
        [System.Management.Automation.Credential()]
@@ -75,7 +76,6 @@ function Get-TargetResource
     {
         foreach ($currentSubFeatureName in $feature.SubFeatures)
         {
-
             $getWindowsFeatureParameters = @{
                 Name = $currentSubFeatureName
             }
@@ -169,18 +169,22 @@ function Set-TargetResource
        [String]
        $Name,
 
+       [Parameter()]
        [ValidateSet('Present', 'Absent')]
        [String]
        $Ensure = 'Present',
 
+       [Parameter()]
        [Boolean]
        $IncludeAllSubFeature = $false,
 
+       [Parameter()]
        [ValidateNotNullOrEmpty()]
        [System.Management.Automation.PSCredential]
        [System.Management.Automation.Credential()]
        $Credential,
 
+       [Parameter()]
        [ValidateNotNullOrEmpty()]
        [String]
        $LogPath
@@ -339,18 +343,22 @@ function Test-TargetResource
         [String]
         $Name,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [Boolean]
         $IncludeAllSubFeature = $false,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [String]
         $LogPath
@@ -466,9 +474,11 @@ function Assert-SingleFeatureExists
     [CmdletBinding()]
     param
     (
+        [Parameter()]
         [PSObject]
         $Feature,
 
+        [Parameter()]
         [String]
         $Name
     )
@@ -520,7 +530,8 @@ function Import-ServerManager
     {
         Import-Module -Name 'ServerManager' -ErrorAction Stop
     }
-    catch [System.Management.Automation.RuntimeException] {
+    catch [System.Management.Automation.RuntimeException]
+    {
         if ($_.Exception.Message -like "*Some or all identity references could not be translated*")
         {
             Write-Verbose -Message $script:localizedData.IdentityNotFoundMessage

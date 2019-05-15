@@ -96,6 +96,7 @@ function Get-TargetResource
         [String]
         $GroupName,
 
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential
@@ -188,22 +189,28 @@ function Set-TargetResource
         [String]
         $GroupName,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [String]
         $Description,
 
+        [Parameter()]
         [String[]]
         $Members,
 
+        [Parameter()]
         [String[]]
         $MembersToInclude,
 
+        [Parameter()]
         [String[]]
         $MembersToExclude,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -286,22 +293,28 @@ function Test-TargetResource
         [String]
         $GroupName,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [String]
         $Description,
 
+        [Parameter()]
         [String[]]
         $Members,
 
+        [Parameter()]
         [String[]]
         $MembersToInclude,
 
+        [Parameter()]
         [String[]]
         $MembersToExclude,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -343,6 +356,7 @@ function Get-TargetResourceOnFullSKU
         [String]
         $GroupName,
 
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential
@@ -411,6 +425,7 @@ function Get-TargetResourceOnNanoServer
         [String]
         $GroupName,
 
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential
@@ -508,22 +523,28 @@ function Set-TargetResourceOnFullSKU
         [String]
         $GroupName,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [String]
         $Description,
 
+        [Parameter()]
         [String[]]
         $Members,
 
+        [Parameter()]
         [String[]]
         $MembersToInclude,
 
+        [Parameter()]
         [String[]]
         $MembersToExclude,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -859,22 +880,28 @@ function Set-TargetResourceOnNanoServer
         [String]
         $GroupName,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [String]
         $Description,
 
+        [Parameter()]
         [String[]]
         $Members,
 
+        [Parameter()]
         [String[]]
         $MembersToInclude,
 
+        [Parameter()]
         [String[]]
         $MembersToExclude,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -1092,22 +1119,28 @@ function Test-TargetResourceOnFullSKU
         [String]
         $GroupName,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [String]
         $Description,
 
+        [Parameter()]
         [String[]]
         $Members,
 
+        [Parameter()]
         [String[]]
         $MembersToInclude,
 
+        [Parameter()]
         [String[]]
         $MembersToExclude,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -1353,22 +1386,28 @@ function Test-TargetResourceOnNanoServer
         [String]
         $GroupName,
 
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
         $Ensure = 'Present',
 
+        [Parameter()]
         [String]
         $Description,
 
+        [Parameter()]
         [String[]]
         $Members,
 
+        [Parameter()]
         [String[]]
         $MembersToInclude,
 
+        [Parameter()]
         [String[]]
         $MembersToExclude,
 
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -1571,6 +1610,7 @@ function Get-MembersOnFullSKU
         [AllowEmptyCollection()]
         $Disposables,
 
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential
@@ -1656,6 +1696,7 @@ function Get-MembersAsPrincipalsList
         [AllowEmptyCollection()]
         $Disposables,
 
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential
@@ -1833,6 +1874,7 @@ function ConvertTo-UniquePrincipalsList
         [AllowEmptyCollection()]
         $Disposables,
 
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential
@@ -1922,6 +1964,7 @@ function ConvertTo-Principal
         [AllowEmptyCollection()]
         $Disposables,
 
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential
@@ -2061,6 +2104,7 @@ function Get-PrincipalContext
         [String]
         $Scope,
 
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,
@@ -2329,6 +2373,7 @@ function Find-Principal
         [String]
         $IdentityValue,
 
+        [Parameter()]
         [System.DirectoryServices.AccountManagement.IdentityType]
         $IdentityType
     )
