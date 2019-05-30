@@ -790,105 +790,6 @@ function Exit-DscResourceTestEnvironment
     Restore-TestEnvironment -TestEnvironment $TestEnvironment
 }
 
-<#
-    .SYNOPSIS
-        Enables strong crypto for .NET v4.0.30319. Returns a Hashtable
-        containing the relevant, original registry settings, prior to
-        modification.
-#>
-function Enable-StrongCryptoForDotNetFour
-{
-    [OutputType([System.Collections.Hashtable])]
-    [CmdletBinding()]
-    param ()
-
-    $originalValues = @{}
-
-    $regBases = @(
-        'HKLM:\SOFTWARE'
-        'HKLM:\SOFTWARE\Wow6432Node'
-    )
-
-    $net4Suffix = 'Microsoft\.NetFramework\v4.0.30319'
-
-    foreach ($regBase in $regBases)
-    {
-        $regPath = Join-Path -Path $regBase -ChildPath $net4Suffix
-
-        if ($null -ne (Get-Item -Path $regPath -ErrorAction SilentlyContinue))
-        {
-            $useStrongCryptoProp = Get-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -ErrorAction SilentlyContinue
-            $needsUpdate = $false
-
-            if ($null -eq $useStrongCryptoProp)
-            {
-                $originalValues.Add($regPath, $null)
-                $needsUpdate = $true
-            }
-            else
-            {
-                $originalValues.Add($regPath, $useStrongCryptoProp.SchUseStrongCrypto)
-
-                if ($useStrongCryptoProp.SchUseStrongCrypto -ne 1)
-                {
-                    $needsUpdate = $true
-                }
-            }
-
-            if ($needsUpdate)
-            {
-                Write-Verbose -Message "Setting property SchUseStrongCrypto at path '$regPath' to 1"
-
-                Set-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -ErrorAction Stop
-            }
-        }
-        else
-        {
-            Write-Warning -Message "Failed to find registry key at path: $regPath. Skipping setting SchUseStrongCrypto to 1. This may cause Integration tests to fail that depend on this setting."
-            continue
-        }
-    }
-
-    return $originalValues
-}
-
-<#
-    .SYNOPSIS
-        Restores strong crypto for .NET v4.0.30319 settings to what they were
-        prior to calling Enable-StrongCryptoForDotNetFour.
-
-    .PARAMETER OriginalSettings
-        A Hashtable containing the original registry settings for strong crypto
-        for .NET v4.0.30319.
-#>
-function Undo-ChangesToStrongCryptoForDotNetFour
-{
-    [CmdletBinding()]
-    param
-    (
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [System.Collections.Hashtable]
-        $OriginalSettings
-    )
-
-    foreach ($regPath in $OriginalSettings.Keys)
-    {
-        $useStrongCryptoProp = Get-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -ErrorAction SilentlyContinue
-
-        # The SchUseStrongCrypto value previously didn't exist, but now does. Delete it.
-        if ($null -eq $OriginalSettings[$regPath] -and $null -ne $useStrongCryptoProp)
-        {
-            Remove-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -ErrorAction Stop
-        }
-        # The SchUseStrongCrypto value previously existed but had a different value.
-        elseif($OriginalSettings[$regPath] -ne $useStrongCryptoProp.SchUseStrongCrypto)
-        {
-            Set-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -Value $OriginalSettings[$regPath] -Type DWord -ErrorAction Stop
-        }
-    }
-}
-
 Export-ModuleMember -Function @(
     'Test-GetTargetResourceResult', `
     'Wait-ScriptBlockReturnTrue', `
@@ -901,7 +802,5 @@ Export-ModuleMember -Function @(
     'Invoke-SetTargetResourceUnitTest', `
     'Invoke-TestTargetResourceUnitTest', `
     'Invoke-ExpectedMocksAreCalledTest', `
-    'Invoke-GenericUnitTest',
-    'Enable-StrongCryptoForDotNetFour',
-    'Undo-ChangesToStrongCryptoForDotNetFour'
+    'Invoke-GenericUnitTest'
 )
