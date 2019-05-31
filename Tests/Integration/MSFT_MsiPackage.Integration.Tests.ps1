@@ -49,6 +49,9 @@ try
 
                 $null = New-TestMsi -DestinationPath $script:msiLocation
 
+                $script:testHttpPort = Get-UnusedTcpPort
+                $script:testHttpsPort = Get-UnusedTcpPort -ExcludePorts @($script:testHttpPort)
+
                 # Clear the log file
                 'Beginning integration tests' > $script:logFile
             }
@@ -171,7 +174,7 @@ try
                 }
 
                 It 'Should correctly install and remove a package from a HTTP URL' {
-                    $baseUrl = 'http://localhost:1242/'
+                    $baseUrl = "http://localhost:$script:testHttpPort/"
                     $msiUrl = "$baseUrl" + 'package.msi'
 
                     $fileServerStarted = $null
@@ -181,7 +184,10 @@ try
                     {
                         'Http tests:' >> $script:logFile
 
-                        $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $false
+                        # Make sure no existing HTTP(S) test servers are running
+                        Stop-EveryTestServerInstance
+
+                        $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $false -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
                         $fileServerStarted = $serverResult.FileServerStarted
                         $job = $serverResult.Job
 
@@ -196,6 +202,12 @@ try
                         Set-TargetResource -Ensure 'Absent' -Path $msiUrl -ProductId $script:packageId
                         Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
                     }
+                    catch
+                    {
+                        Write-Warning -Message 'Caught exception performing HTTP server tests. Outputting HTTP server log.' -Verbose
+                        Get-Content -Path $script:logFile | Write-Verbose -Verbose
+                        throw $_
+                    }
                     finally
                     {
                         <#
@@ -208,7 +220,7 @@ try
 
                 It 'Should correctly install and remove a package from a HTTPS URL' -Skip:$script:skipHttpsTest {
 
-                    $baseUrl = 'https://localhost:1243/'
+                    $baseUrl = "https://localhost:$script:testHttpsPort/"
                     $msiUrl = "$baseUrl" + 'package.msi'
 
                     $fileServerStarted = $null
@@ -218,7 +230,10 @@ try
                     {
                         'Https tests:' >> $script:logFile
 
-                        $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true
+                        # Make sure no existing HTTP(S) test servers are running
+                        Stop-EveryTestServerInstance
+
+                        $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
                         $fileServerStarted = $serverResult.FileServerStarted
                         $job = $serverResult.Job             
 
@@ -232,6 +247,12 @@ try
 
                         Set-TargetResource -Ensure 'Absent' -Path $msiUrl -ProductId $script:packageId
                         Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+                    }
+                    catch
+                    {
+                        Write-Warning -Message 'Caught exception performing HTTPS server tests. Outputting HTTPS server log.' -Verbose
+                        Get-Content -Path $script:logFile | Write-Verbose -Verbose
+                        throw $_
                     }
                     finally
                     {

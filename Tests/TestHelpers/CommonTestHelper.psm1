@@ -790,6 +790,82 @@ function Exit-DscResourceTestEnvironment
     Restore-TestEnvironment -TestEnvironment $TestEnvironment
 }
 
+<#
+    .SYNOPSIS
+        Finds an unused TCP port in the specified port range. By default,
+        searches within ports 38473 - 38799, which at the time of writing, show
+        as unassigned in:
+        https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
+
+    .PARAMETER LowestPortNumber
+        The TCP port number at which to begin the unused port search. Must be
+        greater than 0.
+
+    .PARAMETER HighestPortNumber
+        The highest TCP port number to search for unused ports within. Must be
+        greater than 0, and greater than LowestPortNumber.
+
+    .PARAMETER ExcludePorts
+        TCP ports to exclude from the search, even if they fall within the
+        LowestPortNumber and HighestPortNumber range.
+#>
+function Get-UnusedTcpPort
+{
+    [OutputType([System.UInt16])]
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [ValidateScript({$_ -gt 0})]
+        [System.UInt16]
+        $LowestPortNumber = 38473,
+
+        [Parameter()]
+        [ValidateScript({$_ -gt $0})]
+        [System.UInt16]
+        $HighestPortNumber = 38799,
+
+        [Parameter()]
+        [System.UInt16[]]
+        $ExcludePorts = @()
+    )
+
+    if ($HighestPortNumber -lt $LowestPortNumber)
+    {
+        throw "HighestPortNumber must be greater than or equal to LowestPortNumber"
+    }
+
+    [System.UInt16] $unusedPort = 0
+
+    $usedPorts = (Get-NetTCPConnection).LocalPort | Where-Object -FilterScript {$_ -ge $LowestPortNumber -and $_ -le $HighestPortNumber}
+
+    if (!(Test-Path -Path variable:usedPorts) -or ($usedPorts -eq $null))
+    {
+        $usedPorts = @()
+    }
+
+    if (!(Test-Path -Path variable:ExcludePorts) -or ($ExcludePorts -eq $null))
+    {
+        $ExcludePorts = @()
+    }
+
+    for ($i = $LowestPortNumber; $i -le $HighestPortNumber; $i++)
+    {
+        if (!($usedPorts.Contains($i)) -and !($ExcludePorts.Contains($i)))
+        {
+            $unusedPort = $i
+            break
+        }
+    }
+
+    if ($unusedPort -eq 0)
+    {
+        throw "Failed to find unused TCP port between ports $LowestPortNumber and $HighestPortNumber."
+    }
+
+    return $unusedPort
+}
+
 Export-ModuleMember -Function @(
     'Test-GetTargetResourceResult', `
     'Wait-ScriptBlockReturnTrue', `
@@ -802,5 +878,6 @@ Export-ModuleMember -Function @(
     'Invoke-SetTargetResourceUnitTest', `
     'Invoke-TestTargetResourceUnitTest', `
     'Invoke-ExpectedMocksAreCalledTest', `
-    'Invoke-GenericUnitTest'
+    'Invoke-GenericUnitTest', `
+    'Get-UnusedTcpPort'
 )
