@@ -832,7 +832,7 @@ function Get-UnusedTcpPort
 
     if ($HighestPortNumber -lt $LowestPortNumber)
     {
-        throw "HighestPortNumber must be greater than or equal to LowestPortNumber"
+        throw 'HighestPortNumber must be greater than or equal to LowestPortNumber'
     }
 
     [System.UInt16] $unusedPort = 0

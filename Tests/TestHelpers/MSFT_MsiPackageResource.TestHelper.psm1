@@ -60,6 +60,12 @@ function Test-PackageInstalledById
         and listen on port 'https://localhost:HttpsPort'. Otherwise the file server will use Http and
         listen on port 'http://localhost:HttpPort'
         Default value is False (Http).
+
+    .PARAMETER HttpPort
+        Specifies the TCP port to register an Http based HttpListener on.
+
+    .PARAMETER HttspPort
+        Specifies the TCP port to register an Https based HttpListener on.
 #>
 function Start-Server
 {
@@ -113,6 +119,9 @@ function Start-Server
 
             .PARAMETER Https
                 Indicates whether https was used and if so, removes the SSL binding.
+
+            .PARAMETER HttspPort
+                Specifies the TCP port to de-register an Https based HttpListener from.
         #>
         function Stop-Listener
         {
@@ -176,6 +185,9 @@ function Start-Server
         <#
             .SYNOPSIS
                 Creates and registers an SSL certificate for Https connections.
+
+            .PARAMETER HttspPort
+                Specifies the TCP port to register an Https based HttpListener on.
         #>
         function Register-Ssl
         {
