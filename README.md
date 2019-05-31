@@ -577,10 +577,6 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
-* Fixes issue where MsiPackage Integration tests fail to make an HTTPS
-  connection if Strong Crypto for .NET is not enabled. Fixes
-  [Issue #142](https://github.com/PowerShell/PSDscResources/issues/142)
-
 ### 2.11.0.0
 
 * Fix Custom DSC Resource Kit PSSA Rule Failures

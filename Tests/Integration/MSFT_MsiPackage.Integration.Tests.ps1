@@ -19,9 +19,6 @@ $script:testEnvironment = Enter-DscResourceTestEnvironment `
 
 try
 {
-    # Make sure strong crypto is enabled in .NET for HTTPS tests
-    $originalStrongCryptoSettings = Enable-StrongCryptoForDotNetFour
-
     InModuleScope 'MSFT_MsiPackage' {
         Describe 'MSFT_MsiPackage Integration Tests' {
             BeforeAll {
@@ -309,6 +306,4 @@ try
 finally
 {
     Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
-
-    Undo-ChangesToStrongCryptoForDotNetFour -OriginalSettings $originalStrongCryptoSettings
 }
