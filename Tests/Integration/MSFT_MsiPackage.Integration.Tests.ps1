@@ -37,7 +37,7 @@ try
 
                 <#
                     This log file is used to log messages from the mock server which is important for debugging since
-                    most of the work of the mock server is done within a separate process. 
+                    most of the work of the mock server is done within a separate process.
                 #>
                 $script:logFile = Join-Path -Path $PSScriptRoot -ChildPath 'PackageTestLogFile.txt'
 
@@ -174,8 +174,11 @@ try
                 }
 
                 It 'Should correctly install and remove a package from a HTTP URL' {
-                    $baseUrl = "http://localhost:$script:testHttpPort/"
-                    $msiUrl = "$baseUrl" + 'package.msi'
+                    $uriBuilder = [System.UriBuilder]::new('http', 'localhost', $script:testHttpPort)
+                    $baseUrl = $uriBuilder.Uri.AbsoluteUri
+
+                    $uriBuilder.Path = 'package.msi'
+                    $msiUrl = $uriBuilder.Uri.AbsoluteUri
 
                     $fileServerStarted = $null
                     $job = $null
@@ -219,9 +222,11 @@ try
                 }
 
                 It 'Should correctly install and remove a package from a HTTPS URL' -Skip:$script:skipHttpsTest {
+                    $uriBuilder = [System.UriBuilder]::new('https', 'localhost', $script:testHttpsPort)
+                    $baseUrl = $uriBuilder.Uri.AbsoluteUri
 
-                    $baseUrl = "https://localhost:$script:testHttpsPort/"
-                    $msiUrl = "$baseUrl" + 'package.msi'
+                    $uriBuilder.Path = 'package.msi'
+                    $msiUrl = $uriBuilder.Uri.AbsoluteUri
 
                     $fileServerStarted = $null
                     $job = $null
@@ -235,7 +240,7 @@ try
 
                         $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
                         $fileServerStarted = $serverResult.FileServerStarted
-                        $job = $serverResult.Job             
+                        $job = $serverResult.Job
 
                         # Wait for the file server to be ready to receive requests
                         $fileServerStarted.WaitOne(30000)

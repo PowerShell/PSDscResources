@@ -157,7 +157,7 @@ function Invoke-ExpectedMocksAreCalledTest
         Each item in the array is a hashtable that contains the name of the command
         being mocked, the number of times it is called (can be 0) and, optionally,
         an extra custom string to make the test name more descriptive. The custom
-        string will only work if the command has a corresponding variable in the 
+        string will only work if the command has a corresponding variable in the
         string data name.
 
     .PARAMETER ShouldThrow
@@ -227,7 +227,7 @@ function Invoke-GenericUnitTest {
         Each item in the array is a hashtable that contains the name of the command
         being mocked, the number of times it is called (can be 0) and, optionally,
         an extra custom string to make the test name more descriptive. The custom
-        string will only work if the command has a corresponding variable in the 
+        string will only work if the command has a corresponding variable in the
         string data name.
 
     .PARAMETER ExpectedReturnValue
@@ -288,7 +288,7 @@ function Invoke-GetTargetResourceUnitTest
         Each item in the array is a hashtable that contains the name of the command
         being mocked, the number of times it is called (can be 0) and, optionally,
         an extra custom string to make the test name more descriptive. The custom
-        string will only work if the command has a corresponding variable in the 
+        string will only work if the command has a corresponding variable in the
         string data name.
 
     .PARAMETER ShouldThrow
@@ -354,7 +354,7 @@ function Invoke-SetTargetResourceUnitTest {
         Each item in the array is a hashtable that contains the name of the command
         being mocked, the number of times it is called (can be 0) and, optionally,
         an extra custom string to make the test name more descriptive. The custom
-        string will only work if the command has a corresponding variable in the 
+        string will only work if the command has a corresponding variable in the
         string data name.
 
     .PARAMETER ExpectedReturnValue
@@ -573,7 +573,7 @@ function Test-IsFileLocked
     .PARAMETER ExpectedOutput
         The output expected to be in the output from running WhatIf with the Set-TargetResource cmdlet.
         If this parameter is empty or null, this cmdlet will check that there was no output from
-        Set-TargetResource with WhatIf specified.    
+        Set-TargetResource with WhatIf specified.
 #>
 function Test-SetTargetResourceWithWhatIf
 {
@@ -584,7 +584,7 @@ function Test-SetTargetResourceWithWhatIf
         [Parameter(Mandatory = $true)]
         [Hashtable]
         $Parameters,
-     
+
         [String[]]
         $ExpectedOutput
     )
@@ -837,23 +837,27 @@ function Get-UnusedTcpPort
 
     [System.UInt16] $unusedPort = 0
 
-    $usedPorts = (Get-NetTCPConnection).LocalPort | Where-Object -FilterScript {$_ -ge $LowestPortNumber -and $_ -le $HighestPortNumber}
-
-    if (!(Test-Path -Path variable:usedPorts) -or ($usedPorts -eq $null))
-    {
-        $usedPorts = @()
+    [System.Collections.ArrayList] $usedAndExcludedPorts = (Get-NetTCPConnection).LocalPort | Where-Object -FilterScript {
+        $_ -ge $LowestPortNumber -and $_ -le $HighestPortNumber
     }
 
-    if (!(Test-Path -Path variable:ExcludePorts) -or ($ExcludePorts -eq $null))
+    if (!(Test-Path -Path variable:usedAndExcludedPorts) -or ($null -eq $usedAndExcludedPorts))
+    {
+        [System.Collections.ArrayList] $usedAndExcludedPorts = @()
+    }
+
+    if (!(Test-Path -Path variable:ExcludePorts) -or ($null -eq $ExcludePorts))
     {
         $ExcludePorts = @()
     }
 
-    for ($i = $LowestPortNumber; $i -le $HighestPortNumber; $i++)
+    $null = $usedAndExcludedPorts.Add($ExcludePorts)
+
+    foreach ($port in $LowestPortNumber..$HighestPortNumber)
     {
-        if (!($usedPorts.Contains($i)) -and !($ExcludePorts.Contains($i)))
+        if (!($usedAndExcludedPorts.Contains($port)))
         {
-            $unusedPort = $i
+            $unusedPort = $port
             break
         }
     }

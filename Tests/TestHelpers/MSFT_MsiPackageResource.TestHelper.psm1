@@ -100,7 +100,7 @@ function Start-Server
                                     'HttpIntegrationTest.FileServerStarted')
     $null = $fileServerStarted.Reset()
 
-    <# 
+    <#
         The server is run on a separate process so that it can receive requests
         while the tests continue to run. It takes in the same parameterss that are passed
         in to this function. All helper functions that the server uses have to be
@@ -130,7 +130,7 @@ function Start-Server
             (
                 [Parameter(Mandatory = $true)]
                 [System.Net.HttpListener]
-                $HttpListener, 
+                $HttpListener,
 
                 [Parameter(Mandatory = $true)]
                 [System.Boolean]
@@ -203,7 +203,7 @@ function Start-Server
             # Create certificate
             $certificate = New-SelfSignedCertificate -CertStoreLocation 'Cert:\LocalMachine\My' -DnsName localhost
             Write-Log -LogFile $LogPath -Message 'Created certificate'
-            
+
             $hash = $certificate.Thumbprint
             $certPassword = ConvertTo-SecureString -String 'password12345' -AsPlainText -Force
             $tempPath = 'C:\certForTesting'
@@ -211,9 +211,9 @@ function Start-Server
             $null = Export-PfxCertificate -Cert $certificate -FilePath $tempPath -Password $certPassword
             $null = Import-PfxCertificate -CertStoreLocation 'Cert:\LocalMachine\Root' -FilePath 'C:\certForTesting' -Password $certPassword
             Remove-Item -Path $tempPath
-            
+
             Write-Log -LogFile $LogPath -Message 'Finished importing certificate into root. About to bind it to port.'
-             
+
             # Use net shell command to directly bind certificate to designated testing port
             $null = netsh http add sslcert ipport=0.0.0.0:$HttpsPort certhash=$hash appid='{833f13c2-319a-4799-9d1a-5b267a0c3593}' clientcertnegotiation=enable
         }
@@ -239,32 +239,32 @@ function Start-Server
             # Add the CallbackEventBridge type if it's not already defined
             if (-not ('CallbackEventBridge' -as [Type]))
             {
-                Add-Type @' 
-                    using System; 
- 
-                    public sealed class CallbackEventBridge { 
-                        public event AsyncCallback CallbackComplete = delegate { }; 
- 
-                        private CallbackEventBridge() {} 
- 
+                Add-Type @'
+                    using System;
+
+                    public sealed class CallbackEventBridge {
+                        public event AsyncCallback CallbackComplete = delegate { };
+
+                        private CallbackEventBridge() {}
+
                         private void CallbackInternal(IAsyncResult result)
-                        { 
-                            CallbackComplete(result); 
-                        } 
- 
+                        {
+                            CallbackComplete(result);
+                        }
+
                         public AsyncCallback Callback
-                        { 
-                            get { return new AsyncCallback(CallbackInternal); } 
-                        } 
- 
+                        {
+                            get { return new AsyncCallback(CallbackInternal); }
+                        }
+
                         public static CallbackEventBridge Create()
-                        { 
-                            return new CallbackEventBridge(); 
-                        } 
-                    } 
+                        {
+                            return new CallbackEventBridge();
+                        }
+                    }
 '@
             }
-    
+
             $bridge = [CallbackEventBridge]::Create()
             Register-ObjectEvent -InputObject $bridge -EventName 'CallbackComplete' -Action $Callback -MessageData $args > $null
             $bridge.Callback
@@ -284,7 +284,7 @@ function Start-Server
 
             .PARAMETER ScriptBlock
                 The code to execute.
-                
+
         #>
         function Invoke-ConsoleCommand
         {
@@ -312,7 +312,7 @@ function Start-Server
                 $message = ('Failed action ''{0}'' on target ''{1}'' (exit code {2}): {3}' -f $Action,$Target,$LASTEXITCODE,$output)
                 Write-Error -Message $message
                 Write-Log -LogFile $LogPath -Message "Error from Invoke-ConsoleCommand: $message"
-            } 
+            }
             else
             {
                 $nonNullOutput = $output | Where-Object { $_ -ne $null }
@@ -344,7 +344,7 @@ function Start-Server
                 [String]
                 $Message
             )
-            
+
             $Message >> $LogFile
         }
 
@@ -409,7 +409,7 @@ function Start-Server
 
                 .PARAMETER Result
                     th IAsyncResult containing the listener object and path to the MSI file.
-                    
+
             #>
             $requestListener =
             {
@@ -495,10 +495,10 @@ function Start-Server
             $_.Exception | ConvertTo-Xml -As String >> $LogPath
 
             'Running Process Info' >> $LogPath
-            Get-Process | fl | Out-String >> $LogPath
+            Get-Process | Format-List | Out-String >> $LogPath
 
             'Open TCP Connections Info' >> $LogPath
-            Get-NetTCPConnection | fl | Out-String >> $LogPath
+            Get-NetTCPConnection | Format-List | Out-String >> $LogPath
 
             throw $_
         }
@@ -508,7 +508,7 @@ function Start-Server
             {
                 $fileServerStarted.Dispose()
             }
-            
+
             Write-Log -LogFile $LogPath -Message 'Stopping the Server'
             Stop-Listener -HttpListener $HttpListener -Https $Https -HttpsPort $HttpsPort
         }
@@ -537,10 +537,10 @@ function Start-Server
     }
 
     <#
-        Return the event object so that client knows when it can start sending requests and 
+        Return the event object so that client knows when it can start sending requests and
         the job object so that the client can stop the job once it is done sending requests.
     #>
-    return @{ 
+    return @{
         FileServerStarted = $fileServerStarted
         Job = $job
     }
@@ -570,7 +570,7 @@ function Stop-Server
         $FileServerStarted,
 
         [System.Management.Automation.Job]
-        $Job  
+        $Job
     )
 
     if ($null -ne $FileServerStarted)
@@ -593,9 +593,7 @@ function Stop-Server
 function Stop-EveryTestServerInstance
 {
     [CmdletBinding()]
-    param
-    (
-    )
+    param ()
 
     Get-Job -Name "$($testJobPrefix)*" | Stop-Job
     Get-Job -Name "$($testJobPrefix)*" | Remove-Job
@@ -611,7 +609,7 @@ function Stop-EveryTestServerInstance
 function New-TestMsi
 {
     [CmdletBinding()]
-    param    
+    param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
