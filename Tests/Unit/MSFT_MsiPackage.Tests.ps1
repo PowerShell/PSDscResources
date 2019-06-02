@@ -495,6 +495,7 @@ Describe 'MsiPackage Unit Tests' {
                 It 'Should return the expected URI when scheme is http' {
                     $uriBuilder = [System.UriBuilder]::new('http', 'localhost')
                     $uriBuilder.Path = 'testMsi.msi'
+                    $filePath = $uriBuilder.Uri.AbsoluteUri
 
                     Convert-PathToUri -Path $filePath | Should Be $uriBuilder.Uri
                 }
@@ -502,6 +503,7 @@ Describe 'MsiPackage Unit Tests' {
                 It 'Should return the expected URI when scheme is https' {
                     $uriBuilder = [System.UriBuilder]::new('https', 'localhost')
                     $uriBuilder.Path = 'testMsi.msi'
+                    $filePath = $uriBuilder.Uri.AbsoluteUri
 
                     Convert-PathToUri -Path $filePath | Should Be $uriBuilder.Uri
                 }
