@@ -577,6 +577,16 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* Fixes issue where MsiPackage Integration tests fail if the test HttpListener
+  fails to start. Moves the test HttpListener objects to dynamically assigned,
+  higher numbered ports to avoid conflicts with other services, and also checks
+  to ensure that the ports are available before using them. Adds checks to
+  ensure that no outstanding HTTP server jobs are running before attempting to
+  setup a new one. Also adds additional instrumentation to make it easier to
+  troubleshoot issues with the test HttpListener objects in the future.
+  Specifically fixes
+  [Issue #142](https://github.com/PowerShell/PSDscResources/issues/142)
+
 ### 2.11.0.0
 
 * Fix Custom DSC Resource Kit PSSA Rule Failures

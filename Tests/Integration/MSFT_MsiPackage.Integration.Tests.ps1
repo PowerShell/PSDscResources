@@ -37,7 +37,7 @@ try
 
                 <#
                     This log file is used to log messages from the mock server which is important for debugging since
-                    most of the work of the mock server is done within a separate process. 
+                    most of the work of the mock server is done within a separate process.
                 #>
                 $script:logFile = Join-Path -Path $PSScriptRoot -ChildPath 'PackageTestLogFile.txt'
 
@@ -48,6 +48,9 @@ try
                 $script:packageId = '{deadbeef-80c6-41e6-a1b9-8bdb8a05027f}'
 
                 $null = New-TestMsi -DestinationPath $script:msiLocation
+
+                $script:testHttpPort = Get-UnusedTcpPort
+                $script:testHttpsPort = Get-UnusedTcpPort -ExcludePorts @($script:testHttpPort)
 
                 # Clear the log file
                 'Beginning integration tests' > $script:logFile
@@ -171,8 +174,11 @@ try
                 }
 
                 It 'Should correctly install and remove a package from a HTTP URL' {
-                    $baseUrl = 'http://localhost:1242/'
-                    $msiUrl = "$baseUrl" + 'package.msi'
+                    $uriBuilder = [System.UriBuilder]::new('http', 'localhost', $script:testHttpPort)
+                    $baseUrl = $uriBuilder.Uri.AbsoluteUri
+
+                    $uriBuilder.Path = 'package.msi'
+                    $msiUrl = $uriBuilder.Uri.AbsoluteUri
 
                     $fileServerStarted = $null
                     $job = $null
@@ -181,7 +187,10 @@ try
                     {
                         'Http tests:' >> $script:logFile
 
-                        $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $false
+                        # Make sure no existing HTTP(S) test servers are running
+                        Stop-EveryTestServerInstance
+
+                        $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $false -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
                         $fileServerStarted = $serverResult.FileServerStarted
                         $job = $serverResult.Job
 
@@ -196,6 +205,12 @@ try
                         Set-TargetResource -Ensure 'Absent' -Path $msiUrl -ProductId $script:packageId
                         Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
                     }
+                    catch
+                    {
+                        Write-Warning -Message 'Caught exception performing HTTP server tests. Outputting HTTP server log.' -Verbose
+                        Get-Content -Path $script:logFile | Write-Verbose -Verbose
+                        throw $_
+                    }
                     finally
                     {
                         <#
@@ -207,9 +222,11 @@ try
                 }
 
                 It 'Should correctly install and remove a package from a HTTPS URL' -Skip:$script:skipHttpsTest {
+                    $uriBuilder = [System.UriBuilder]::new('https', 'localhost', $script:testHttpsPort)
+                    $baseUrl = $uriBuilder.Uri.AbsoluteUri
 
-                    $baseUrl = 'https://localhost:1243/'
-                    $msiUrl = "$baseUrl" + 'package.msi'
+                    $uriBuilder.Path = 'package.msi'
+                    $msiUrl = $uriBuilder.Uri.AbsoluteUri
 
                     $fileServerStarted = $null
                     $job = $null
@@ -218,9 +235,12 @@ try
                     {
                         'Https tests:' >> $script:logFile
 
-                        $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true
+                        # Make sure no existing HTTP(S) test servers are running
+                        Stop-EveryTestServerInstance
+
+                        $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
                         $fileServerStarted = $serverResult.FileServerStarted
-                        $job = $serverResult.Job             
+                        $job = $serverResult.Job
 
                         # Wait for the file server to be ready to receive requests
                         $fileServerStarted.WaitOne(30000)
@@ -232,6 +252,12 @@ try
 
                         Set-TargetResource -Ensure 'Absent' -Path $msiUrl -ProductId $script:packageId
                         Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+                    }
+                    catch
+                    {
+                        Write-Warning -Message 'Caught exception performing HTTPS server tests. Outputting HTTPS server log.' -Verbose
+                        Get-Content -Path $script:logFile | Write-Verbose -Verbose
+                        throw $_
                     }
                     finally
                     {
