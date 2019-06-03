@@ -13,647 +13,650 @@ if ($PSVersionTable.PSVersion -lt [Version] '5.1')
     return
 }
 
-# Import CommonTestHelper
-$testsFolderFilePath = Split-Path -Path $PSScriptRoot -Parent
-$testHelperFolderFilePath = Join-Path -Path $testsFolderFilePath -ChildPath 'TestHelpers'
-$commonTestHelperFilePath = Join-Path -Path $testHelperFolderFilePath -ChildPath 'CommonTestHelper.psm1'
-Import-Module -Name $commonTestHelperFilePath
+Describe 'MsiPackage End to End Tests' {
+    BeforeAll {
+        # Import CommonTestHelper
+        $testsFolderFilePath = Split-Path $PSScriptRoot -Parent
+        $testHelperFolderFilePath = Join-Path -Path $testsFolderFilePath -ChildPath 'TestHelpers'
+        $commonTestHelperFilePath = Join-Path -Path $testHelperFolderFilePath -ChildPath 'CommonTestHelper.psm1'
+        Import-Module -Name $commonTestHelperFilePath
 
-try
-{
-    # Make sure strong crypto is enabled in .NET for HTTPS tests
-    $originalStrongCryptoSettings = Enable-StrongCryptoForDotNetFour
+        $script:testEnvironment = Enter-DscResourceTestEnvironment `
+            -DscResourceModuleName 'PSDscResources' `
+            -DscResourceName 'MSFT_MsiPackage' `
+            -TestType 'Integration'
 
-    Describe 'MsiPackage End to End Tests' {
-        BeforeAll {
-            # Import CommonTestHelper
-            $testsFolderFilePath = Split-Path $PSScriptRoot -Parent
-            $testHelperFolderFilePath = Join-Path -Path $testsFolderFilePath -ChildPath 'TestHelpers'
-            $commonTestHelperFilePath = Join-Path -Path $testHelperFolderFilePath -ChildPath 'CommonTestHelper.psm1'
-            Import-Module -Name $commonTestHelperFilePath
+        # Import MsiPackage resource module for Test-TargetResource
+        $moduleRootFilePath = Split-Path -Path $testsFolderFilePath -Parent
+        $dscResourcesFolderFilePath = Join-Path -Path $moduleRootFilePath -ChildPath 'DscResources'
+        $msiPackageResourceFolderFilePath = Join-Path -Path $dscResourcesFolderFilePath -ChildPath 'MSFT_MsiPackage'
+        $msiPackageResourceModuleFilePath = Join-Path -Path $msiPackageResourceFolderFilePath -ChildPath 'MSFT_MsiPackage.psm1'
+        Import-Module -Name $msiPackageResourceModuleFilePath -Force
 
-            $script:testEnvironment = Enter-DscResourceTestEnvironment `
-                -DscResourceModuleName 'PSDscResources' `
-                -DscResourceName 'MSFT_MsiPackage' `
-                -TestType 'Integration'
+        # Import the MsiPackage test helper
+        $packageTestHelperFilePath = Join-Path -Path $testHelperFolderFilePath -ChildPath 'MSFT_MsiPackageResource.TestHelper.psm1'
+        Import-Module -Name $packageTestHelperFilePath -Force
 
-            # Import MsiPackage resource module for Test-TargetResource
-            $moduleRootFilePath = Split-Path -Path $testsFolderFilePath -Parent
-            $dscResourcesFolderFilePath = Join-Path -Path $moduleRootFilePath -ChildPath 'DscResources'
-            $msiPackageResourceFolderFilePath = Join-Path -Path $dscResourcesFolderFilePath -ChildPath 'MSFT_MsiPackage'
-            $msiPackageResourceModuleFilePath = Join-Path -Path $msiPackageResourceFolderFilePath -ChildPath 'MSFT_MsiPackage.psm1'
-            Import-Module -Name $msiPackageResourceModuleFilePath -Force
+        # Set up the paths to the test configurations
+        $script:configurationFilePathNoOptionalParameters = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_MsiPackage_NoOptionalParameters'
+        $script:configurationFilePathLogPath = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_MsiPackage_LogPath'
 
-            # Import the MsiPackage test helper
-            $packageTestHelperFilePath = Join-Path -Path $testHelperFolderFilePath -ChildPath 'MSFT_MsiPackageResource.TestHelper.psm1'
-            Import-Module -Name $packageTestHelperFilePath -Force
+        <#
+            This log file is used to log messages from the mock server which is important for debugging since
+            most of the work of the mock server is done within a separate process.
+        #>
+        $script:logFile = Join-Path -Path $PSScriptRoot -ChildPath 'PackageTestLogFile.txt'
+        $script:environmentInIncorrectStateErrorMessage = 'The current environment is not in the expected state for this test - either something was setup incorrectly on your machine or a previous test failed - results after this may be invalid.'
 
-            # Set up the paths to the test configurations
-            $script:configurationFilePathNoOptionalParameters = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_MsiPackage_NoOptionalParameters'
-            $script:configurationFilePathLogPath = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_MsiPackage_LogPath'
+        $script:msiName = 'DSCSetupProject.msi'
+        $script:msiLocation = Join-Path -Path $TestDrive -ChildPath $script:msiName
 
-            <#
-                This log file is used to log messages from the mock server which is important for debugging since
-                most of the work of the mock server is done within a separate process. 
-            #>
-            $script:logFile = Join-Path -Path $PSScriptRoot -ChildPath 'PackageTestLogFile.txt'
-            $script:environmentInIncorrectStateErrorMessage = 'The current environment is not in the expected state for this test - either something was setup incorrectly on your machine or a previous test failed - results after this may be invalid.'
+        $script:packageId = '{deadbeef-80c6-41e6-a1b9-8bdb8a05027f}'
 
-            $script:msiName = 'DSCSetupProject.msi'
-            $script:msiLocation = Join-Path -Path $TestDrive -ChildPath $script:msiName
+        $null = New-TestMsi -DestinationPath $script:msiLocation
 
-            $script:packageId = '{deadbeef-80c6-41e6-a1b9-8bdb8a05027f}'
+        $script:testHttpPort = Get-UnusedTcpPort
+        $script:testHttpsPort = Get-UnusedTcpPort -ExcludePorts @($script:testHttpPort)
 
-            $null = New-TestMsi -DestinationPath $script:msiLocation
+        # Clear the log file
+        'Beginning integration tests' > $script:logFile
+    }
 
-            # Clear the log file
-            'Beginning integration tests' > $script:logFile
+    AfterAll {
+        # Remove the test MSI if it is still installed
+        if (Test-PackageInstalledById -ProductId $script:packageId)
+        {
+            $null = Start-Process -FilePath 'msiexec.exe' -ArgumentList @("/x$script:packageId", '/passive') -Wait
+            $null = Start-Sleep -Seconds 1
         }
 
-        AfterAll {
-            # Remove the test MSI if it is still installed
-            if (Test-PackageInstalledById -ProductId $script:packageId)
-            {
-                $null = Start-Process -FilePath 'msiexec.exe' -ArgumentList @("/x$script:packageId", '/passive') -Wait
-                $null = Start-Sleep -Seconds 1
-            }
-
-            if (Test-PackageInstalledById -ProductId $script:packageId)
-            {
-                throw 'Test package could not be uninstalled after running all tests. It may cause errors in subsequent test runs.'
-            }
-
-            Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
+        if (Test-PackageInstalledById -ProductId $script:packageId)
+        {
+            throw 'Test package could not be uninstalled after running all tests. It may cause errors in subsequent test runs.'
         }
 
-        Context 'Uninstall package that is already Absent' {
-            $configurationName = 'RemoveAbsentMsiPackage'
+        Exit-DscResourceTestEnvironment -TestEnvironment $script:testEnvironment
+    }
 
-            $msiPackageParameters = @{
-                ProductId = $script:packageId
-                Path = $script:msiLocation
-                Ensure = 'Absent'
-            }
+    Context 'Uninstall package that is already Absent' {
+        $configurationName = 'RemoveAbsentMsiPackage'
 
-            It 'Should return True from Test-TargetResource with the same parameters before configuration' {
-                $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-                $testTargetResourceInitialResult | Should Be $true
-
-                if ($testTargetResourceInitialResult -ne $true)
-                {
-                    <#
-                        Not throwing an error here since the tests should still run correctly after this,
-                        we just want to notify the user that the tests aren't necessarily testing what
-                        they should be
-                    #>
-                    Write-Error -Message $script:environmentInIncorrectStateErrorMessage
-                }
-            }
-
-            It 'Package should not exist on the machine before configuration is run' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
-            }
-
-            It 'Should compile and run configuration' {
-                { 
-                    . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
-                    & $configurationName -OutputPath $TestDrive @msiPackageParameters
-                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
-
-            It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-                MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
-            }
-
-            It 'Package should not exist on the machine' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
-            }
+        $msiPackageParameters = @{
+            ProductId = $script:packageId
+            Path = $script:msiLocation
+            Ensure = 'Absent'
         }
 
-        Context 'Install package that is not installed yet' {
-            $configurationName = 'InstallMsiPackage'
+        It 'Should return True from Test-TargetResource with the same parameters before configuration' {
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should Be $true
 
-            $msiPackageParameters = @{
-                ProductId = $script:packageId
-                Path = $script:msiLocation
-                Ensure = 'Present'
-            }
-
-            It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-                $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-                $testTargetResourceInitialResult | Should Be $false
-
-                if ($testTargetResourceInitialResult -ne $false)
-                {
-                    <#
-                        Not throwing an error here since the tests should still run correctly after this,
-                        we just want to notify the user that the tests aren't necessarily testing what
-                        they should be
-                    #>
-                    Write-Error -Message $script:environmentInIncorrectStateErrorMessage
-                }
-            }
-
-            It 'Package should not exist on the machine before configuration is run' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
-            }
-
-            It 'Should compile and run configuration' {
-                { 
-                    . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
-                    & $configurationName -OutputPath $TestDrive @msiPackageParameters
-                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
-
-            It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-                MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
-            }
-
-            It 'Package should exist on the machine' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
-            }
-        }
-
-        Context 'Install package that is already installed' {
-            $configurationName = 'InstallExistingMsiPackage'
-
-            $msiPackageParameters = @{
-                ProductId = $script:packageId
-                Path = $script:msiLocation
-                Ensure = 'Present'
-            }
-
-            It 'Should return True from Test-TargetResource with the same parameters before configuration' {
-                $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-                $testTargetResourceInitialResult | Should Be $true
-
-                if ($testTargetResourceInitialResult -ne $true)
-                {
-                    <#
-                        Not throwing an error here since the tests should still run correctly after this,
-                        we just want to notify the user that the tests aren't necessarily testing what
-                        they should be
-                    #>
-                    Write-Error -Message $script:environmentInIncorrectStateErrorMessage
-                }
-            }
-
-            It 'Package should exist on the machine before configuration is run' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
-            }
-
-            It 'Should compile and run configuration' {
-                { 
-                    . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
-                    & $configurationName -OutputPath $TestDrive @msiPackageParameters
-                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
-
-            It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-                MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
-            }
-
-            It 'Package should exist on the machine' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
-            }
-        }
-
-        Context 'Uninstall package that is installed' {
-            $configurationName = 'UninstallExistingMsiPackage'
-
-            $msiPackageParameters = @{
-                ProductId = $script:packageId
-                Path = $script:msiLocation
-                Ensure = 'Absent'
-            }
-
-            It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-                $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-                $testTargetResourceInitialResult | Should Be $false
-
-                if ($testTargetResourceInitialResult -ne $false)
-                {
-                    <#
-                        Not throwing an error here since the tests should still run correctly after this,
-                        we just want to notify the user that the tests aren't necessarily testing what
-                        they should be
-                    #>
-                    Write-Error -Message $script:environmentInIncorrectStateErrorMessage
-                }
-            }
-
-            It 'Package should exist on the machine before configuration is run' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
-            }
-
-            It 'Should compile and run configuration' {
-                { 
-                    . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
-                    & $configurationName -OutputPath $TestDrive @msiPackageParameters
-                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
-
-            It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-                MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
-            }
-
-            It 'Package should not exist on the machine' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
-            }
-        }
-
-        Context 'Install package that is not installed and write to specified log file' {
-            $configurationName = 'InstallWithLogFile'
-
-            $logPath = Join-Path -Path $TestDrive -ChildPath 'TestMsiLog.txt'
-
-            if (Test-Path -Path $logPath)
-            {
-                Remove-Item -Path $logPath -Force
-            }
-
-            $msiPackageParameters = @{
-                ProductId = $script:packageId
-                Path = $script:msiLocation
-                Ensure = 'Present'
-                LogPath = $logPath
-            }
-
-            It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-                $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-                $testTargetResourceInitialResult | Should Be $false
-
-                if ($testTargetResourceInitialResult -ne $false)
-                {
-                    <#
-                        Not throwing an error here since the tests should still run correctly after this,
-                        we just want to notify the user that the tests aren't necessarily testing what
-                        they should be
-                    #>
-                    Write-Error -Message $script:environmentInIncorrectStateErrorMessage
-                }
-            }
-
-            It 'Package should not exist on the machine before configuration is run' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
-            }
-
-            It 'Should compile and run configuration' {
-                { 
-                    . $script:configurationFilePathLogPath -ConfigurationName $configurationName
-                    & $configurationName -OutputPath $TestDrive @msiPackageParameters
-                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
-
-            It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-                MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
-            }
-
-            It 'Should have created the log file' {
-                Test-Path -Path $logPath | Should Be $true
-            }
-
-            It 'Package should exist on the machine' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
-            }
-        }
-
-        Context 'Uninstall package that is installed and write to specified log file' {
-            $configurationName = 'InstallWithLogFile'
-
-            $logPath = Join-Path -Path $TestDrive -ChildPath 'TestMsiLog.txt'
-
-            if (Test-Path -Path $logPath)
-            {
-                Remove-Item -Path $logPath -Force
-            }
-
-            $msiPackageParameters = @{
-                ProductId = $script:packageId
-                Path = $script:msiLocation
-                Ensure = 'Absent'
-                LogPath = $logPath
-            }
-
-            It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-                $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-                $testTargetResourceInitialResult | Should Be $false
-
-                if ($testTargetResourceInitialResult -ne $false)
-                {
-                    <#
-                        Not throwing an error here since the tests should still run correctly after this,
-                        we just want to notify the user that the tests aren't necessarily testing what
-                        they should be
-                    #>
-                    Write-Error -Message $script:environmentInIncorrectStateErrorMessage
-                }
-            }
-
-            It 'Package should exist on the machine before configuration is run' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
-            }
-
-            It 'Should compile and run configuration' {
-                { 
-                    . $script:configurationFilePathLogPath -ConfigurationName $configurationName
-                    & $configurationName -OutputPath $TestDrive @msiPackageParameters
-                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
-            }
-
-            It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-                MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
-            }
-
-            It 'Should have created the log file' {
-                Test-Path -Path $logPath | Should Be $true
-            }
-
-            It 'Package should not exist on the machine' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
-            } 
-        }
-
-        Context 'Install package from HTTP Url' {
-            $configurationName = 'UninstallExistingMsiPackageFromHttp'
-
-            $baseUrl = 'http://localhost:1242/'
-            $msiUrl = "$baseUrl" + 'package.msi'
-
-            $fileServerStarted = $null
-            $job = $null
-
-            $msiPackageParameters = @{
-                ProductId = $script:packageId
-                Path = $msiUrl
-                Ensure = 'Present'
-            }
-
-            It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-                $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-                $testTargetResourceInitialResult | Should Be $false
-
-                if ($testTargetResourceInitialResult -ne $false)
-                {
-                    <#
-                        Not throwing an error here since the tests should still run correctly after this,
-                        we just want to notify the user that the tests aren't necessarily testing what
-                        they should be
-                    #>
-                    Write-Error -Message $script:environmentInIncorrectStateErrorMessage
-                }
-            }
-
-            It 'Package should not exist on the machine before configuration is run' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
-            }
-
-            try
-            {
-                $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $false
-                $fileServerStarted = $serverResult.FileServerStarted
-                $job = $serverResult.Job              
-
-                $fileServerStarted.WaitOne(30000)
-
-                It 'Should compile and run configuration' {
-                    { 
-                        . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
-                        & $configurationName -OutputPath $TestDrive @msiPackageParameters
-                        Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                    } | Should Not Throw
-                }
-            }
-            finally
+            if ($testTargetResourceInitialResult -ne $true)
             {
                 <#
-                    This must be called after Start-Server to ensure the listening port is closed,
-                    otherwise subsequent tests may fail until the machine is rebooted.
+                    Not throwing an error here since the tests should still run correctly after this,
+                    we just want to notify the user that the tests aren't necessarily testing what
+                    they should be
                 #>
-                Stop-Server -FileServerStarted $fileServerStarted -Job $job
-            }
-
-            It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-                MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
-            }
-
-            It 'Package should exist on the machine' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+                Write-Error -Message $script:environmentInIncorrectStateErrorMessage
             }
         }
 
-        Context 'Uninstall Msi package from HTTP Url' {
-            $configurationName = 'InstallMsiPackageFromHttp'
-
-            $baseUrl = 'http://localhost:1242/'
-            $msiUrl = "$baseUrl" + 'package.msi'
-
-            $fileServerStarted = $null
-            $job = $null
-
-            $msiPackageParameters = @{
-                ProductId = $script:packageId
-                Path = $msiUrl
-                Ensure = 'Absent'
-            }
-
-            It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-                $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-                $testTargetResourceInitialResult | Should Be $false
-
-                if ($testTargetResourceInitialResult -ne $false)
-                {
-                    <#
-                        Not throwing an error here since the tests should still run correctly after this,
-                        we just want to notify the user that the tests aren't necessarily testing what
-                        they should be
-                    #>
-                    Write-Error -Message $script:environmentInIncorrectStateErrorMessage
-                }
-            }
-
-            It 'Package should exist on the machine before configuration is run' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
-            }
-        
-            try
-            {
-                $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $false
-                $fileServerStarted = $serverResult.FileServerStarted
-                $job = $serverResult.Job
-
-                $fileServerStarted.WaitOne(30000)
-
-                It 'Should compile and run configuration' {
-                    { 
-                        . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
-                        & $configurationName -OutputPath $TestDrive @msiPackageParameters
-                        Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                    } | Should Not Throw
-                }
-            }
-            finally
-            {
-                <#
-                    This must be called after Start-Server to ensure the listening port is closed,
-                    otherwise subsequent tests may fail until the machine is rebooted.
-                #>
-                Stop-Server -FileServerStarted $fileServerStarted -Job $job
-            }
-
-            It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-                MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
-            }
-
-            It 'Package should not exist on the machine' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
-            }
+        It 'Package should not exist on the machine before configuration is run' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
         }
 
-        Context 'Install Msi package from HTTPS Url' {
-            $configurationName = 'InstallMsiPackageFromHttpS'
-
-            $baseUrl = 'https://localhost:1243/'
-            $msiUrl = "$baseUrl" + 'package.msi'
-
-            $fileServerStarted = $null
-            $job = $null
-
-            $msiPackageParameters = @{
-                ProductId = $script:packageId
-                Path = $msiUrl
-                Ensure = 'Present'
-            }
-
-            It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-                $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-                $testTargetResourceInitialResult | Should Be $false
-
-                if ($testTargetResourceInitialResult -ne $false)
-                {
-                    <#
-                        Not throwing an error here since the tests should still run correctly after this,
-                        we just want to notify the user that the tests aren't necessarily testing what
-                        they should be
-                    #>
-                    Write-Error -Message $script:environmentInIncorrectStateErrorMessage
-                }
-            }
-
-            It 'Package should not exist on the machine before configuration is run' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
-            }
-        
-            try
+        It 'Should compile and run configuration' {
             {
-                $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true
-                $fileServerStarted = $serverResult.FileServerStarted
-                $job = $serverResult.Job
-
-                $fileServerStarted.WaitOne(30000)
-
-                It 'Should compile and run configuration' {
-                    { 
-                        . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
-                        & $configurationName -OutputPath $TestDrive @msiPackageParameters
-                        Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                    } | Should Not Throw
-                }
-            }
-            finally
-            {
-                <#
-                    This must be called after Start-Server to ensure the listening port is closed,
-                    otherwise subsequent tests may fail until the machine is rebooted.
-                #>
-                Stop-Server -FileServerStarted $fileServerStarted -Job $job
-            }
-
-            It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-                MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
-            }
-
-            It 'Package should exist on the machine' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
-            }
+                . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
+                & $configurationName -OutputPath $TestDrive @msiPackageParameters
+                Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+            } | Should Not Throw
         }
-    
-        Context 'Uninstall Msi package from HTTPS Url' {
-            $configurationName = 'UninstallMsiPackageFromHttps'
 
-            $baseUrl = 'https://localhost:1243/'
-            $msiUrl = "$baseUrl" + 'package.msi'
+        It 'Should return True from Test-TargetResource with the same parameters after configuration' {
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+        }
 
-            $fileServerStarted = $null
-            $job = $null
-
-            $msiPackageParameters = @{
-                ProductId = $script:packageId
-                Path = $msiUrl
-                Ensure = 'Absent'
-            }
-
-            It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-                $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-                $testTargetResourceInitialResult | Should Be $false
-
-                if ($testTargetResourceInitialResult -ne $false)
-                {
-                    <#
-                        Not throwing an error here since the tests should still run correctly after this,
-                        we just want to notify the user that the tests aren't necessarily testing what
-                        they should be
-                    #>
-                    Write-Error -Message $script:environmentInIncorrectStateErrorMessage
-                }
-            }
-
-            It 'Package should exist on the machine before configuration is run' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
-            }
-
-            try
-            {
-                $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true
-                $fileServerStarted = $serverResult.FileServerStarted
-                $job = $serverResult.Job
-
-                $fileServerStarted.WaitOne(30000)
-
-                It 'Should compile and run configuration' {
-                    { 
-                        . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
-                        & $configurationName -OutputPath $TestDrive @msiPackageParameters
-                        Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                    } | Should Not Throw
-                }
-            }
-            finally
-            {
-                <#
-                    This must be called after Start-Server to ensure the listening port is closed,
-                    otherwise subsequent tests may fail until the machine is rebooted.
-                #>
-                Stop-Server -FileServerStarted $fileServerStarted -Job $job
-            }
-
-            It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-                MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
-            }
-
-            It 'Package should not exist on the machine' {
-                Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
-            }
+        It 'Package should not exist on the machine' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
         }
     }
-}
-finally
-{
-    Undo-ChangesToStrongCryptoForDotNetFour -OriginalSettings $originalStrongCryptoSettings
+
+    Context 'Install package that is not installed yet' {
+        $configurationName = 'InstallMsiPackage'
+
+        $msiPackageParameters = @{
+            ProductId = $script:packageId
+            Path = $script:msiLocation
+            Ensure = 'Present'
+        }
+
+        It 'Should return False from Test-TargetResource with the same parameters before configuration' {
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should Be $false
+
+            if ($testTargetResourceInitialResult -ne $false)
+            {
+                <#
+                    Not throwing an error here since the tests should still run correctly after this,
+                    we just want to notify the user that the tests aren't necessarily testing what
+                    they should be
+                #>
+                Write-Error -Message $script:environmentInIncorrectStateErrorMessage
+            }
+        }
+
+        It 'Package should not exist on the machine before configuration is run' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+        }
+
+        It 'Should compile and run configuration' {
+            {
+                . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
+                & $configurationName -OutputPath $TestDrive @msiPackageParameters
+                Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+            } | Should Not Throw
+        }
+
+        It 'Should return True from Test-TargetResource with the same parameters after configuration' {
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+        }
+
+        It 'Package should exist on the machine' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+        }
+    }
+
+    Context 'Install package that is already installed' {
+        $configurationName = 'InstallExistingMsiPackage'
+
+        $msiPackageParameters = @{
+            ProductId = $script:packageId
+            Path = $script:msiLocation
+            Ensure = 'Present'
+        }
+
+        It 'Should return True from Test-TargetResource with the same parameters before configuration' {
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should Be $true
+
+            if ($testTargetResourceInitialResult -ne $true)
+            {
+                <#
+                    Not throwing an error here since the tests should still run correctly after this,
+                    we just want to notify the user that the tests aren't necessarily testing what
+                    they should be
+                #>
+                Write-Error -Message $script:environmentInIncorrectStateErrorMessage
+            }
+        }
+
+        It 'Package should exist on the machine before configuration is run' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+        }
+
+        It 'Should compile and run configuration' {
+            {
+                . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
+                & $configurationName -OutputPath $TestDrive @msiPackageParameters
+                Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+            } | Should Not Throw
+        }
+
+        It 'Should return True from Test-TargetResource with the same parameters after configuration' {
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+        }
+
+        It 'Package should exist on the machine' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+        }
+    }
+
+    Context 'Uninstall package that is installed' {
+        $configurationName = 'UninstallExistingMsiPackage'
+
+        $msiPackageParameters = @{
+            ProductId = $script:packageId
+            Path = $script:msiLocation
+            Ensure = 'Absent'
+        }
+
+        It 'Should return False from Test-TargetResource with the same parameters before configuration' {
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should Be $false
+
+            if ($testTargetResourceInitialResult -ne $false)
+            {
+                <#
+                    Not throwing an error here since the tests should still run correctly after this,
+                    we just want to notify the user that the tests aren't necessarily testing what
+                    they should be
+                #>
+                Write-Error -Message $script:environmentInIncorrectStateErrorMessage
+            }
+        }
+
+        It 'Package should exist on the machine before configuration is run' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+        }
+
+        It 'Should compile and run configuration' {
+            {
+                . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
+                & $configurationName -OutputPath $TestDrive @msiPackageParameters
+                Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+            } | Should Not Throw
+        }
+
+        It 'Should return True from Test-TargetResource with the same parameters after configuration' {
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+        }
+
+        It 'Package should not exist on the machine' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+        }
+    }
+
+    Context 'Install package that is not installed and write to specified log file' {
+        $configurationName = 'InstallWithLogFile'
+
+        $logPath = Join-Path -Path $TestDrive -ChildPath 'TestMsiLog.txt'
+
+        if (Test-Path -Path $logPath)
+        {
+            Remove-Item -Path $logPath -Force
+        }
+
+        $msiPackageParameters = @{
+            ProductId = $script:packageId
+            Path = $script:msiLocation
+            Ensure = 'Present'
+            LogPath = $logPath
+        }
+
+        It 'Should return False from Test-TargetResource with the same parameters before configuration' {
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should Be $false
+
+            if ($testTargetResourceInitialResult -ne $false)
+            {
+                <#
+                    Not throwing an error here since the tests should still run correctly after this,
+                    we just want to notify the user that the tests aren't necessarily testing what
+                    they should be
+                #>
+                Write-Error -Message $script:environmentInIncorrectStateErrorMessage
+            }
+        }
+
+        It 'Package should not exist on the machine before configuration is run' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+        }
+
+        It 'Should compile and run configuration' {
+            {
+                . $script:configurationFilePathLogPath -ConfigurationName $configurationName
+                & $configurationName -OutputPath $TestDrive @msiPackageParameters
+                Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+            } | Should Not Throw
+        }
+
+        It 'Should return True from Test-TargetResource with the same parameters after configuration' {
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+        }
+
+        It 'Should have created the log file' {
+            Test-Path -Path $logPath | Should Be $true
+        }
+
+        It 'Package should exist on the machine' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+        }
+    }
+
+    Context 'Uninstall package that is installed and write to specified log file' {
+        $configurationName = 'InstallWithLogFile'
+
+        $logPath = Join-Path -Path $TestDrive -ChildPath 'TestMsiLog.txt'
+
+        if (Test-Path -Path $logPath)
+        {
+            Remove-Item -Path $logPath -Force
+        }
+
+        $msiPackageParameters = @{
+            ProductId = $script:packageId
+            Path = $script:msiLocation
+            Ensure = 'Absent'
+            LogPath = $logPath
+        }
+
+        It 'Should return False from Test-TargetResource with the same parameters before configuration' {
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should Be $false
+
+            if ($testTargetResourceInitialResult -ne $false)
+            {
+                <#
+                    Not throwing an error here since the tests should still run correctly after this,
+                    we just want to notify the user that the tests aren't necessarily testing what
+                    they should be
+                #>
+                Write-Error -Message $script:environmentInIncorrectStateErrorMessage
+            }
+        }
+
+        It 'Package should exist on the machine before configuration is run' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+        }
+
+        It 'Should compile and run configuration' {
+            {
+                . $script:configurationFilePathLogPath -ConfigurationName $configurationName
+                & $configurationName -OutputPath $TestDrive @msiPackageParameters
+                Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+            } | Should Not Throw
+        }
+
+        It 'Should return True from Test-TargetResource with the same parameters after configuration' {
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+        }
+
+        It 'Should have created the log file' {
+            Test-Path -Path $logPath | Should Be $true
+        }
+
+        It 'Package should not exist on the machine' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+        }
+    }
+
+    Context 'Install package from HTTP Url' {
+        $configurationName = 'UninstallExistingMsiPackageFromHttp'
+
+        $uriBuilder = [System.UriBuilder]::new('http', 'localhost', $script:testHttpPort)
+        $uriBuilder.Path = 'package.msi'
+        $msiUrl = $uriBuilder.Uri.AbsoluteUri
+
+        $fileServerStarted = $null
+        $job = $null
+
+        $msiPackageParameters = @{
+            ProductId = $script:packageId
+            Path = $msiUrl
+            Ensure = 'Present'
+        }
+
+        It 'Should return False from Test-TargetResource with the same parameters before configuration' {
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should Be $false
+
+            if ($testTargetResourceInitialResult -ne $false)
+            {
+                <#
+                    Not throwing an error here since the tests should still run correctly after this,
+                    we just want to notify the user that the tests aren't necessarily testing what
+                    they should be
+                #>
+                Write-Error -Message $script:environmentInIncorrectStateErrorMessage
+            }
+        }
+
+        It 'Package should not exist on the machine before configuration is run' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+        }
+
+        try
+        {
+            # Make sure no existing HTTP(S) test servers are running
+            Stop-EveryTestServerInstance
+
+            $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $false -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
+            $fileServerStarted = $serverResult.FileServerStarted
+            $job = $serverResult.Job
+
+            $fileServerStarted.WaitOne(30000)
+
+            It 'Should compile and run configuration' {
+                {
+                    . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @msiPackageParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                } | Should Not Throw
+            }
+        }
+        finally
+        {
+            <#
+                This must be called after Start-Server to ensure the listening port is closed,
+                otherwise subsequent tests may fail until the machine is rebooted.
+            #>
+            Stop-Server -FileServerStarted $fileServerStarted -Job $job
+        }
+
+        It 'Should return True from Test-TargetResource with the same parameters after configuration' {
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+        }
+
+        It 'Package should exist on the machine' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+        }
+    }
+
+    Context 'Uninstall Msi package from HTTP Url' {
+        $configurationName = 'InstallMsiPackageFromHttp'
+
+        $uriBuilder = [System.UriBuilder]::new('http', 'localhost', $script:testHttpPort)
+        $uriBuilder.Path = 'package.msi'
+        $msiUrl = $uriBuilder.Uri.AbsoluteUri
+
+        $fileServerStarted = $null
+        $job = $null
+
+        $msiPackageParameters = @{
+            ProductId = $script:packageId
+            Path = $msiUrl
+            Ensure = 'Absent'
+        }
+
+        It 'Should return False from Test-TargetResource with the same parameters before configuration' {
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should Be $false
+
+            if ($testTargetResourceInitialResult -ne $false)
+            {
+                <#
+                    Not throwing an error here since the tests should still run correctly after this,
+                    we just want to notify the user that the tests aren't necessarily testing what
+                    they should be
+                #>
+                Write-Error -Message $script:environmentInIncorrectStateErrorMessage
+            }
+        }
+
+        It 'Package should exist on the machine before configuration is run' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+        }
+
+        try
+        {
+            # Make sure no existing HTTP(S) test servers are running
+            Stop-EveryTestServerInstance
+
+            $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $false -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
+            $fileServerStarted = $serverResult.FileServerStarted
+            $job = $serverResult.Job
+
+            $fileServerStarted.WaitOne(30000)
+
+            It 'Should compile and run configuration' {
+                {
+                    . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @msiPackageParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                } | Should Not Throw
+            }
+        }
+        finally
+        {
+            <#
+                This must be called after Start-Server to ensure the listening port is closed,
+                otherwise subsequent tests may fail until the machine is rebooted.
+            #>
+            Stop-Server -FileServerStarted $fileServerStarted -Job $job
+        }
+
+        It 'Should return true from Test-TargetResource with the same parameters after configuration' {
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+        }
+
+        It 'Package should not exist on the machine' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+        }
+    }
+
+    Context 'Install Msi package from HTTPS Url' {
+        $configurationName = 'InstallMsiPackageFromHttpS'
+
+        $uriBuilder = [System.UriBuilder]::new('https', 'localhost', $script:testHttpsPort)
+        $uriBuilder.Path = 'package.msi'
+        $msiUrl = $uriBuilder.Uri.AbsoluteUri
+
+        $fileServerStarted = $null
+        $job = $null
+
+        $msiPackageParameters = @{
+            ProductId = $script:packageId
+            Path = $msiUrl
+            Ensure = 'Present'
+        }
+
+        It 'Should return False from Test-TargetResource with the same parameters before configuration' {
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should Be $false
+
+            if ($testTargetResourceInitialResult -ne $false)
+            {
+                <#
+                    Not throwing an error here since the tests should still run correctly after this,
+                    we just want to notify the user that the tests aren't necessarily testing what
+                    they should be
+                #>
+                Write-Error -Message $script:environmentInIncorrectStateErrorMessage
+            }
+        }
+
+        It 'Package should not exist on the machine before configuration is run' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+        }
+
+        try
+        {
+            # Make sure no existing HTTP(S) test servers are running
+            Stop-EveryTestServerInstance
+
+            $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
+            $fileServerStarted = $serverResult.FileServerStarted
+            $job = $serverResult.Job
+
+            $fileServerStarted.WaitOne(30000)
+
+            It 'Should compile and run configuration' {
+                {
+                    . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @msiPackageParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                } | Should Not Throw
+            }
+        }
+        finally
+        {
+            <#
+                This must be called after Start-Server to ensure the listening port is closed,
+                otherwise subsequent tests may fail until the machine is rebooted.
+            #>
+            Stop-Server -FileServerStarted $fileServerStarted -Job $job
+        }
+
+        It 'Should return true from Test-TargetResource with the same parameters after configuration' {
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+        }
+
+        It 'Package should exist on the machine' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+        }
+    }
+
+    Context 'Uninstall Msi package from HTTPS Url' {
+        $configurationName = 'UninstallMsiPackageFromHttps'
+
+        $uriBuilder = [System.UriBuilder]::new('https', 'localhost', $script:testHttpsPort)
+        $uriBuilder.Path = 'package.msi'
+        $msiUrl = $uriBuilder.Uri.AbsoluteUri
+
+        $fileServerStarted = $null
+        $job = $null
+
+        $msiPackageParameters = @{
+            ProductId = $script:packageId
+            Path = $msiUrl
+            Ensure = 'Absent'
+        }
+
+        It 'Should return False from Test-TargetResource with the same parameters before configuration' {
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should Be $false
+
+            if ($testTargetResourceInitialResult -ne $false)
+            {
+                <#
+                    Not throwing an error here since the tests should still run correctly after this,
+                    we just want to notify the user that the tests aren't necessarily testing what
+                    they should be
+                #>
+                Write-Error -Message $script:environmentInIncorrectStateErrorMessage
+            }
+        }
+
+        It 'Package should exist on the machine before configuration is run' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+        }
+
+        try
+        {
+            # Make sure no existing HTTP(S) test servers are running
+            Stop-EveryTestServerInstance
+
+            $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
+            $fileServerStarted = $serverResult.FileServerStarted
+            $job = $serverResult.Job
+
+            $fileServerStarted.WaitOne(30000)
+
+            It 'Should compile and run configuration' {
+                {
+                    . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
+                    & $configurationName -OutputPath $TestDrive @msiPackageParameters
+                    Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
+                } | Should Not Throw
+            }
+        }
+        finally
+        {
+            <#
+                This must be called after Start-Server to ensure the listening port is closed,
+                otherwise subsequent tests may fail until the machine is rebooted.
+            #>
+            Stop-Server -FileServerStarted $fileServerStarted -Job $job
+        }
+
+        It 'Should return true from Test-TargetResource with the same parameters after configuration' {
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+        }
+
+        It 'Package should not exist on the machine' {
+            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+        }
+    }
 }
