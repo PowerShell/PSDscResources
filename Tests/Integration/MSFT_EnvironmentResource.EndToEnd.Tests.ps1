@@ -1,4 +1,4 @@
-﻿<#
+<#
     Please note that some of these tests depend on each other.
     They must be run in the order given - if one test fails, subsequent tests may
     also fail.

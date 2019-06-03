@@ -1,4 +1,4 @@
-﻿# Localized resources for MSFT_MsiPackage
+# Localized resources for MSFT_MsiPackage
 
 ConvertFrom-StringData @'
     CheckingFileHash = Checking file '{0}' for expected {2} hash value of {1}

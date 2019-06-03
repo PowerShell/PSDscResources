@@ -1,4 +1,4 @@
-﻿<#
+<#
     WARNING: DO NOT RUN THESE TESTS ON A VALUABLE MACHINE!
     Running on a disposable VM or AppVeyor is strongly recommended.
     If these tests go awry, your machine's registry could be corrupted which will brick your machine!

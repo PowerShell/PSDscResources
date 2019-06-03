@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
         Creates the environment variable 'TestPathEnvironmentVariable' and sets the value to 'TestValue'
         if it doesn't already exist or appends the value 'TestValue' to the existing path if it does

@@ -1,4 +1,4 @@
-﻿# Localized resources for WindowsPackageCab
+# Localized resources for WindowsPackageCab
 
 ConvertFrom-StringData @'
     RetrievingPackage = Retrieving information for the package {0}

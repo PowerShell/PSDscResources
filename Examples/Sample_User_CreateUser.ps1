@@ -1,4 +1,4 @@
-﻿Configuration Sample_User_CreateUser
+Configuration Sample_User_CreateUser
 {
     param
     (

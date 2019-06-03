@@ -1,4 +1,4 @@
-﻿# Localized strings for MSFT_WindowsFeature.psd1
+# Localized strings for MSFT_WindowsFeature.psd1
 
 ConvertFrom-StringData @'
     FeatureNotFoundError = The requested feature {0} could not be found on the target machine.
