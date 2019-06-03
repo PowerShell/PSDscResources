@@ -593,6 +593,14 @@ The following parameters will be the same for each process in the set:
 
 ### Unreleased
 
+* Ports fixes for the following issues:
+  [Issue #505](https://github.com/PowerShell/xPSDesiredStateConfiguration/issues/505)
+  [Issue #590](https://github.com/PowerShell/xPSDesiredStateConfiguration/issues/590)
+  Changes to test helper Enter-DscResourceTestEnvironment so that it only
+  updates DSCResource.Tests when it is longer than 120 minutes since
+  it was last pulled. This is to improve performance of test execution
+  and reduce the likelihood of connectivity issues caused by inability to
+  pull DSCResource.Tests.
 * Fixes issue where MsiPackage Integration tests fail if the test HttpListener
   fails to start. Moves the test HttpListener objects to dynamically assigned,
   higher numbered ports to avoid conflicts with other services, and also checks
