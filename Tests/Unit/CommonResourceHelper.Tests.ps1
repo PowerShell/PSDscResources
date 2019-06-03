@@ -14,112 +14,38 @@ Describe 'CommonResourceHelper Unit Tests' {
     InModuleScope 'CommonResourceHelper' {
         Describe 'Test-IsNanoServer' {
             $testComputerInfoNanoServer = @{
-                OsProductType = 'Server'
-                OsServerLevel = 'NanoServer'
+                NanoServer = 1
             }
 
             $testComputerInfoServerNotNano = @{
-                OsProductType = 'Server'
-                OsServerLevel = 'NotNano'
             }
 
-            $testComputerInfoNotServer = @{
-                OsProductType = 'NotServer'
-                OsServerLevel = 'NotNano'
-            }
-
-            Mock -CommandName 'Test-CommandExists' -MockWith { return $true }
-            Mock -CommandName 'Get-ComputerInfo' -MockWith { return $testComputerInfoNanoServer }
-
-            Context 'Get-ComputerInfo command exists and succeeds' {
-                Context 'Computer OS type is Server and OS server level is NanoServer' {
-                    It 'Should not throw' {
-                        { $null = Test-IsNanoServer } | Should -Not -Throw
-                    }
-
-                    It 'Should test if the Get-ComputerInfo command exists' {
-                        $testCommandExistsParameterFilter = {
-                            return $Name -eq 'Get-ComputerInfo'
-                        }
-
-                        Assert-MockCalled -CommandName 'Test-CommandExists' -ParameterFilter $testCommandExistsParameterFilter -Exactly 1 -Scope 'Context'
-                    }
-
-                    It 'Should retrieve the computer info' {
-                        Assert-MockCalled -CommandName 'Get-ComputerInfo' -Exactly 1 -Scope 'Context'
-                    }
-
-                    It 'Should return true' {
-                        Test-IsNanoServer | Should -Be $true
-                    }
+            Context 'Computer OS type is Server and OS server level is NanoServer' {
+                Mock -CommandName 'Test-Path' -MockWith { return $true }
+                Mock -CommandName 'Get-ItemProperty' -MockWith { return $testComputerInfoNanoServer }
+                It 'Should not throw' {
+                    { $null = Test-IsNanoServer } | Should -Not -Throw
                 }
 
-                Context 'Computer OS type is Server and OS server level is not NanoServer' {
-                    Mock -CommandName 'Get-ComputerInfo' -MockWith { return $testComputerInfoServerNotNano }
-                    
-                    It 'Should not throw' {
-                        { $null = Test-IsNanoServer } | Should -Not -Throw
-                    }
-
-                    It 'Should test if the Get-ComputerInfo command exists' {
-                        $testCommandExistsParameterFilter = {
-                            return $Name -eq 'Get-ComputerInfo'
-                        }
-
-                        Assert-MockCalled -CommandName 'Test-CommandExists' -ParameterFilter $testCommandExistsParameterFilter -Exactly 1 -Scope 'Context'
-                    }
-
-                    It 'Should retrieve the computer info' {
-                        Assert-MockCalled -CommandName 'Get-ComputerInfo' -Exactly 1 -Scope 'Context'
-                    }
-
-                    It 'Should return false' {
-                        Test-IsNanoServer | Should -Be $false
-                    }
+                It 'Should check the ServerLevels registry path' {
+                    Assert-MockCalled -CommandName 'Get-ItemProperty' -Exactly 1 -Scope 'Context'
                 }
 
-                Context 'Computer OS type is not Server' {
-                    Mock -CommandName 'Get-ComputerInfo' -MockWith { return $testComputerInfoNotServer }
-
-                    It 'Should not throw' {
-                        { $null = Test-IsNanoServer } | Should -Not -Throw
-                    }
-
-                    It 'Should test if the Get-ComputerInfo command exists' {
-                        $testCommandExistsParameterFilter = {
-                            return $Name -eq 'Get-ComputerInfo'
-                        }
-
-                        Assert-MockCalled -CommandName 'Test-CommandExists' -ParameterFilter $testCommandExistsParameterFilter -Exactly 1 -Scope 'Context'
-                    }
-
-                    It 'Should retrieve the computer info' {
-                        Assert-MockCalled -CommandName 'Get-ComputerInfo' -Exactly 1 -Scope 'Context'
-                    }
-
-                    It 'Should return false' {
-                        Test-IsNanoServer | Should -Be $false
-                    }
+                It 'Should return true' {
+                    Test-IsNanoServer | Should -Be $true
                 }
             }
 
-            Context 'Get-ComputerInfo command exists but throws an error and returns null' {
-                Mock -CommandName 'Get-ComputerInfo' -MockWith { return $null }
+            Context 'Computer OS type is Server and OS server level is not NanoServer' {
+                Mock -CommandName 'Test-Path' -MockWith { return $true }
+                Mock -CommandName 'Get-ItemProperty' -MockWith { return $testComputerInfoServerNotNano }
 
                 It 'Should not throw' {
                     { $null = Test-IsNanoServer } | Should -Not -Throw
                 }
 
-                It 'Should test if the Get-ComputerInfo command exists' {
-                    $testCommandExistsParameterFilter = {
-                        return $Name -eq 'Get-ComputerInfo'
-                    }
-
-                    Assert-MockCalled -CommandName 'Test-CommandExists' -ParameterFilter $testCommandExistsParameterFilter -Exactly 1 -Scope 'Context'
-                }
-
-                It 'Should retrieve the computer info' {
-                    Assert-MockCalled -CommandName 'Get-ComputerInfo' -Exactly 1 -Scope 'Context'
+                It 'Should check the ServerLevels registry path' {
+                    Assert-MockCalled -CommandName 'Get-ItemProperty' -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should return false' {
@@ -127,23 +53,15 @@ Describe 'CommonResourceHelper Unit Tests' {
                 }
             }
 
-            Context 'Get-ComputerInfo command does not exist' {
-                Mock -CommandName 'Test-CommandExists' -MockWith { return $false }
+            Context 'Computer OS type is not Server' {
+                Mock -CommandName 'Test-Path' -MockWith { return $false }
 
                 It 'Should not throw' {
                     { $null = Test-IsNanoServer } | Should -Not -Throw
                 }
 
-                It 'Should test if the Get-ComputerInfo command exists' {
-                    $testCommandExistsParameterFilter = {
-                        return $Name -eq 'Get-ComputerInfo'
-                    }
-
-                    Assert-MockCalled -CommandName 'Test-CommandExists' -ParameterFilter $testCommandExistsParameterFilter -Exactly 1 -Scope 'Context'
-                }
-
-                It 'Should not attempt to retrieve the computer info' {
-                    Assert-MockCalled -CommandName 'Get-ComputerInfo' -Exactly 0 -Scope 'Context'
+                It 'Should check the ServerLevels registry path' {
+                    Assert-MockCalled -CommandName 'Test-Path' -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should return false' {
