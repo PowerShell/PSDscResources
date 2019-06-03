@@ -30,27 +30,27 @@ Import-Module -Name 'Dism'
 function Get-TargetResource
 {
     [CmdletBinding()]
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Name,
 
         [Parameter(Mandatory = $true)]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $SourcePath,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $LogPath
     )
 
@@ -72,7 +72,7 @@ function Get-TargetResource
     }
 
     Write-Verbose -Message ($script:localizedData.RetrievingPackage -f $Name)
-    
+
     try
     {
         $windowsPackageInfo = Dism\Get-WindowsPackage @getWindowsPackageParams
@@ -118,22 +118,22 @@ function Set-TargetResource
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Name,
 
         [Parameter(Mandatory = $true)]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $SourcePath,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $LogPath
     )
 
@@ -143,10 +143,10 @@ function Set-TargetResource
     {
         New-InvalidArgumentException -ArgumentName 'SourcePath' -Message ($script:localizedData.SourcePathDoesNotExist -f $SourcePath)
     }
-        
+
     if ($Ensure -ieq 'Present')
     {
-        Write-Verbose -Message ($script:localizedData.AddingPackage -f $SourcePath) 
+        Write-Verbose -Message ($script:localizedData.AddingPackage -f $SourcePath)
         Dism\Add-WindowsPackage -PackagePath $SourcePath -LogPath $LogPath -Online
     }
     else
@@ -180,27 +180,27 @@ function Set-TargetResource
 function Test-TargetResource
 {
     [CmdletBinding()]
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Name,
 
         [Parameter(Mandatory = $true)]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $SourcePath,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $LogPath
     )
 
@@ -226,7 +226,7 @@ function Test-TargetResource
     {
         Write-Verbose -Message ($script:localizedData.EnsureStatesDoNotMatch -f $Name)
         return $false
-    } 
+    }
 }
 
 Export-ModuleMember -Function '*-TargetResource'

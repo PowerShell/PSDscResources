@@ -34,13 +34,13 @@ else
 #>
 function Get-TargetResource
 {
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $UserName
     )
 
@@ -57,7 +57,7 @@ function Get-TargetResource
 <#
     .SYNOPSIS
         Creates, modifies, or deletes a user.
-    
+
     .PARAMETER UserName
         The name of the user to create, modify, or delete.
 
@@ -91,30 +91,32 @@ function Get-TargetResource
         Specifies whether the user is allowed to change their password or not.
         By default this is set to $false
 
-    .NOTES 
+    .NOTES
         If Ensure is set to 'Present' then the password parameter is required.
 #>
 function Set-TargetResource
 {
-    [CmdletBinding()]
+    # Should process is called in a helper functions but not directly in Set-TargetResource
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSShouldProcess', '')]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $UserName,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $FullName,
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
@@ -124,19 +126,19 @@ function Set-TargetResource
         $Password,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $Disabled,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordNeverExpires,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordChangeRequired,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordChangeNotAllowed
     )
 
@@ -186,26 +188,26 @@ function Set-TargetResource
 #>
 function Test-TargetResource
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $UserName,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $FullName,
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
@@ -215,19 +217,19 @@ function Test-TargetResource
         $Password,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $Disabled,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordNeverExpires,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordChangeRequired,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordChangeNotAllowed
     )
 
@@ -251,13 +253,13 @@ function Test-TargetResource
 #>
 function Get-TargetResourceOnFullSKU
 {
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $UserName
     )
 
@@ -312,7 +314,7 @@ function Get-TargetResourceOnFullSKU
 <#
     .SYNOPSIS
         Creates, modifies, or deletes a user when on a full server.
-    
+
     .PARAMETER UserName
         The name of the user to create, modify, or delete.
 
@@ -346,30 +348,30 @@ function Get-TargetResourceOnFullSKU
         Specifies whether the user is allowed to change their password or not.
         By default this is set to $false
 
-    .NOTES 
+    .NOTES
         If Ensure is set to 'Present' then the Password parameter is required.
 #>
 function Set-TargetResourceOnFullSKU
 {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $UserName,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $FullName,
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
@@ -379,19 +381,19 @@ function Set-TargetResourceOnFullSKU
         $Password,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $Disabled,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordNeverExpires,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordChangeRequired,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordChangeNotAllowed
     )
 
@@ -410,7 +412,7 @@ function Set-TargetResourceOnFullSKU
             try
             {
                 $user = Find-UserByNameOnFullSku -UserName $UserName
-                
+
             }
             catch
             {
@@ -456,7 +458,7 @@ function Set-TargetResourceOnFullSKU
             }
             elseif (-not $userExists)
             {
-                <# 
+                <#
                     For a newly created user, set the DisplayName property to an empty string
                     since by default DisplayName is set to user's name.
                 #>
@@ -574,26 +576,26 @@ function Set-TargetResourceOnFullSKU
 #>
 function Test-TargetResourceOnFullSKU
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $UserName,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $FullName,
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
@@ -603,19 +605,19 @@ function Test-TargetResourceOnFullSKU
         $Password,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $Disabled,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordNeverExpires,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordChangeRequired,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordChangeNotAllowed
     )
 
@@ -731,13 +733,13 @@ function Test-TargetResourceOnFullSKU
 #>
 function Get-TargetResourceOnNanoServer
 {
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $UserName
     )
 
@@ -793,7 +795,7 @@ function Get-TargetResourceOnNanoServer
 <#
     .SYNOPSIS
         Creates, modifies, or deletes a user when on Nano Server.
-    
+
     .PARAMETER UserName
         The name of the user to create, modify, or delete.
 
@@ -827,7 +829,7 @@ function Get-TargetResourceOnNanoServer
         Specifies whether the user is allowed to change their password or not.
         By default this is set to $false
 
-    .NOTES 
+    .NOTES
         If Ensure is set to 'Present' then the Password parameter is required.
 #>
 function Set-TargetResourceOnNanoServer
@@ -836,20 +838,20 @@ function Set-TargetResourceOnNanoServer
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $UserName,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $FullName,
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
@@ -859,19 +861,19 @@ function Set-TargetResourceOnNanoServer
         $Password,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $Disabled,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordNeverExpires,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordChangeRequired,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordChangeNotAllowed
     )
 
@@ -883,7 +885,7 @@ function Set-TargetResourceOnNanoServer
 
     # Try to find a user by a name.
     $userExists = $false
-    
+
     try
     {
         $user = Find-UserByNameOnNanoServer -UserName $UserName
@@ -965,12 +967,12 @@ function Set-TargetResourceOnNanoServer
         # NOTE: The parameter name and the property name have opposite meaning.
         $expected = (-not $PasswordChangeNotAllowed)
         $actual = $expected
-        
+
         if ($userExists)
         {
             $actual = $user.UserMayChangePassword
         }
-        
+
         if ($PSBoundParameters.ContainsKey('PasswordChangeNotAllowed') -and ((-not $userExists) -or ($expected -ne $actual)))
         {
             Set-LocalUser -Name $UserName -UserMayChangePassword $expected
@@ -1031,26 +1033,26 @@ function Set-TargetResourceOnNanoServer
 #>
 function Test-TargetResourceOnNanoServer
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $UserName,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $FullName,
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
@@ -1060,19 +1062,19 @@ function Test-TargetResourceOnNanoServer
         $Password,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $Disabled,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordNeverExpires,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordChangeRequired,
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $PasswordChangeNotAllowed
     )
 
@@ -1172,35 +1174,35 @@ function Assert-UserNameValid
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $UserName
     )
 
     # Check if the name consists of only periods and/or white spaces
     $wrongName = $true
-    
+
     for ($i = 0; $i -lt $UserName.Length; $i++)
     {
-        if (-not [Char]::IsWhiteSpace($UserName, $i) -and $UserName[$i] -ne '.')
+        if (-not [System.Char]::IsWhiteSpace($UserName, $i) -and $UserName[$i] -ne '.')
         {
             $wrongName = $false
             break
         }
     }
 
-    $invalidChars = @('\','/','"','[',']',':','|','<','>','+','=',';',',','?','*','@')
+    $invalidChars = @('\', '/', '"', '[', ']', ':', '|', '<', '>', '+', '=', ';', ',', '?', '*', '@')
 
     if ($wrongName)
     {
         New-InvalidArgumentException `
-            -Message ($script:localizedData.InvalidUserName -f $UserName, [String]::Join(' ', $invalidChars)) `
+            -Message ($script:localizedData.InvalidUserName -f $UserName, [System.String]::Join(' ', $invalidChars)) `
             -ArgumentName 'UserName'
     }
 
     if ($UserName.IndexOfAny($invalidChars) -ne -1)
     {
         New-InvalidArgumentException `
-            -Message ($script:localizedData.InvalidUserName -f $UserName, [String]::Join(' ', $invalidChars)) `
+            -Message ($script:localizedData.InvalidUserName -f $UserName, [System.String]::Join(' ', $invalidChars)) `
             -ArgumentName 'UserName'
     }
 }
@@ -1208,7 +1210,7 @@ function Assert-UserNameValid
 <#
     .SYNOPSIS
         Tests the local user's credentials on the local machine.
-    
+
     .PARAMETER UserName
         The username to validate the credentials of.
 
@@ -1217,18 +1219,18 @@ function Assert-UserNameValid
 #>
 function Test-CredentialsValidOnNanoServer
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $UserName,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [SecureString]
+        [System.Security.SecureString]
         $Password
     )
 
@@ -1314,7 +1316,7 @@ function Test-CredentialsValidOnNanoServer
     .SYNOPSIS
         Queries a user by the given username. If found the function returns a UserPrincipal object.
         Otherwise, the function returns $null.
-    
+
     .PARAMETER UserName
         The username to search for.
 #>
@@ -1342,7 +1344,7 @@ function Find-UserByNameOnFullSku
 <#
     .SYNOPSIS
         Adds a user with the given username and returns the new user object
-    
+
     .PARAMETER UserName
         The username for the new user
 #>
@@ -1383,7 +1385,7 @@ function Add-UserOnFullSku
 <#
     .SYNOPSIS
         Sets the password for the given user
-    
+
     .PARAMETER User
         The user to set the password for
 
@@ -1415,7 +1417,7 @@ function Set-UserPasswordOnFullSku
     .SYNOPSIS
         Validates the password is correct for the given user. Returns $true if the
         Password is correct for the given username, false otherwise.
-    
+
     .PARAMETER UserName
         The UserName to check
 
@@ -1459,7 +1461,7 @@ function Test-UserPasswordOnFullSku
     .SYNOPSIS
         Queries a user by the given username. If found the function returns a UserPrincipal object.
         Otherwise, the function returns $null.
-    
+
     .PARAMETER UserName
         The username to search for.
 #>
@@ -1498,7 +1500,7 @@ function Remove-UserOnFullSku
 <#
     .SYNOPSIS
         Saves changes for the given user on a machine.
-    
+
     .PARAMETER User
         The user to save the changes of
 #>
@@ -1519,7 +1521,7 @@ function Save-UserOnFullSku
 <#
     .SYNOPSIS
         Expires the password of the given user.
-    
+
     .PARAMETER User
         The user to expire the password of.
 #>
@@ -1541,7 +1543,7 @@ function Revoke-UserPassword
     .SYNOPSIS
         Queries a user by the given username. If found the function returns a LocalUser object.
         Otherwise, the function throws an error that the user was not found.
-    
+
     .PARAMETER UserName
         The username to search for.
 #>

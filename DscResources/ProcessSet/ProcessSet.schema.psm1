@@ -53,12 +53,12 @@ Configuration ProcessSet
     (
         [Parameter(Mandatory = $true, HelpMessage="The file paths to the executables of the processes to start or stop. Only the names of the files may be specified if they are all accessible through the environment path. Relative paths are not supported.")]
         [ValidateNotNullOrEmpty()]
-        [String[]]
+        [System.String[]]
         $Path,
 
         [Parameter(HelpMessage="Specifies whether or not the processes should exist. To start processes, set this property to Present. To stop processes, set this property to Absent.")]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure,
 
         [Parameter(HelpMessage="The credential of the user account to start the processes under.")]
@@ -69,25 +69,25 @@ Configuration ProcessSet
 
         [Parameter(HelpMessage="The file path to write the standard output to. Any existing file at this path will be overwritten.This property cannot be specified at the same time as Credential when running the processes as a local user.")]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $StandardOutputPath,
 
         [Parameter(HelpMessage="The file path to write the standard error output to. Any existing file at this path will be overwritten.")]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $StandardErrorPath,
 
         [Parameter(HelpMessage="The file path to get standard input from. This property cannot be specified at the same time as Credential when running the processes as a local user.")]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $StandardInputPath,
 
         [Parameter(HelpMessage="The file path to use as the working directory for the processes. Any existing file at this path will be overwritten. This property cannot be specified at the same time as Credential when running the processes as a local user.")]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $WorkingDirectory
     )
-    
+
     $newResourceSetConfigurationParams = @{
         ResourceName = 'WindowsProcess'
         ModuleName = 'PSDscResources'
@@ -97,7 +97,7 @@ Configuration ProcessSet
 
     # Arguments is a key parameter in WindowsProcess resource. Adding it as a common parameter with an empty value string
     $newResourceSetConfigurationParams['Parameters']['Arguments'] = ''
-    
+
     $configurationScriptBlock = New-ResourceSetConfigurationScriptBlock @newResourceSetConfigurationParams
 
     # This script block must be run directly in this configuration in order to resolve variables
