@@ -309,12 +309,12 @@ function Set-TargetResource
                     if (-not [System.String]::IsNullOrEmpty($ValueName))
                     {
                         # If the user specified a registry key value with a name to remove, remove the registry key value with the specified name
-                        $null = Remove-RegistryKeyValue -RegistryKey $registryKey -RegistryKeyValueName $ValueName
+                        $null = Remove-ItemProperty -Path $Key -Name $ValueName -Force
                     }
                     else
                     {
                         # If the user did not specify a registry key value with a name to remove, remove the default registry key value
-                        $null = Remove-DefaultRegistryKeyValue -RegistryKey $registryKey
+                        $null = Remove-Item -Path $Key -Recurse -Force
                     }
                 }
             }
