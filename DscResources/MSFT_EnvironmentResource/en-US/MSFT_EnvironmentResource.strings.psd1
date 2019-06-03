@@ -1,4 +1,4 @@
-﻿# Localized resources for MSFT_EnvironmentResource
+# Localized resources for MSFT_EnvironmentResource
 
 ConvertFrom-StringData @'
     ArgumentTooLong = Argument is too long.

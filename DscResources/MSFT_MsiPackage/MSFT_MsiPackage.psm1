@@ -1,4 +1,4 @@
-﻿# Suppress Global Vars PSSA Error because $global:DSCMachineStatus must be allowed
+# Suppress Global Vars PSSA Error because $global:DSCMachineStatus must be allowed
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
 param()
@@ -269,7 +269,7 @@ function Set-TargetResource
                     }
                     finally
                     {
-                        if ($null -ne $responseStream)
+                        if ((Test-Path -Path variable:responseStream) -and ($null -ne $responseStream))
                         {
                             Close-Stream -Stream $responseStream
                         }

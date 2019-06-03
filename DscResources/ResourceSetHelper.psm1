@@ -1,4 +1,4 @@
-﻿# This module should not write any verbose or error messages unless a localization file for it is added
+# This module should not write any verbose or error messages unless a localization file for it is added
 
 $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'

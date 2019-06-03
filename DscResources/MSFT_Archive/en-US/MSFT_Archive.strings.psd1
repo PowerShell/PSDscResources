@@ -1,4 +1,4 @@
-﻿# Localized MSFT_Archive.strings.psd1
+# Localized MSFT_Archive.strings.psd1
 
 ConvertFrom-StringData @'
     RetrievingArchiveState = Retrieving the state of the archive with path "{0}" and destination "{1}"...
