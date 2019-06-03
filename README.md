@@ -588,11 +588,11 @@ The following parameters will be the same for each process in the set:
   [Issue #142](https://github.com/PowerShell/PSDscResources/issues/142)
 * Improved speed of Test-IsNanoServer function
 * Remove the Byte Order Mark (BOM) from all affected files
+* Opt-in to 'Validate Module Files' and 'Validate Script Files' common meta-tests
 
 ### 2.11.0.0
 
 * Fix Custom DSC Resource Kit PSSA Rule Failures
-* Opt-in to 'Validate Module Files' and 'Validate Script Files' common meta-tests
 
 ### 2.10.0.0
 
