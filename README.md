@@ -1,9 +1,3 @@
-master: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/master)
-[![codecov](https://codecov.io/gh/PowerShell/PSDscResources/branch/master/graph/badge.svg)](https://codecov.io/gh/PowerShell/PSDscResources)
-
-dev: [![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/dev?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/dev)
-[![codecov](https://codecov.io/gh/PowerShell/PSDscResources/branch/dev/graph/badge.svg)](https://codecov.io/gh/PowerShell/PSDscResources)
-
 # PSDscResources
 
 PSDscResources is the new home of the in-box resources from PSDesiredStateConfiguration.
@@ -17,17 +11,39 @@ Because PSDscResources overwrites in-box resources, it is only available for WMF
 Many of the resource updates provided here are also included in the [xPSDesiredStateConfiguration](https://github.com/PowerShell/xPSDesiredStateConfiguration) module which is still compatible with WMF 4 and WMF 5 (though this module is not supported and may be removed in the future).
 
 To update your in-box resources to the newest versions provided by PSDscResources, first install PSDscResources from the PowerShell Gallery:
+
 ```powershell
 Install-Module PSDscResources
 ```
 
 Then, simply add this line to your DSC configuration:
+
 ```powershell
 Import-DscResource -ModuleName PSDscResources
 ```
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+## Branches
+
+### master
+
+[![Build status](https://ci.appveyor.com/api/projects/status/9uf3wyys7ky7776d/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/psdscresources/branch/master)
+[![codecov](https://codecov.io/gh/PowerShell/PSDscResources/branch/master/graph/badge.svg)](https://codecov.io/gh/PowerShell/PSDscResources)
+
+This is the branch containing the latest release -
+no contributions should be made directly to this branch.
+
+### dev
+
+[![Build status](https://ci.appveyor.com/api/projects/status/9nsi30ladk1jaax5/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/AuditPolicyDsc/branch/dev)
+[![codecov](https://codecov.io/gh/PowerShell/AuditPolicyDsc/branch/dev/graph/badge.svg)](https://codecov.io/gh/PowerShell/AuditPolicyDsc/branch/dev)
+
+This is the development branch
+to which contributions should be proposed by contributors as pull requests.
+This development branch will periodically be merged to the master branch,
+and be released to [PowerShell Gallery](https://www.powershellgallery.com/).
 
 ## Contributing
 
@@ -589,6 +605,7 @@ The following parameters will be the same for each process in the set:
 * Improved speed of Test-IsNanoServer function
 * Remove the Byte Order Mark (BOM) from all affected files
 * Opt-in to 'Validate Module Files' and 'Validate Script Files' common meta-tests
+* Fix README markdownlint validation failures
 
 ### 2.11.0.0
 
@@ -695,8 +712,8 @@ The following parameters will be the same for each process in the set:
 ### 2.2.0.0
 
 * WindowsFeature:
-    * Added Catch to ignore RuntimeException when importing ServerManager module. This solves the issue described [here](https://social.technet.microsoft.com/Forums/en-US/9fc314e1-27bf-4f03-ab78-5e0f7a662b8f/importmodule-servermanager-some-or-all-identity-references-could-not-be-translated?forum=winserverpowershell).
-    * Updated unit tests.
+  * Added Catch to ignore RuntimeException when importing ServerManager module. This solves the issue described [here](https://social.technet.microsoft.com/Forums/en-US/9fc314e1-27bf-4f03-ab78-5e0f7a662b8f/importmodule-servermanager-some-or-all-identity-references-could-not-be-translated?forum=winserverpowershell).
+  * Updated unit tests.
 * Added WindowsProcess
 * CommonTestHelper:
   * Added Get-AppVeyorAdministratorCredential.
