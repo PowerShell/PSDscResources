@@ -9,9 +9,11 @@ function Test-IsNanoServer
     param ()
 
     $serverLevelsRegKey = 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels'
+    
     if (Test-Path -Path $serverLevelsRegKey)
     {
         $serverLevels = Get-ItemProperty -Path $serverLevelsRegKey
+        
         if ($serverLevels.NanoServer -eq 1)
         {
             $isNanoServer = $true
@@ -21,9 +23,11 @@ function Test-IsNanoServer
             $isNanoServer = $false
         }
     }
-    else {
+    else
+    {
         $isNanoServer = $false
     }
+    
     return $isNanoServer
 }
 
