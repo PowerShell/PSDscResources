@@ -758,7 +758,8 @@ function Enter-DscResourceTestEnvironment
         $TestType
     )
 
-    $moduleRootPath = Split-Path -Path $PSScriptRoot -Parent
+    $testsFolderPath = Split-Path -Path $PSScriptRoot -Parent
+    $moduleRootPath = Split-Path -Path $testsFolderPath -Parent
     $dscResourceTestsPath = Join-Path -Path $moduleRootPath -ChildPath 'DSCResource.Tests'
     $testHelperFilePath = Join-Path -Path $dscResourceTestsPath -ChildPath 'TestHelper.psm1'
 
