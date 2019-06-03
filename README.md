@@ -603,11 +603,11 @@ The following parameters will be the same for each process in the set:
   Specifically fixes
   [Issue #142](https://github.com/PowerShell/PSDscResources/issues/142)
 * Improved speed of Test-IsNanoServer function
+* Fix README markdownlint validation failures
 
 ### 2.11.0.0
 
 * Fix Custom DSC Resource Kit PSSA Rule Failures
-* Fix README markdownlint validation failures
 
 ### 2.10.0.0
 
