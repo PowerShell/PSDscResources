@@ -314,7 +314,7 @@ function Set-TargetResource
                     else
                     {
                         # If the user did not specify a registry key value with a name to remove, remove the default registry key value
-                        $null = Remove-Item -Path $Key -Recurse -Force
+                        $null = Remove-DefaultRegistryKeyValue -RegistryKey $registryKey
                     }
                 }
             }
@@ -336,7 +336,7 @@ function Set-TargetResource
                 {
                     # Remove the registry key
                     Write-Verbose -Message ($script:localizedData.RemovingRegistryKey -f $Key)
-                    $null = Remove-RegistryKey -RegistryKey $registryKey
+                    $null = Remove-Item -Path $Key -Recurse -Force
                 }
             }
         }
