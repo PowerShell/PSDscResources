@@ -1351,14 +1351,14 @@ function Get-MsiTool
 '@
 
     # Check if the the type is already defined
-    if (([System.Management.Automation.PSTypeName]'Microsoft.Windows.DesiredStateConfiguration.xPackageResource.MsiTools').Type)
+    if (([System.Management.Automation.PSTypeName]'Microsoft.Windows.DesiredStateConfiguration.MsiPackageResource.MsiTools').Type)
     {
-        $script:msiTools = ([System.Management.Automation.PSTypeName]'Microsoft.Windows.DesiredStateConfiguration.xPackageResource.MsiTools').Type
+        $script:msiTools = ([System.Management.Automation.PSTypeName]'Microsoft.Windows.DesiredStateConfiguration.MsiPackageResource.MsiTools').Type
     }
     else
     {
         $script:msiTools = Add-Type `
-            -Namespace 'Microsoft.Windows.DesiredStateConfiguration.xPackageResource' `
+            -Namespace 'Microsoft.Windows.DesiredStateConfiguration.MsiPackageResource' `
             -Name 'MsiTools' `
             -Using 'System.Text' `
             -MemberDefinition $msiToolsCodeDefinition `
