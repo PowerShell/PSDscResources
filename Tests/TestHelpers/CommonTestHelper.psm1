@@ -809,7 +809,8 @@ function Test-DscResourceTestsNeedsInstallOrUpdate
         $RefreshAfterMinutes = $script:dscResourceTestsRefreshAfterMinutes
     )
 
-    $moduleRootPath = Split-Path -Path $PSScriptRoot -Parent
+    $testsFolderPath = Split-Path -Path $PSScriptRoot -Parent
+    $moduleRootPath = Split-Path -Path $testsFolderPath -Parent
     $dscResourceTestsPath = Join-Path -Path $moduleRootPath -ChildPath 'DSCResource.Tests'
 
     if (Test-Path -Path $dscResourceTestsPath)
@@ -862,7 +863,8 @@ function Install-DscResourceTestsModule
     (
     )
 
-    $moduleRootPath = Split-Path -Path $PSScriptRoot -Parent
+    $testsFolderPath = Split-Path -Path $PSScriptRoot -Parent
+    $moduleRootPath = Split-Path -Path $testsFolderPath -Parent
     $dscResourceTestsPath = Join-Path -Path $moduleRootPath -ChildPath 'DSCResource.Tests'
     $gitInstalled = $null -ne (Get-Command -Name 'git' -ErrorAction 'SilentlyContinue')
     $writeMagicFile = $false
@@ -943,7 +945,8 @@ function Exit-DscResourceTestEnvironment
         $TestEnvironment
     )
 
-    $moduleRootPath = Split-Path -Path $PSScriptRoot -Parent
+    $testsFolderPath = Split-Path -Path $PSScriptRoot -Parent
+    $moduleRootPath = Split-Path -Path $testsFolderPath -Parent
     $dscResourceTestsPath = Join-Path -Path $moduleRootPath -ChildPath 'DSCResource.Tests'
     $testHelperFilePath = Join-Path -Path $dscResourceTestsPath -ChildPath 'TestHelper.psm1'
 
