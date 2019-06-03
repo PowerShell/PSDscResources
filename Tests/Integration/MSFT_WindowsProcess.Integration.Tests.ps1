@@ -24,7 +24,7 @@ Describe 'WindowsProcess Integration Tests' {
         $script:logFilePath = Join-Path -Path $TestDrive -ChildPath 'ProcessTestLog.txt'
 
         $script:configurationFilePathNoCredential = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_WindowsProcess_NoCredential.config.ps1'
-        $script:configurationFilePathWithCredential = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_WindowsProcess_WithCredential.config.ps1' 
+        $script:configurationFilePathWithCredential = Join-Path -Path $PSScriptRoot -ChildPath 'MSFT_WindowsProcess_WithCredential.config.ps1'
 
         $null = Stop-Process -Name $script:testProcessName -Force -ErrorAction 'SilentlyContinue'
     }
@@ -59,7 +59,7 @@ Describe 'WindowsProcess Integration Tests' {
             }
 
             It 'Should compile and run configuration' {
-                { 
+                {
                     . $script:configurationFilePathNoCredential -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @processParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -68,7 +68,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             # Wait a moment for the process to stop/start
             $null = Start-Sleep -Seconds 1
-            
+
             It 'Should not be able to retrieve the process after configuration' {
                 { $null = Get-Process -Name $script:testProcessName } | Should Throw
             }
@@ -114,7 +114,7 @@ Describe 'WindowsProcess Integration Tests' {
             }
 
             It 'Should compile and run configuration' {
-                { 
+                {
                     . $script:configurationFilePathNoCredential -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @processParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -123,7 +123,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             # Wait a moment for the process to stop/start
             $null = Start-Sleep -Seconds 1
-            
+
             It 'Should be able to retrieve the process after configuration' {
                 { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
             }
@@ -175,7 +175,7 @@ Describe 'WindowsProcess Integration Tests' {
             }
 
             It 'Should compile and run configuration' {
-                { 
+                {
                     . $script:configurationFilePathNoCredential -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @processParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -184,7 +184,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             # Wait a moment for the process to stop/start
             $null = Start-Sleep -Seconds 1
-            
+
             It 'Should be able to retrieve the process after configuration' {
                 { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
             }
@@ -239,7 +239,7 @@ Describe 'WindowsProcess Integration Tests' {
             $null = Remove-Item -Path $script:logFilePath -Force -ErrorAction 'SilentlyContinue'
 
             It 'Should compile and run configuration' {
-                { 
+                {
                     . $script:configurationFilePathNoCredential -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @processParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -248,7 +248,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             # Wait a moment for the process to stop/start
             $null = Start-Sleep -Seconds 1
-            
+
             It 'Should not be able to retrieve the process after configuration' {
                 { $null = Get-Process -Name $script:testProcessName } | Should Throw
             }
@@ -294,7 +294,7 @@ Describe 'WindowsProcess Integration Tests' {
             }
 
             It 'Should compile and run configuration' {
-                { 
+                {
                     . $script:configurationFilePathNoCredential -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @processParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -308,7 +308,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             # Wait a moment for the second process to stop/start
             $null = Start-Sleep -Seconds 1
-            
+
             It 'Should be able to retrieve the processes after configuration' {
                 { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
             }
@@ -368,7 +368,7 @@ Describe 'WindowsProcess Integration Tests' {
             $null = Remove-Item -Path $script:logFilePath -Force -ErrorAction 'SilentlyContinue'
 
             It 'Should compile and run configuration' {
-                { 
+                {
                     . $script:configurationFilePathNoCredential -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @processParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -399,7 +399,7 @@ Describe 'WindowsProcess Integration Tests' {
             }
         }
     }
-    
+
     if ($env:AppVeyor) {
         Describe 'Credential provided - Only runs in AppVeyor' {
              $script:testCredential = Get-AppVeyorAdministratorCredential
@@ -441,7 +441,7 @@ Describe 'WindowsProcess Integration Tests' {
                 }
 
                 It 'Should compile and run configuration' {
-                    { 
+                    {
                         . $script:configurationFilePathWithCredential -ConfigurationName $configurationName
                         & $configurationName -OutputPath $TestDrive -ConfigurationData $script:credentialConfigurationData @processParameters
                         Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -450,7 +450,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 # Wait a moment for the process to stop/start
                 $null = Start-Sleep -Seconds 1
-                
+
                 It 'Should not be able to retrieve the process after configuration' {
                     { $null = Get-Process -Name $script:testProcessName } | Should Throw
                 }
@@ -497,7 +497,7 @@ Describe 'WindowsProcess Integration Tests' {
                 }
 
                 It 'Should compile and run configuration' {
-                    { 
+                    {
                         . $script:configurationFilePathWithCredential -ConfigurationName $configurationName
                         & $configurationName -OutputPath $TestDrive -ConfigurationData $script:credentialConfigurationData @processParameters
                         Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -506,7 +506,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 # Wait a moment for the process to stop/start
                 $null = Start-Sleep -Seconds 1
-                
+
                 It 'Should be able to retrieve the process after configuration' {
                     { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
                 }
@@ -559,7 +559,7 @@ Describe 'WindowsProcess Integration Tests' {
                 }
 
                 It 'Should compile and run configuration' {
-                    { 
+                    {
                         . $script:configurationFilePathWithCredential -ConfigurationName $configurationName
                         & $configurationName -OutputPath $TestDrive -ConfigurationData $script:credentialConfigurationData @processParameters
                         Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -568,7 +568,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 # Wait a moment for the process to stop/start
                 $null = Start-Sleep -Seconds 1
-                
+
                 It 'Should be able to retrieve the process after configuration' {
                     { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
                 }
@@ -624,7 +624,7 @@ Describe 'WindowsProcess Integration Tests' {
                 $null = Remove-Item -Path $script:logFilePath -Force -ErrorAction 'SilentlyContinue'
 
                 It 'Should compile and run configuration' {
-                    { 
+                    {
                         . $script:configurationFilePathWithCredential -ConfigurationName $configurationName
                         & $configurationName -OutputPath $TestDrive -ConfigurationData $script:credentialConfigurationData @processParameters
                         Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -633,7 +633,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 # Wait a moment for the process to stop/start
                 $null = Start-Sleep -Seconds 1
-                
+
                 It 'Should not be able to retrieve the process after configuration' {
                     { $null = Get-Process -Name $script:testProcessName } | Should Throw
                 }
@@ -680,7 +680,7 @@ Describe 'WindowsProcess Integration Tests' {
                 }
 
                 It 'Should compile and run configuration' {
-                    { 
+                    {
                         . $script:configurationFilePathWithCredential -ConfigurationName $configurationName
                         & $configurationName -OutputPath $TestDrive -ConfigurationData $script:credentialConfigurationData @processParameters
                         Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -694,7 +694,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 # Wait a moment for the second process to stop/start
                 $null = Start-Sleep -Seconds 1
-                
+
                 It 'Should be able to retrieve the processes after configuration' {
                     { $null = Get-Process -Name $script:testProcessName } | Should Not Throw
                 }
@@ -755,7 +755,7 @@ Describe 'WindowsProcess Integration Tests' {
                 $null = Remove-Item -Path $script:logFilePath -Force -ErrorAction 'SilentlyContinue'
 
                 It 'Should compile and run configuration' {
-                    { 
+                    {
                         . $script:configurationFilePathWithCredential -ConfigurationName $configurationName
                         & $configurationName -OutputPath $TestDrive -ConfigurationData $script:credentialConfigurationData @processParameters
                         Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -788,4 +788,4 @@ Describe 'WindowsProcess Integration Tests' {
         }
     }
 }
-    
+

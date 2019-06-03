@@ -22,7 +22,7 @@ try
 
     InModuleScope 'MSFT_ServiceResource' {
         $script:testServiceName = 'DscTestService'
-        
+
         $script:testUsername1 = 'TestUser1'
         $script:testUsername2 = 'TestUser2'
 
@@ -43,7 +43,7 @@ try
 
             Context 'Service does not exist' {
                 It 'Should not throw' {
-                    { $null = Get-TargetResource @getTargetResourceParameters } | Should Not Throw
+                    { $null = Get-TargetResource @GetTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service' {
@@ -99,13 +99,13 @@ try
                 }
 
                 $convertToStartupTypeStringResult = 'TestStartupTypeString'
-                
+
                 Mock -CommandName 'Get-Service' -MockWith { return $testService }
                 Mock -CommandName 'Get-ServiceCimInstance' -MockWith { return $testServiceCimInstance }
                 Mock -CommandName 'ConvertTo-StartupTypeString' -MockWith { return $convertToStartupTypeStringResult }
 
                 It 'Should not throw' {
-                    { $null = Get-TargetResource @getTargetResourceParameters } | Should Not Throw
+                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service' {
@@ -188,13 +188,13 @@ try
                 }
 
                 $convertToStartupTypeStringResult = 'TestStartupTypeString'
-                
+
                 Mock -CommandName 'Get-Service' -MockWith { return $testService }
                 Mock -CommandName 'Get-ServiceCimInstance' -MockWith { return $testServiceCimInstance }
                 Mock -CommandName 'ConvertTo-StartupTypeString' -MockWith { return $convertToStartupTypeStringResult }
 
                 It 'Should not throw' {
-                    { $null = Get-TargetResource @getTargetResourceParameters } | Should Not Throw
+                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service' {
@@ -284,13 +284,13 @@ try
                 }
 
                 $convertToStartupTypeStringResult = 'TestStartupTypeString'
-                
+
                 Mock -CommandName 'Get-Service' -MockWith { return $testService }
                 Mock -CommandName 'Get-ServiceCimInstance' -MockWith { return $testServiceCimInstance }
                 Mock -CommandName 'ConvertTo-StartupTypeString' -MockWith { return $convertToStartupTypeStringResult }
 
                 It 'Should not throw' {
-                    { $null = Get-TargetResource @getTargetResourceParameters } | Should Not Throw
+                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service' {
@@ -375,7 +375,7 @@ try
 
                 It 'Should throw an error for BuiltInAccount and Credential conflict' {
                     $expectedErrorMessage = $script:localizedData.BuiltInAccountAndCredentialSpecified -f $setTargetResourceParameters.Name
-                    { Set-TargetResource @setTargetResourceParameters } | Should Throw $expectedErrorMessage
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
 
@@ -386,7 +386,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -430,7 +430,7 @@ try
 
                 It 'Should throw an error for the missing path' {
                     $expectedErrorMessage = $script:localizedData.ServiceDoesNotExistPathMissingError -f $script:testServiceName
-                    { Set-TargetResource @setTargetResourceParameters } | Should Throw $expectedErrorMessage
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
 
@@ -442,7 +442,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -493,7 +493,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should check for a startup type and state conflict' {
@@ -544,7 +544,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should check for a startup type and state conflict' {
@@ -604,7 +604,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -647,7 +647,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -677,7 +677,7 @@ try
                 It 'Should start the service' {
                     Assert-MockCalled -CommandName 'Start-ServiceWithTimeout' -ParameterFilter { $ServiceName -eq $setTargetResourceParameters.Name } -Times 1 -Scope 'Context'
                 }
- 
+
                 It 'Should not attempt to stop or restart the service' {
                     Assert-MockCalled -CommandName 'Stop-ServiceWithTimeout' -Times 0 -Scope 'Context'
                 }
@@ -691,7 +691,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -742,7 +742,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should check for a startup type and state conflict' {
@@ -792,7 +792,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should check for a startup type and state conflict' {
@@ -836,7 +836,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -873,7 +873,7 @@ try
             }
 
             Mock -CommandName 'Set-ServicePath' -MockWith { return $false }
-            
+
             Context 'Service exists, Ensure set to Present, and matching Path to service path specified' {
                 $setTargetResourceParameters = @{
                     Name = $script:testServiceName
@@ -882,7 +882,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -939,7 +939,7 @@ try
 
                 It 'Should throw an error for BuiltInAccount and Credential conflict' {
                     $expectedErrorMessage = $script:localizedData.BuiltInAccountAndCredentialSpecified -f $testTargetResourceParameters.Name
-                    { Test-TargetResource @testTargetResourceParameters } | Should Throw $expectedErrorMessage
+                    { Test-TargetResource @testTargetResourceParameters } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
 
@@ -948,9 +948,9 @@ try
                     Name = $script:testServiceName
                     Ensure = 'Absent'
                 }
-                
+
                 It 'Should not throw' {
-                    { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                    { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -970,7 +970,7 @@ try
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
                 }
             }
 
@@ -979,9 +979,9 @@ try
                     Name = $script:testServiceName
                     Ensure = 'Present'
                 }
-                
+
                 It 'Should not throw' {
-                    { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                    { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -1001,7 +1001,7 @@ try
                 }
 
                 It 'Should return false' {
-                    Test-TargetResource @testTargetResourceParameters | Should Be $false
+                    Test-TargetResource @testTargetResourceParameters | Should -Be $false
                 }
             }
 
@@ -1025,9 +1025,9 @@ try
                     Name = $script:testServiceName
                     Ensure = 'Absent'
                 }
-                
+
                 It 'Should not throw' {
-                    { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                    { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -1047,7 +1047,7 @@ try
                 }
 
                 It 'Should return false' {
-                    Test-TargetResource @testTargetResourceParameters | Should Be $false
+                    Test-TargetResource @testTargetResourceParameters | Should -Be $false
                 }
             }
 
@@ -1056,9 +1056,9 @@ try
                     Name = $script:testServiceName
                     Ensure = 'Present'
                 }
-                
+
                 It 'Should not throw' {
-                    { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                    { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -1078,15 +1078,15 @@ try
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
                 }
             }
 
             Context 'Service exists, Ensure set to Present, and all matching parameters specified except Credential' {
                 $testTargetResourceParameters = $serviceResourceWithAllProperties
-                
+
                 It 'Should not throw' {
-                    { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                    { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should check for a startup type and state conflict' {
@@ -1106,7 +1106,7 @@ try
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
                 }
             }
 
@@ -1128,12 +1128,12 @@ try
                         Ensure = 'Present'
                         $mismatchingParameterName = $mismatchingParameters[$mismatchingParameterName]
                     }
-                
+
                     It 'Should not throw' {
-                        { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                        { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                     }
 
-                    
+
 
                     if ($mismatchingParameterName -eq 'StartupType')
                     {
@@ -1161,7 +1161,7 @@ try
                     }
 
                     It 'Should return false' {
-                        Test-TargetResource @testTargetResourceParameters | Should Be $false
+                        Test-TargetResource @testTargetResourceParameters | Should -Be $false
                     }
                 }
             }
@@ -1172,9 +1172,9 @@ try
                     Ensure = 'Present'
                     State = 'Ignore'
                 }
-                
+
                 It 'Should not throw' {
-                    { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                    { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -1194,7 +1194,7 @@ try
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
                 }
             }
 
@@ -1216,9 +1216,9 @@ try
                     Ensure = 'Present'
                     Credential = $script:testCredential1
                 }
-                
+
                 It 'Should not throw' {
-                    { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                    { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -1238,7 +1238,7 @@ try
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
                 }
             }
 
@@ -1248,9 +1248,9 @@ try
                     Ensure = 'Present'
                     Credential = $script:testCredential2
                 }
-                
+
                 It 'Should not throw' {
-                    { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                    { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -1270,7 +1270,7 @@ try
                 }
 
                 It 'Should return false' {
-                    Test-TargetResource @testTargetResourceParameters | Should Be $false
+                    Test-TargetResource @testTargetResourceParameters | Should -Be $false
                 }
             }
 
@@ -1292,9 +1292,9 @@ try
                     {
                         $testTargetResourceParameters[$allowedEmptyPropertyName] = ''
                     }
-                
+
                     It 'Should not throw' {
-                        { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                        { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                     }
 
                     It 'Should not check for a startup type and state conflict' {
@@ -1314,7 +1314,7 @@ try
                     }
 
                     It 'Should return false' {
-                        Test-TargetResource @testTargetResourceParameters | Should Be $false
+                        Test-TargetResource @testTargetResourceParameters | Should -Be $false
                     }
                 }
             }
@@ -1330,7 +1330,7 @@ try
             {
                 $serviceResourceWithNullProperties[$nullPropertyName] = $null
             }
-                
+
             Mock -CommandName 'Get-TargetResource' -MockWith { return $serviceResourceWithNullProperties }
 
             foreach ($nullPropertyName in $allowedEmptyPropertyNames)
@@ -1341,9 +1341,9 @@ try
                         Ensure = 'Present'
                         $nullPropertyName = 'Something'
                     }
-                
+
                     It 'Should not throw' {
-                        { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                        { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                     }
 
                     It 'Should not check for a startup type and state conflict' {
@@ -1363,7 +1363,7 @@ try
                     }
 
                     It 'Should return false' {
-                        Test-TargetResource @testTargetResourceParameters | Should Be $false
+                        Test-TargetResource @testTargetResourceParameters | Should -Be $false
                     }
                 }
 
@@ -1372,9 +1372,9 @@ try
                         Name = $serviceResourceWithNullProperties.Name
                         Ensure = 'Present'
                     }
-                
+
                     It 'Should not throw' {
-                        { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                        { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                     }
 
                     It 'Should not check for a startup type and state conflict' {
@@ -1394,7 +1394,7 @@ try
                     }
 
                     It 'Should return true' {
-                        Test-TargetResource @testTargetResourceParameters | Should Be $true
+                        Test-TargetResource @testTargetResourceParameters | Should -Be $true
                     }
                 }
             }
@@ -1407,9 +1407,9 @@ try
                     Ensure = 'Present'
                     Path = 'Mismatching path'
                 }
-                
+
                 It 'Should not throw' {
-                    { Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                    { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should not check for a startup type and state conflict' {
@@ -1429,7 +1429,7 @@ try
                 }
 
                 It 'Should return false' {
-                    Test-TargetResource @testTargetResourceParameters | Should Be $false
+                    Test-TargetResource @testTargetResourceParameters | Should -Be $false
                 }
             }
         }
@@ -1439,7 +1439,7 @@ try
 
             Context 'Service does not exist' {
                 It 'Should not throw' {
-                    { Get-ServiceCimInstance -ServiceName $script:testServiceName } | Should Not Throw
+                    { Get-ServiceCimInstance -ServiceName $script:testServiceName } | Should -Not -Throw
                 }
 
                 It 'Should retrieve the CIM instance of the service with the given name' {
@@ -1447,7 +1447,7 @@ try
                 }
 
                 It 'Should return null' {
-                    Get-ServiceCimInstance -ServiceName $script:testServiceName | Should Be $null
+                    Get-ServiceCimInstance -ServiceName $script:testServiceName | Should -Be $null
                 }
             }
 
@@ -1457,7 +1457,7 @@ try
 
             Context 'Service exists' {
                 It 'Should not throw' {
-                    { Get-ServiceCimInstance -ServiceName $script:testServiceName } | Should Not Throw
+                    { Get-ServiceCimInstance -ServiceName $script:testServiceName } | Should -Not -Throw
                 }
 
                 It 'Should retrieve the CIM instance of the service with the given name' {
@@ -1465,7 +1465,7 @@ try
                 }
 
                 It 'Should return the retrieved CIM instance' {
-                    Get-ServiceCimInstance -ServiceName $script:testServiceName | Should Be $testCimInstance
+                    Get-ServiceCimInstance -ServiceName $script:testServiceName | Should -Be $testCimInstance
                 }
             }
         }
@@ -1473,19 +1473,19 @@ try
         Describe 'Service\ConvertTo-StartupTypeString' {
             Context 'StartupType specifed as Auto' {
                 It 'Should return Automatic' {
-                    ConvertTo-StartupTypeString -StartMode 'Auto' | Should Be 'Automatic'
+                    ConvertTo-StartupTypeString -StartMode 'Auto' | Should -Be 'Automatic'
                 }
             }
 
             Context 'StartupType specifed as Manual' {
                 It 'Should return Manual' {
-                    ConvertTo-StartupTypeString -StartMode 'Manual' | Should Be 'Manual'
+                    ConvertTo-StartupTypeString -StartMode 'Manual' | Should -Be 'Manual'
                 }
             }
 
             Context 'StartupType specifed as Disabled' {
                 It 'Should return Disabled' {
-                    ConvertTo-StartupTypeString -StartMode 'Disabled' | Should Be 'Disabled'
+                    ConvertTo-StartupTypeString -StartMode 'Disabled' | Should -Be 'Disabled'
                 }
             }
         }
@@ -1509,20 +1509,20 @@ try
                         {
                             It 'Should throw error for conflicting state and startup type' {
                                 $errorMessage = $script:localizedData.StartupTypeStateConflict -f $assertNoStartupTypeStateConflictParameters.ServiceName, $startupTypeValue, $stateValue
-                                { Assert-NoStartupTypeStateConflict @assertNoStartupTypeStateConflictParameters } | Should Throw $errorMessage
-                            }                    
+                                { Assert-NoStartupTypeStateConflict @assertNoStartupTypeStateConflictParameters } | Should -Throw -ExpectedMessage $errorMessage
+                            }
                         }
                         elseif ($stateValue -eq 'Stopped' -and $startupTypeValue -eq 'Automatic')
                         {
                             It 'Should throw error for conflicting state and startup type' {
                                 $errorMessage = $script:localizedData.StartupTypeStateConflict -f $assertNoStartupTypeStateConflictParameters.ServiceName, $startupTypeValue, $stateValue
-                                { Assert-NoStartupTypeStateConflict @assertNoStartupTypeStateConflictParameters } | Should Throw $errorMessage
+                                { Assert-NoStartupTypeStateConflict @assertNoStartupTypeStateConflictParameters } | Should -Throw -ExpectedMessage $errorMessage
                             }
                         }
                         else
                         {
                             It 'Should not throw' {
-                                { Assert-NoStartupTypeStateConflict @assertNoStartupTypeStateConflictParameters } | Should Not Throw
+                                { Assert-NoStartupTypeStateConflict @assertNoStartupTypeStateConflictParameters } | Should -Not -Throw
                             }
                         }
                     }
@@ -1534,13 +1534,13 @@ try
             Context 'Specified paths match' {
                 It 'Should return true' {
                     $matchingPath = 'MatchingPath'
-                    Test-PathsMatch -ExpectedPath $matchingPath -ActualPath $matchingPath | Should Be $true
+                    Test-PathsMatch -ExpectedPath $matchingPath -ActualPath $matchingPath | Should -Be $true
                 }
             }
 
             Context 'Specified paths do not match' {
                 It 'Should return false' {
-                    Test-PathsMatch -ExpectedPath 'Path1' -ActualPath 'Path2' | Should Be $false
+                    Test-PathsMatch -ExpectedPath 'Path1' -ActualPath 'Path2' | Should -Be $false
                 }
             }
         }
@@ -1548,26 +1548,26 @@ try
         Describe 'Service\ConvertTo-StartName' {
             Context 'Username specified as LocalSystem' {
                 It 'Should return .\LocalSystem' {
-                    ConvertTo-StartName -Username 'LocalSystem' | Should Be '.\LocalSystem'
+                    ConvertTo-StartName -Username 'LocalSystem' | Should -Be '.\LocalSystem'
                 }
             }
 
             Context 'Username specified as LocalService' {
                 It 'Should return NT Authority\LocalService' {
-                    ConvertTo-StartName -Username 'LocalService' | Should Be 'NT Authority\LocalService'
+                    ConvertTo-StartName -Username 'LocalService' | Should -Be 'NT Authority\LocalService'
                 }
             }
 
             Context 'Username specified as NetworkService' {
                 It 'Should return NT Authority\NetworkService' {
-                    ConvertTo-StartName -Username 'NetworkService' | Should Be 'NT Authority\NetworkService'
+                    ConvertTo-StartName -Username 'NetworkService' | Should -Be 'NT Authority\NetworkService'
                 }
             }
 
             Context 'Custom username specified without any \ or @ characters' {
                 It 'Should return custom username prefixed with .\' {
                     $customUsername = 'TestUsername'
-                    ConvertTo-StartName -Username $customUsername | Should Be ".\$customUsername"
+                    ConvertTo-StartName -Username $customUsername | Should -Be ".\$customUsername"
                 }
             }
 
@@ -1575,21 +1575,21 @@ try
                 It 'Should return custom username prefixed with .\ instead of the local computer name' {
                     $customUsername = 'TestUsername'
                     $customUsernameWithComputerNamePrefix = "$env:computerName\$customUsername"
-                    ConvertTo-StartName -Username $customUsernameWithComputerNamePrefix | Should Be ".\$customUsername"
+                    ConvertTo-StartName -Username $customUsernameWithComputerNamePrefix | Should -Be ".\$customUsername"
                 }
             }
 
             Context 'Custom username specified with a \ character and a custom domain' {
                 It 'Should return the custom username with no changes' {
                     $customUsername = 'TestDomain\TestUsername'
-                    ConvertTo-StartName -Username $customUsername | Should Be $customUsername
+                    ConvertTo-StartName -Username $customUsername | Should -Be $customUsername
                 }
             }
 
             Context 'Custom username specified with an @ character' {
                 It 'Should return the custom username with no changes' {
                     $customUsername = 'TestUsername@TestDomain'
-                    ConvertTo-StartName -Username $customUsername | Should Be $customUsername
+                    ConvertTo-StartName -Username $customUsername | Should -Be $customUsername
                 }
             }
         }
@@ -1615,7 +1615,7 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServicePath @setServicePathParameters } | Should Not Throw
+                        { Set-ServicePath @setServicePathParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve the service CIM instance' {
@@ -1631,7 +1631,7 @@ try
                     }
 
                     It 'Should return false' {
-                        Set-ServicePath @setServicePathParameters | Should Be $false
+                        Set-ServicePath @setServicePathParameters | Should -Be $false
                     }
                 }
 
@@ -1644,7 +1644,7 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServicePath @setServicePathParameters } | Should Not Throw
+                        { Set-ServicePath @setServicePathParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve the service CIM instance' {
@@ -1660,10 +1660,10 @@ try
                     }
 
                     It 'Should return true' {
-                        Set-ServicePath @setServicePathParameters | Should Be $true
+                        Set-ServicePath @setServicePathParameters | Should -Be $true
                     }
                 }
-    
+
                 $invokeCimMethodFailResult = @{
                     ReturnValue = 1
                 }
@@ -1679,7 +1679,7 @@ try
                     It 'Should throw error for failed service path change' {
                         $errorMessage = $script:localizedData.InvokeCimMethodFailed -f 'Change', $setServicePathParameters.ServiceName, 'PathName', $invokeCimMethodFailResult.ReturnValue
 
-                        { Set-ServicePath @setServicePathParameters } | Should Throw $errorMessage
+                        { Set-ServicePath @setServicePathParameters } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
             }
@@ -1716,11 +1716,11 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceDependency @setServiceDependenciesParameters } | Should Not Throw
+                        { Set-ServiceDependency @setServiceDependenciesParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve the service' {
-                        Assert-MockCalled -CommandName 'Get-Service' -ParameterFilter { $Name -eq $setServiceDependenciesParameters.ServiceName } -Times 1 -Scope 'Context'                        
+                        Assert-MockCalled -CommandName 'Get-Service' -ParameterFilter { $Name -eq $setServiceDependenciesParameters.ServiceName } -Times 1 -Scope 'Context'
                     }
 
                     It 'Should not retrieve the service CIM instance' {
@@ -1739,11 +1739,11 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceDependency @setServiceDependenciesParameters } | Should Not Throw
+                        { Set-ServiceDependency @setServiceDependenciesParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve the service' {
-                        Assert-MockCalled -CommandName 'Get-Service' -ParameterFilter { $Name -eq $setServiceDependenciesParameters.ServiceName } -Times 1 -Scope 'Context'                        
+                        Assert-MockCalled -CommandName 'Get-Service' -ParameterFilter { $Name -eq $setServiceDependenciesParameters.ServiceName } -Times 1 -Scope 'Context'
                     }
 
                     It 'Should retrieve the service CIM instance' {
@@ -1762,11 +1762,11 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceDependency @setServiceDependenciesParameters } | Should Not Throw
+                        { Set-ServiceDependency @setServiceDependenciesParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve the service' {
-                        Assert-MockCalled -CommandName 'Get-Service' -ParameterFilter { $Name -eq $setServiceDependenciesParameters.ServiceName } -Times 1 -Scope 'Context'                        
+                        Assert-MockCalled -CommandName 'Get-Service' -ParameterFilter { $Name -eq $setServiceDependenciesParameters.ServiceName } -Times 1 -Scope 'Context'
                     }
 
                     It 'Should retrieve the service CIM instance' {
@@ -1791,11 +1791,11 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceDependency @setServiceDependenciesParameters } | Should Not Throw
+                        { Set-ServiceDependency @setServiceDependenciesParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve the service' {
-                        Assert-MockCalled -CommandName 'Get-Service' -ParameterFilter { $Name -eq $setServiceDependenciesParameters.ServiceName } -Times 1 -Scope 'Context'                        
+                        Assert-MockCalled -CommandName 'Get-Service' -ParameterFilter { $Name -eq $setServiceDependenciesParameters.ServiceName } -Times 1 -Scope 'Context'
                     }
 
                     It 'Should not retrieve the service CIM instance' {
@@ -1814,11 +1814,11 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceDependency @setServiceDependenciesParameters } | Should Not Throw
+                        { Set-ServiceDependency @setServiceDependenciesParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve the service' {
-                        Assert-MockCalled -CommandName 'Get-Service' -ParameterFilter { $Name -eq $setServiceDependenciesParameters.ServiceName } -Times 1 -Scope 'Context'                        
+                        Assert-MockCalled -CommandName 'Get-Service' -ParameterFilter { $Name -eq $setServiceDependenciesParameters.ServiceName } -Times 1 -Scope 'Context'
                     }
 
                     It 'Should retrieve the service CIM instance' {
@@ -1827,9 +1827,9 @@ try
 
                     It 'Should change the service' {
                         Assert-MockCalled -CommandName 'Invoke-CimMethod' -ParameterFilter { $InputObject -eq $testServiceCimInstance -and $MethodName -eq 'Change' -and $null -eq (Compare-Object -ReferenceObject $setServiceDependenciesParameters.Dependencies -DifferenceObject $Arguments.ServiceDependencies) } -Times 1 -Scope 'Context'
-                    }                    
+                    }
                 }
-    
+
                 $invokeCimMethodFailResult = @{
                     ReturnValue = 1
                 }
@@ -1845,7 +1845,7 @@ try
                     It 'Should throw error for failed service path change' {
                         $errorMessage = $script:localizedData.InvokeCimMethodFailed -f 'Change', $setServiceDependenciesParameters.ServiceName, 'ServiceDependencies', $invokeCimMethodFailResult.ReturnValue
 
-                        { Set-ServiceDependency @setServiceDependenciesParameters } | Should Throw $errorMessage
+                        { Set-ServiceDependency @setServiceDependenciesParameters } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
             }
@@ -1862,7 +1862,7 @@ try
                 Mock -CommandName 'Get-ServiceCimInstance' -MockWith { return $testServiceCimInstance }
                 Mock -CommandName 'Grant-LogOnAsServiceRight' -MockWith { }
                 Mock -CommandName 'ConvertTo-StartName' -MockWith { return $Username }
-                
+
                 $invokeCimMethodSuccessResult = @{
                     ReturnValue = 0
                 }
@@ -1875,7 +1875,7 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should Not Throw
+                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve service CIM instance' {
@@ -1902,7 +1902,7 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should Not Throw
+                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve service CIM instance' {
@@ -1929,7 +1929,7 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should Not Throw
+                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve service CIM instance' {
@@ -1959,7 +1959,7 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should Not Throw
+                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve service CIM instance' {
@@ -1986,7 +1986,7 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should Not Throw
+                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve service CIM instance' {
@@ -2013,7 +2013,7 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should Not Throw
+                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve service CIM instance' {
@@ -2040,7 +2040,7 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should Not Throw
+                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve service CIM instance' {
@@ -2056,7 +2056,7 @@ try
                     }
 
                     It 'Should change service' {
-                        Assert-MockCalled -CommandName 'Invoke-CimMethod' -ParameterFilter { $InputObject -eq $testServiceCimInstance -and $MethodName -eq 'Change' -and $Arguments.StartName -eq $setServiceAccountPropertyParameters.BuiltInAccount -and $Arguments.StartPassword -eq [String]::Empty } -Times 1 -Scope 'Context'
+                        Assert-MockCalled -CommandName 'Invoke-CimMethod' -ParameterFilter { $InputObject -eq $testServiceCimInstance -and $MethodName -eq 'Change' -and $Arguments.StartName -eq $setServiceAccountPropertyParameters.BuiltInAccount -and $Arguments.StartPassword -eq [System.String]::Empty } -Times 1 -Scope 'Context'
                     }
                 }
 
@@ -2075,7 +2075,7 @@ try
                     It 'Should throw an error for service change failure' {
                         $errorMessage = $script:localizedData.InvokeCimMethodFailed -f 'Change', $setServiceAccountPropertyParameters.ServiceName, 'DesktopInteract', $invokeCimMethodFailResult.ReturnValue
 
-                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should Throw $errorMessage
+                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
 
@@ -2088,7 +2088,7 @@ try
                     It 'Should throw an error for service change failure' {
                         $errorMessage = $script:localizedData.InvokeCimMethodFailed -f 'Change', $setServiceAccountPropertyParameters.ServiceName, 'StartName, StartPassword', $invokeCimMethodFailResult.ReturnValue
 
-                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should Throw $errorMessage
+                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
 
@@ -2101,7 +2101,7 @@ try
                     It 'Should throw an error for service change failure' {
                         $errorMessage = $script:localizedData.InvokeCimMethodFailed -f 'Change', $setServiceAccountPropertyParameters.ServiceName, 'StartName, StartPassword', $invokeCimMethodFailResult.ReturnValue
 
-                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should Throw $errorMessage
+                        { Set-ServiceAccountProperty @setServiceAccountPropertyParameters } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
             }
@@ -2134,7 +2134,7 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceStartupType @setServiceStartupTypeParameters } | Should Not Throw
+                        { Set-ServiceStartupType @setServiceStartupTypeParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve the service CIM instance' {
@@ -2153,7 +2153,7 @@ try
                     }
 
                     It 'Should not throw' {
-                        { Set-ServiceStartupType @setServiceStartupTypeParameters } | Should Not Throw
+                        { Set-ServiceStartupType @setServiceStartupTypeParameters } | Should -Not -Throw
                     }
 
                     It 'Should retrieve the service CIM instance' {
@@ -2180,7 +2180,7 @@ try
                     It 'Should throw error for failed service change' {
                         $errorMessage = $script:localizedData.InvokeCimMethodFailed -f 'Change', $setServiceStartupTypeParameters.ServiceName, 'StartMode', $invokeCimMethodFailResult.ReturnValue
 
-                        { Set-ServiceStartupType @setServiceStartupTypeParameters } | Should Throw $errorMessage
+                        { Set-ServiceStartupType @setServiceStartupTypeParameters } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
             }
@@ -2211,7 +2211,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-ServiceProperty @setServicePropertyParameters } | Should Not Throw
+                    { Set-ServiceProperty @setServicePropertyParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service CIM instance' {
@@ -2242,7 +2242,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-ServiceProperty @setServicePropertyParameters } | Should Not Throw
+                    { Set-ServiceProperty @setServicePropertyParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service CIM instance' {
@@ -2273,7 +2273,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-ServiceProperty @setServicePropertyParameters } | Should Not Throw
+                    { Set-ServiceProperty @setServicePropertyParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service CIM instance' {
@@ -2305,7 +2305,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-ServiceProperty @setServicePropertyParameters } | Should Not Throw
+                    { Set-ServiceProperty @setServicePropertyParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service CIM instance' {
@@ -2336,7 +2336,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-ServiceProperty @setServicePropertyParameters } | Should Not Throw
+                    { Set-ServiceProperty @setServicePropertyParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service CIM instance' {
@@ -2367,7 +2367,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-ServiceProperty @setServicePropertyParameters } | Should Not Throw
+                    { Set-ServiceProperty @setServicePropertyParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service CIM instance' {
@@ -2383,7 +2383,7 @@ try
                 }
 
                 It 'Should set service account properties' {
-                    Assert-MockCalled -CommandName 'Set-ServiceAccountProperty' -ParameterFilter { $ServiceName -eq $setServicePropertyParameters.ServiceName -and [PSCredential]::Equals($setServicePropertyParameters.Credential, $Credential) } -Times 1 -Scope 'Context'
+                    Assert-MockCalled -CommandName 'Set-ServiceAccountProperty' -ParameterFilter { $ServiceName -eq $setServicePropertyParameters.ServiceName -and [System.Management.Automation.PSCredential]::Equals($setServicePropertyParameters.Credential, $Credential) } -Times 1 -Scope 'Context'
                 }
 
                 It 'Should not set service startup type' {
@@ -2398,7 +2398,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-ServiceProperty @setServicePropertyParameters } | Should Not Throw
+                    { Set-ServiceProperty @setServicePropertyParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service CIM instance' {
@@ -2429,7 +2429,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-ServiceProperty @setServicePropertyParameters } | Should Not Throw
+                    { Set-ServiceProperty @setServicePropertyParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service CIM instance' {
@@ -2460,7 +2460,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-ServiceProperty @setServicePropertyParameters } | Should Not Throw
+                    { Set-ServiceProperty @setServicePropertyParameters } | Should -Not -Throw
                 }
 
                 It 'Should retrieve service CIM instance' {
@@ -2496,7 +2496,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Remove-ServiceWithTimeout @removeServiceWithTimeoutParameters } | Should Not Throw
+                    { Remove-ServiceWithTimeout @removeServiceWithTimeoutParameters } | Should -Not -Throw
                 }
 
                 It 'Should remove service' {
@@ -2518,7 +2518,7 @@ try
 
                 It 'Should throw error for service removal timeout' {
                     $errorMessage = $script:localizedData.ServiceDeletionFailed -f $removeServiceWithTimeoutParameters.Name
-                    { Remove-ServiceWithTimeout @removeServiceWithTimeoutParameters } | Should Throw $errorMessage
+                    { Remove-ServiceWithTimeout @removeServiceWithTimeoutParameters } | Should -Throw -ExpectedMessage $errorMessage
                 }
             }
         }
@@ -2532,10 +2532,10 @@ try
                 StartupTimeout = 500
             }
 
-            $expectedTimeSpan = [TimeSpan]::FromMilliseconds($startServiceWithTimeoutParameters.StartupTimeout)
-                    
+            $expectedTimeSpan = [System.TimeSpan]::FromMilliseconds($startServiceWithTimeoutParameters.StartupTimeout)
+
             It 'Should not throw' {
-                { Start-ServiceWithTimeout @startServiceWithTimeoutParameters } | Should Not Throw
+                { Start-ServiceWithTimeout @startServiceWithTimeoutParameters } | Should -Not -Throw
             }
 
             It 'Should start service' {
@@ -2543,7 +2543,7 @@ try
             }
 
             It 'Should wait for service to start' {
-                Assert-MockCalled -CommandName 'Wait-ServiceStateWithTimeout' -ParameterFilter { $ServiceName -eq $startServiceWithTimeoutParameters.ServiceName -and $State -eq [System.ServiceProcess.ServiceControllerStatus]::Running -and [TimeSpan]::Equals($expectedTimeSpan, $WaitTimeSpan) } -Times 1 -Scope 'Describe'
+                Assert-MockCalled -CommandName 'Wait-ServiceStateWithTimeout' -ParameterFilter { $ServiceName -eq $startServiceWithTimeoutParameters.ServiceName -and $State -eq [System.ServiceProcess.ServiceControllerStatus]::Running -and [System.TimeSpan]::Equals($expectedTimeSpan, $WaitTimeSpan) } -Times 1 -Scope 'Describe'
             }
         }
 
@@ -2556,10 +2556,10 @@ try
                 TerminateTimeout = 500
             }
 
-            $expectedTimeSpan = [TimeSpan]::FromMilliseconds($stopServiceWithTimeoutParameters.TerminateTimeout)
-                    
+            $expectedTimeSpan = [System.TimeSpan]::FromMilliseconds($stopServiceWithTimeoutParameters.TerminateTimeout)
+
             It 'Should not throw' {
-                { Stop-ServiceWithTimeout @stopServiceWithTimeoutParameters } | Should Not Throw
+                { Stop-ServiceWithTimeout @stopServiceWithTimeoutParameters } | Should -Not -Throw
             }
 
             It 'Should stop service' {
@@ -2567,7 +2567,7 @@ try
             }
 
             It 'Should wait for service to stop' {
-                Assert-MockCalled -CommandName 'Wait-ServiceStateWithTimeout' -ParameterFilter { $ServiceName -eq $stopServiceWithTimeoutParameters.ServiceName -and $State -eq [System.ServiceProcess.ServiceControllerStatus]::Stopped -and [TimeSpan]::Equals($expectedTimeSpan, $WaitTimeSpan) } -Times 1 -Scope 'Describe'
+                Assert-MockCalled -CommandName 'Wait-ServiceStateWithTimeout' -ParameterFilter { $ServiceName -eq $stopServiceWithTimeoutParameters.ServiceName -and $State -eq [System.ServiceProcess.ServiceControllerStatus]::Stopped -and [System.TimeSpan]::Equals($expectedTimeSpan, $WaitTimeSpan) } -Times 1 -Scope 'Describe'
             }
         }
     }

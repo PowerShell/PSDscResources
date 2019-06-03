@@ -469,11 +469,10 @@ Describe 'Archive Integration Tests' {
 
             $fileBeforeEdit = Get-Item -Path $fileToEditPath
             $lastWriteTimeBeforeEdit = $fileBeforeEdit.LastWriteTime
-            $creationTimeBeforeEdit = $fileBeforeEdit.CreationTime
 
             $null = Set-Content -Path $fileToEditPath -Value 'Different false text' -Force
-            Set-ItemProperty -Path $fileToEditPath -Name 'LastWriteTime' -Value ([DateTime]::MaxValue)
-            Set-ItemProperty -Path $fileToEditPath -Name 'CreationTime' -Value ([DateTime]::MaxValue)
+            Set-ItemProperty -Path $fileToEditPath -Name 'LastWriteTime' -Value ([System.DateTime]::MaxValue)
+            Set-ItemProperty -Path $fileToEditPath -Name 'CreationTime' -Value ([System.DateTime]::MaxValue)
 
             $fileAfterEdit = Get-Item -Path $fileToEditPath
 
@@ -582,11 +581,10 @@ Describe 'Archive Integration Tests' {
 
             $fileBeforeEdit = Get-Item -Path $fileToEditPath
             $lastWriteTimeBeforeEdit = $fileBeforeEdit.LastWriteTime
-            $creationTimeBeforeEdit = $fileBeforeEdit.CreationTime
 
             $null = Set-Content -Path $fileToEditPath -Value 'Different false text' -Force
-            Set-ItemProperty -Path $fileToEditPath -Name 'LastWriteTime' -Value ([DateTime]::MaxValue)
-            Set-ItemProperty -Path $fileToEditPath -Name 'CreationTime' -Value ([DateTime]::MaxValue)
+            Set-ItemProperty -Path $fileToEditPath -Name 'LastWriteTime' -Value ([System.DateTime]::MaxValue)
+            Set-ItemProperty -Path $fileToEditPath -Name 'CreationTime' -Value ([System.DateTime]::MaxValue)
 
             $fileAfterEdit = Get-Item -Path $fileToEditPath
 
@@ -663,11 +661,10 @@ Describe 'Archive Integration Tests' {
 
             $fileBeforeEdit = Get-Item -Path $fileToEditPath
             $lastWriteTimeBeforeEdit = $fileBeforeEdit.LastWriteTime
-            $creationTimeBeforeEdit = $fileBeforeEdit.CreationTime
 
             $null = Set-Content -Path $fileToEditPath -Value 'Different false text' -Force
-            Set-ItemProperty -Path $fileToEditPath -Name 'LastWriteTime' -Value ([DateTime]::MaxValue)
-            Set-ItemProperty -Path $fileToEditPath -Name 'CreationTime' -Value ([DateTime]::MaxValue)
+            Set-ItemProperty -Path $fileToEditPath -Name 'LastWriteTime' -Value ([System.DateTime]::MaxValue)
+            Set-ItemProperty -Path $fileToEditPath -Name 'CreationTime' -Value ([System.DateTime]::MaxValue)
 
             $fileAfterEdit = Get-Item -Path $fileToEditPath
 
@@ -698,8 +695,6 @@ Describe 'Archive Integration Tests' {
             It 'Set-TargetResource should not throw' {
                 { Set-TargetResource -Ensure 'Absent' -Path $zipFilePath -Destination $destinationDirectoryPath -Validate $true -Checksum $possibleChecksumValue } | Should -Not -Throw
             }
-
-            $fileAfterSetTargetResource = Get-Item -Path $fileToEditPath
 
             It 'Edited file should exist at the destination after Set-TargetResource' {
                 Test-Path -Path $fileToEditPath | Should -Be $true

@@ -73,13 +73,13 @@ try {
                 UserMayChangePassword = $false
                 PasswordChangeRequired = $false
             }
-        
-        
+
+
             $modifiableUserName = 'newUser1234'
             $modifiableUserPassword = 'ThisIsAStrongPassword543!'
             $modifiableUserSecurePassword = ConvertTo-SecureString -String $modifiableUserPassword -AsPlainText -Force
             $modifiableUserCredential = New-Object PSCredential ($modifiableUserName, $modifiableUserSecurePassword)
-            
+
             # Mock user object that gets modified by the Set-TargetResourceOnNanoServer tests
             $modifiableUserValues = @{
                 Name = $modifiableUserName
@@ -119,7 +119,7 @@ try {
                 $script:UserObject.DisplayName = $existingUserValues.DisplayName
                 $script:UserObject.UserCannotChangePassword = $existingUserValues.UserCannotChangePassword
                 $script:UserObject.PasswordNeverExpires = $existingUserValues.PasswordNeverExpires
-                
+
             }
 
             # Properties that are used on both Nano and Full Sku
@@ -174,7 +174,7 @@ try {
                         Assert-MockCalled -CommandName New-InvalidOperationException -Exactly 1 -Scope It
                     }
                 }
-                
+
                 Context 'Tests on Nano Server' {
 
                     Mock -CommandName Test-IsNanoServer -MockWith { return $true }
@@ -231,7 +231,7 @@ try {
                         $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                                                   -ArgumentList @($exception, 'MachineStateIncorrect', 'InvalidOperation', $null)
                         Mock -CommandName Find-UserByNameOnNanoServer -MockWith { Throw }
-                        { Get-TargetResource -UserName 'DuplicateUser' } | Should Throw $errorRecord
+                        { Get-TargetResource -UserName 'DuplicateUser' } | Should -Throw -ExpectedMessage $errorRecord
 
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
 
@@ -251,17 +251,17 @@ try {
 
                     It 'Should remove the user' {
                         Mock -CommandName Find-UserByNameOnFullSku -MockWith { return $script:UserObject }
-                        
+
                         Set-TargetResource -UserName $existingUserValues.Name `
                                            -Ensure 'Absent'
 
                         Assert-MockCalled -CommandName Add-UserOnFullSku -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Remove-UserOnFullSku -Exactly 1 -Scope It
                     }
-                
+
                     It 'Should add a new user with a password' {
                         Mock -CommandName Find-UserByNameOnFullSku -MockWith { return $null }
-                        
+
                         Set-TargetResource -UserName $existingUserValues.Name `
                                            -Password $existingUserValues.Password `
                                            -Ensure 'Present'
@@ -317,7 +317,7 @@ try {
                         $passwordNeverExpires = $false
                         $passwordChangeRequired = $true
                         $passwordChangeNotAllowed = $false
-                        
+
                         Set-TargetResource -UserName $existingUserValues.Name `
                                            -Ensure 'Present' `
                                            -FullName $modifiableUserValues.DisplayName `
@@ -326,7 +326,7 @@ try {
                                            -PasswordNeverExpires $passwordNeverExpires `
                                            -PasswordChangeRequired $passwordChangeRequired `
                                            -PasswordChangeNotAllowed $passwordChangeNotAllowed
-                    
+
                         Assert-MockCalled -CommandName Find-UserByNameOnFullSku -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Add-UserOnFullSku -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Remove-UserOnFullSku -Exactly 0 -Scope It
@@ -348,7 +348,7 @@ try {
 
                         Set-TargetResource -UserName $existingUserValues.Name `
                                            -Ensure 'Present'
-                    
+
                         Assert-MockCalled -CommandName Find-UserByNameOnFullSku -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Add-UserOnFullSku -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Remove-UserOnFullSku -Exactly 0 -Scope It
@@ -369,7 +369,7 @@ try {
                                            -Ensure 'Present' `
                                            -FullName $modifiableUserValues.DisplayName `
                                            -Description $modifiableUserValues.Description
-                    
+
                         Assert-MockCalled -CommandName Find-UserByNameOnFullSku -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Add-UserOnFullSku -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Remove-UserOnFullSku -Exactly 0 -Scope It
@@ -390,7 +390,7 @@ try {
                                                   -ArgumentList @($exception, 'MachineStateIncorrect', 'InvalidOperation', $null)
                         Mock -CommandName Find-UserByNameOnFullSku -MockWith { Throw }
 
-                        { Set-TargetResource -UserName 'DuplicateUser' } | Should Throw $errorRecord
+                        { Set-TargetResource -UserName 'DuplicateUser' } | Should -Throw -ExpectedMessage $errorRecord
 
                         Assert-MockCalled -CommandName Find-UserByNameOnFullSku -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Save-UserOnFullSku -Exactly 0 -Scope It
@@ -404,7 +404,7 @@ try {
                     # Mock -CommandName Remove-LocalUser -MockWith {}
                     # Mock -CommandName Disable-LocalUser -MockWith {}
                     # Mock -CommandName Enable-LocalUser -MockWith {}
-                
+
                     It 'Should add a new user' -Skip:$true {
                         Mock -CommandName Set-LocalUser -MockWith { $modifiableUserValues.FullName = [String]::Empty}
 
@@ -413,7 +413,7 @@ try {
 
                         Set-TargetResource -UserName $modifiableUserValues.Name `
                                            -Ensure 'Present'
-                        
+
                         # Set-LocalUser only called to set FullName
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName New-LocalUser -Exactly 1 -Scope It
@@ -426,7 +426,7 @@ try {
                     It 'Should remove the user' -Skip:$true {
                         Mock -CommandName Find-UserByNameOnNanoServer -MockWith { return $script:UserObject }
                         Mock -CommandName Set-LocalUser -MockWith {}
-                        
+
                         Set-TargetResource -UserName $existingUserValues.Name `
                                            -Ensure 'Absent'
 
@@ -440,7 +440,7 @@ try {
                         Mock -CommandName Find-UserByNameOnNanoServer `
                              -MockWith { Write-Error -Message 'Test error message' -ErrorId  'UserNotFound' }
                         Mock -CommandName Set-LocalUser -MockWith {}
-                        
+
                         Set-TargetResource -UserName 'NotAUserName' `
                                            -Ensure 'Absent'
 
@@ -463,7 +463,7 @@ try {
                                            -PasswordNeverExpires (-not $existingUserValues.PasswordNeverExpires) `
                                            -PasswordChangeRequired (-not $existingUserValues.PasswordChangeRequired) `
                                            -PasswordChangeNotAllowed $existingUserValues.UserMayChangePassword
-                        
+
                         <# Set-LocalUser called to:
                              Set the Password
                              Change the FullName
@@ -480,7 +480,7 @@ try {
                         Assert-MockCalled -CommandName Enable-LocalUser -Exactly 0 -Scope It
 
                     }
-                                        
+
                     It 'Should update the user with different values' -Skip:$true {
                         Mock -CommandName Find-UserByNameOnNanoServer -MockWith { return $modifiableUserValues }
                         $modifiableUserValues.FullName = 'new full name'
@@ -518,7 +518,7 @@ try {
 
                         Set-TargetResource -UserName $existingUserValues.Name `
                                            -Ensure 'Present'
-                    
+
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
                         Assert-MockCalled -CommandName Remove-LocalUser -Exactly 0 -Scope It
@@ -555,7 +555,7 @@ try {
                                                   -ArgumentList @($exception, 'MachineStateIncorrect', 'InvalidOperation', $null)
                         Mock -CommandName Find-UserByNameOnNanoServer -MockWith { Throw }
 
-                        { Set-TargetResource -UserName 'DuplicateUser' } | Should Throw $errorRecord
+                        { Set-TargetResource -UserName 'DuplicateUser' } | Should -Throw -ExpectedMessage $errorRecord
 
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName New-LocalUser -Exactly 0 -Scope It
@@ -584,71 +584,71 @@ try {
                                                                         -Disabled (-not $existingUserValues.Enabled) `
                                                                         -PasswordNeverExpires $existingUserValues.PasswordNeverExpires `
                                                                         -PasswordChangeNotAllowed $existingUserValues.UserCanNotChangePassword
-                        $testTargetResourceResult | Should Be $true
+                        $testTargetResourceResult | Should -Be $true
 
                         Assert-MockCalled -CommandName Find-UserByNameOnFullSku -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Test-UserPasswordOnFullSku -Exactly 1 -Scope It
                     }
-                    
+
                     It 'Should return true when user Absent and Ensure = Absent' {
                         $testTargetResourceResult = Test-TargetResource -UserName $absentUserName `
                                                                         -Ensure 'Absent'
-                        $testTargetResourceResult | Should Be $true
+                        $testTargetResourceResult | Should -Be $true
                     }
 
                     It 'Should return false when user Absent and Ensure = Present' {
                         $testTargetResourceResult = Test-TargetResource -UserName $absentUserName `
                                                                         -Ensure 'Present'
-                        $testTargetResourceResult | Should Be $false
+                        $testTargetResourceResult | Should -Be $false
                     }
-                    
+
                     It 'Should return false when user Present and Ensure = Absent' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Ensure 'Absent'
-                        $testTargetResourceResult | Should Be $false
+                        $testTargetResourceResult | Should -Be $false
                     }
-                    
+
                     It 'Should return false when Password is wrong' {
                         Mock -CommandName Test-UserPasswordOnFullSku -MockWith { return $false }
-                        
+
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Password $newUserValues.Password
-                        $testTargetResourceResult | Should Be $false
+                        $testTargetResourceResult | Should -Be $false
 
                         Assert-MockCalled -CommandName Find-UserByNameOnFullSku -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Test-UserPasswordOnFullSku -Exactly 1 -Scope It
                     }
-                    
+
                     It 'Should return false when user Present and wrong Description' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Description 'Wrong description'
-                        $testTargetResourceResult | Should Be $false
+                        $testTargetResourceResult | Should -Be $false
                     }
 
                     It 'Should return false when FullName is incorrect' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -FullName 'Wrong FullName'
-                        $testTargetResourceResult | Should Be $false 
+                        $testTargetResourceResult | Should -Be $false
                     }
-                    
+
                     It 'Should return false when Disabled is incorrect' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Disabled $existingUserValues.Enabled
-                        $testTargetResourceResult | Should Be $false 
+                        $testTargetResourceResult | Should -Be $false
                     }
-                    
+
                     It 'Should return false when PasswordNeverExpires is incorrect' {
                         $testTargetResourceResult = Test-TargetResource `
                                               -UserName $existingUserName `
                                               -PasswordNeverExpires (-not $existingUserValues.PasswordNeverExpires)
-                        $testTargetResourceResult | Should Be $false 
+                        $testTargetResourceResult | Should -Be $false
                     }
-                    
+
                     It 'Should return false when PasswordChangeNotAllowed is incorrect' {
                         $testTargetResourceResult = Test-TargetResource `
                                                -UserName $existingUserName `
                                                -PasswordChangeNotAllowed $existingUserValues.UserMayChangePassword
-                        $testTargetResourceResult | Should Be $false 
+                        $testTargetResourceResult | Should -Be $false
                     }
                 }
 
@@ -663,81 +663,81 @@ try {
                     $duplicateUserName = 'DuplicateUserName'
                     Mock -CommandName Find-UserByNameOnNanoServer -MockWith { Throw } `
                                                                   -ParameterFilter { $UserName -eq $duplicateUserName }
-                    
+
                     It 'Should return true when user Present and correct values' {
                         Mock -CommandName Test-CredentialsValidOnNanoServer { return $true }
-                        
+
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserValues.Name `
                                                                         -Description $existingUserValues.Description `
                                                                         -Password $existingUserValues.Password `
                                                                         -Disabled (-not $existingUserValues.Enabled) `
                                                                         -PasswordNeverExpires $existingUserValues.PasswordNeverExpires `
                                                                         -PasswordChangeNotAllowed $existingUserValues.UserCanNotChangePassword
-                        $testTargetResourceResult | Should Be $true
+                        $testTargetResourceResult | Should -Be $true
 
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Test-CredentialsValidOnNanoServer -Exactly 1 -Scope It
                     }
-                    
+
                     It 'Should return true when user Absent and Ensure = Absent' {
                         $testTargetResourceResult = Test-TargetResource -UserName $absentUserName `
                                                                         -Ensure 'Absent'
-                        $testTargetResourceResult | Should Be $true
+                        $testTargetResourceResult | Should -Be $true
                     }
 
                     It 'Should return false when user Absent and Ensure = Present' {
                         $testTargetResourceResult = Test-TargetResource -UserName $absentUserName `
                                                                         -Ensure 'Present'
-                        $testTargetResourceResult | Should Be $false
+                        $testTargetResourceResult | Should -Be $false
                     }
-                    
+
                     It 'Should return false when user Present and Ensure = Absent' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Ensure 'Absent'
-                        $testTargetResourceResult | Should Be $false
+                        $testTargetResourceResult | Should -Be $false
                     }
-                    
+
                     It 'Should return false when Password is wrong' {
                         Mock -CommandName Test-CredentialsValidOnNanoServer { return $false }
-                        
+
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Password $newUserValues.Password
-                        $testTargetResourceResult | Should Be $false
+                        $testTargetResourceResult | Should -Be $false
 
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Test-CredentialsValidOnNanoServer -Exactly 1 -Scope It
                     }
-                    
+
                     It 'Should return false when user Present and wrong Description' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Description 'Wrong description'
-                        $testTargetResourceResult | Should Be $false
+                        $testTargetResourceResult | Should -Be $false
                     }
 
                     It 'Should return false when FullName is incorrect' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -FullName 'Wrong FullName'
-                        $testTargetResourceResult | Should Be $false 
+                        $testTargetResourceResult | Should -Be $false
                     }
-                    
+
                     It 'Should return false when Disabled is incorrect' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Disabled $existingUserValues.Enabled
-                        $testTargetResourceResult | Should Be $false 
+                        $testTargetResourceResult | Should -Be $false
                     }
-                    
+
                     It 'Should return false when PasswordNeverExpires is incorrect' {
                         $testTargetResourceResult = Test-TargetResource `
                                               -UserName $existingUserName `
                                               -PasswordNeverExpires (-not $existingUserValues.PasswordNeverExpires)
-                        $testTargetResourceResult | Should Be $false 
+                        $testTargetResourceResult | Should -Be $false
                     }
-                    
+
                     It 'Should return false when PasswordChangeNotAllowed is incorrect' {
                         $testTargetResourceResult = Test-TargetResource `
                                                -UserName $existingUserName `
                                                -PasswordChangeNotAllowed $existingUserValues.UserMayChangePassword
-                        $testTargetResourceResult | Should Be $false 
+                        $testTargetResourceResult | Should -Be $false
                     }
 
                     It 'Should throw an Invalid Operation exception when there are multiple users with the given name' {
@@ -746,7 +746,7 @@ try {
                         $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                                                   -ArgumentList @($exception, 'MachineStateIncorrect', 'InvalidOperation', $null)
 
-                        { Test-TargetResource -UserName $duplicateUserName } | Should Throw $errorRecord
+                        { Test-TargetResource -UserName $duplicateUserName } | Should -Throw -ExpectedMessage $errorRecord
 
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
                     }
@@ -757,7 +757,7 @@ try {
                 It 'Should not throw when username contains all valid chars' {
                     { Assert-UserNameValid -UserName 'abc123456!f_t-l098s' } | Should Not Throw
                 }
-                
+
                 It 'Should throw InvalidArgumentError when username contains only whitespace and dots' {
                     $invalidName = ' . .. .     '
                     $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
@@ -765,9 +765,9 @@ try {
                     $errorMessage = "The name $invalidName cannot be used."
                     $exception = New-Object System.ArgumentException $errorMessage;
                     $errorRecord = New-Object System.Management.Automation.ErrorRecord $exception, $errorId, $errorCategory, $null
-                    { Assert-UserNameValid -UserName $invalidName } | Should Throw $errorRecord
+                    { Assert-UserNameValid -UserName $invalidName } | Should -Throw -ExpectedMessage $errorRecord
                 }
-                
+
                 It 'Should throw InvalidArgumentError when username contains an invalid char' {
                     $invalidName = 'user|name'
                     $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
@@ -775,7 +775,7 @@ try {
                     $errorMessage = "The name $invalidName cannot be used."
                     $exception = New-Object System.ArgumentException $errorMessage;
                     $errorRecord = New-Object System.Management.Automation.ErrorRecord $exception, $errorId, $errorCategory, $null
-                    { Assert-UserNameValid -UserName $invalidName } | Should Throw $errorRecord
+                    { Assert-UserNameValid -UserName $invalidName } | Should -Throw -ExpectedMessage $errorRecord
                 }
             }
         }

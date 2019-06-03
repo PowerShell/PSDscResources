@@ -206,7 +206,7 @@ Describe 'Archive End to End Tests' {
         {
             $otherItemName = Split-Path -Path $otherItemPath -Leaf
             $otherItemExpectedContent = $otherItems[$otherItemPath]
-            $otherItemIsDirectory = [String]::IsNullOrEmpty($otherItemExpectedContent)
+            $otherItemIsDirectory = [System.String]::IsNullOrEmpty($otherItemExpectedContent)
 
             if ($otherItemIsDirectory)
             {
@@ -257,7 +257,7 @@ Describe 'Archive End to End Tests' {
         {
             $otherItemName = Split-Path -Path $otherItemPath -Leaf
             $otherItemExpectedContent = $otherItems[$otherItemPath]
-            $otherItemIsDirectory = [String]::IsNullOrEmpty($otherItemExpectedContent)
+            $otherItemIsDirectory = [System.String]::IsNullOrEmpty($otherItemExpectedContent)
 
             if ($otherItemIsDirectory)
             {
@@ -589,7 +589,7 @@ Describe 'Archive End to End Tests' {
         {
             $otherItemName = Split-Path -Path $otherItemPath -Leaf
             $otherItemExpectedContent = $otherItems[$otherItemPath]
-            $otherItemIsDirectory = [String]::IsNullOrEmpty($otherItemExpectedContent)
+            $otherItemIsDirectory = [System.String]::IsNullOrEmpty($otherItemExpectedContent)
 
             if ($otherItemIsDirectory)
             {
@@ -640,7 +640,7 @@ Describe 'Archive End to End Tests' {
         {
             $otherItemName = Split-Path -Path $otherItemPath -Leaf
             $otherItemExpectedContent = $otherItems[$otherItemPath]
-            $otherItemIsDirectory = [String]::IsNullOrEmpty($otherItemExpectedContent)
+            $otherItemIsDirectory = [System.String]::IsNullOrEmpty($otherItemExpectedContent)
 
             if ($otherItemIsDirectory)
             {

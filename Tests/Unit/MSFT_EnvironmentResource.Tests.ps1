@@ -53,7 +53,7 @@ try
                 }
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
                 }
 
                 It 'Should return the environment variable name' {
@@ -77,7 +77,7 @@ try
                 }
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
                 }
 
                 It 'Should return the environment variable name' {
@@ -101,7 +101,7 @@ try
                 }
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
                 }
 
                 It 'Should return the environment variable name' {
@@ -125,7 +125,7 @@ try
                 }
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
                 }
 
                 It 'Should return the environment variable name' {
@@ -149,7 +149,7 @@ try
                 }
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
                 }
 
                 It 'Should return the environment variable name' {
@@ -173,7 +173,7 @@ try
                 }
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
                 }
 
                 It 'Should return the environment variable name' {
@@ -2257,7 +2257,7 @@ try
                             really really really long name that will not be accepted by the machine. `
                             really really really long name that will not be accepted by the machine.' `
                             -Target @('Machine')
-                    } | Should -Throw $script:localizedData.ArgumentTooLong
+                    } | Should -Throw -ExpectedMessage $script:localizedData.ArgumentTooLong
                 }
 
                 It 'Should throw exception when environment variable cannot be found to remove' {
@@ -2298,7 +2298,7 @@ try
                     $value = 'mockValue'
                     {
                         Set-EnvironmentVariable -Name $name -Value $value -Target @('Process')
-                    } | Should -Throw $errorRecord
+                    } | Should -Throw -ExpectedMessage $errorRecord
                 }
             }
         }

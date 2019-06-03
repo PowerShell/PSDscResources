@@ -208,14 +208,14 @@ Describe 'GroupResource Unit Tests' {
 
             Context 'When called with the given group name' {
                 It 'Should call Assert-GroupNameValid' {
-                    $testTargetResourceResult = Test-TargetResource -GroupName $script:testGroupName
+                    $null = Test-TargetResource -GroupName $script:testGroupName
                     Assert-MockCalled -CommandName 'Assert-GroupNameValid' -ParameterFilter { $GroupName -eq $script:testGroupName }
                 }
             }
 
             Context 'When called with all parameters when not on Nano Server' {
                 It 'Should call Test-TargetResourceOnFullSKU' {
-                    $testTargetResourceResult = Test-TargetResource -GroupName $script:testGroupName -Credential $script:testCredential
+                    $null = Test-TargetResource -GroupName $script:testGroupName -Credential $script:testCredential
 
                     Assert-MockCalled -CommandName 'Test-IsNanoServer'
                     Assert-MockCalled -CommandName 'Test-TargetResourceOnFullSKU' -ParameterFilter { $GroupName -eq $script:testGroupName -and $Credential -eq $script:testCredential }
@@ -226,7 +226,7 @@ Describe 'GroupResource Unit Tests' {
                 It 'Should call Test-TargetResourceOnNanoServer' {
                     Mock -CommandName 'Test-IsNanoServer' -MockWith { return $true }
 
-                    $testTargetResourceResult = Test-TargetResource -GroupName $script:testGroupName -Credential $script:testCredential
+                    $null = Test-TargetResource -GroupName $script:testGroupName -Credential $script:testCredential
 
                     Assert-MockCalled -CommandName 'Test-IsNanoServer'
                     Assert-MockCalled -CommandName 'Test-TargetResourceOnNanoServer' -ParameterFilter { $GroupName -eq $script:testGroupName -and $Credential -eq $script:testCredential }
@@ -429,7 +429,7 @@ Describe 'GroupResource Unit Tests' {
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
 
-                        $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
                         $getTargetResourceResult.Keys.Count | Should -Be 2
                         $getTargetResourceResult.GroupName | Should -Be $script:testGroupName
                         $getTargetResourceResult.Ensure | Should -Be 'Absent'
@@ -440,7 +440,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should throw expected exception' {
                         Mock -CommandName 'Get-LocalGroup' -MockWith { Write-Error -Message $script:testErrorMessage -CategoryReason 'OtherException' }
 
-                        { $getTargetResourceResult = Get-TargetResourceOnNanoServer -GroupName $script:testGroupName } | Should -Throw $script:testErrorMessage
+                        { $null = Get-TargetResourceOnNanoServer -GroupName $script:testGroupName } | Should -Throw -ExpectedMessage $script:testErrorMessage
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                     }
@@ -457,7 +457,7 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group -eq $script:testLocalGroup }
 
-                        $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
                         $getTargetResourceResult.Keys.Count | Should -Be 4
                         $getTargetResourceResult.GroupName | Should -Be $script:testGroupName
                         $getTargetResourceResult.Ensure | Should -Be 'Present'
@@ -478,7 +478,7 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group -eq $script:testLocalGroup }
 
-                        $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
                         $getTargetResourceResult.Keys.Count | Should -Be 4
                         $getTargetResourceResult.GroupName | Should -Be $script:testGroupName
                         $getTargetResourceResult.Ensure | Should -Be 'Present'
@@ -767,7 +767,7 @@ Describe 'GroupResource Unit Tests' {
 
                         Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
-                        { Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -MembersToInclude $testMembersToInclude -Ensure 'Present' } | Should -Throw $errorMessage
+                        { Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -MembersToInclude $testMembersToInclude -Ensure 'Present' } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
 
@@ -780,7 +780,7 @@ Describe 'GroupResource Unit Tests' {
 
                         Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
-                        { Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw $errorMessage
+                        { Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
 
@@ -793,7 +793,7 @@ Describe 'GroupResource Unit Tests' {
 
                         Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { return @( $script:testMemberName1, $script:testMemberName2 ) }
 
-                        { Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembersToInclude -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw $errorMessage
+                        { Set-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembersToInclude -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
 
@@ -931,7 +931,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should throw expected exception' {
                         Mock -CommandName 'Get-LocalGroup' -MockWith { Write-Error -Message $script:testErrorMessage -CategoryReason 'OtherException' }
 
-                        { Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Present' } | Should -Throw $script:testErrorMessage
+                        { Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Present' } | Should -Throw -ExpectedMessage $script:testErrorMessage
                     }
                 }
 
@@ -1070,7 +1070,7 @@ Describe 'GroupResource Unit Tests' {
                         Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
                         Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { @( $script:testMemberName1, $script:testMemberName2 ) }
 
-                        { Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -MembersToInclude $testMembersToInclude -Ensure 'Present' } | Should -Throw $errorMessage
+                        { Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -MembersToInclude $testMembersToInclude -Ensure 'Present' } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
 
@@ -1084,7 +1084,7 @@ Describe 'GroupResource Unit Tests' {
                         Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
                         Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { @( $script:testMemberName1, $script:testMemberName2 ) }
 
-                        { Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw $errorMessage
+                        { Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
 
@@ -1098,7 +1098,7 @@ Describe 'GroupResource Unit Tests' {
                         Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
                         Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { @( $script:testMemberName1, $script:testMemberName2 ) }
 
-                        { Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembersToInclude -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw $errorMessage
+                        { Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembersToInclude -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
             }
@@ -1158,7 +1158,7 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Remove-DisposableObject'
 
-                        $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
                         $getTargetResourceResult.Keys.Count | Should -Be 2
                         $getTargetResourceResult.GroupName | Should -Be $script:testGroupName
                         $getTargetResourceResult.Ensure | Should -Be 'Absent'
@@ -1177,7 +1177,7 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'Get-MembersOnFullSKU' -ParameterFilter { $Group -eq $script:testGroup }
                         Assert-MockCalled -CommandName 'Remove-DisposableObject'
 
-                        $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
                         $getTargetResourceResult.Keys.Count | Should -Be 4
                         $getTargetResourceResult.GroupName | Should -Be $script:testGroupName
                         $getTargetResourceResult.Ensure | Should -Be 'Present'
@@ -1199,7 +1199,7 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'Get-MembersOnFullSKU' -ParameterFilter { $Group -eq $script:testGroup }
                         Assert-MockCalled -CommandName 'Remove-DisposableObject'
 
-                        $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
                         $getTargetResourceResult.Keys.Count | Should -Be 4
                         $getTargetResourceResult.GroupName | Should -Be $script:testGroupName
                         $getTargetResourceResult.Ensure | Should -Be 'Present'
@@ -1569,7 +1569,7 @@ Describe 'GroupResource Unit Tests' {
 
                         $errorMessage = $script:localizedData.MembersAndIncludeExcludeConflict -f 'Members', 'MembersToInclude'
 
-                        { Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -MembersToInclude $testMembersToInclude -Ensure 'Present' } | Should -Throw $errorMessage
+                        { Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -MembersToInclude $testMembersToInclude -Ensure 'Present' } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
 
@@ -1580,7 +1580,7 @@ Describe 'GroupResource Unit Tests' {
 
                         $errorMessage = $script:localizedData.MembersAndIncludeExcludeConflict -f 'Members', 'MembersToExclude'
 
-                        { Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw $errorMessage
+                        { Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
 
@@ -1591,7 +1591,7 @@ Describe 'GroupResource Unit Tests' {
 
                         $errorMessage = $script:localizedData.IncludeAndExcludeConflict -f $script:testUserPrincipal1.Name, 'MembersToInclude', 'MembersToExclude'
 
-                        { Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToInclude $testMembersToInclude -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw $errorMessage
+                        { Set-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToInclude $testMembersToInclude -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
 
@@ -1994,7 +1994,7 @@ Describe 'GroupResource Unit Tests' {
 
                         $errorMessage = $script:localizedData.MembersAndIncludeExcludeConflict -f 'Members', 'MembersToInclude'
 
-                        { Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -MembersToInclude $testMembersToInclude -Ensure 'Present' } | Should -Throw $errorMessage
+                        { Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -MembersToInclude $testMembersToInclude -Ensure 'Present' } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
 
@@ -2007,7 +2007,7 @@ Describe 'GroupResource Unit Tests' {
 
                         $errorMessage = $script:localizedData.MembersAndIncludeExcludeConflict -f 'Members', 'MembersToExclude'
 
-                        { Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw $errorMessage
+                        { Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
 
@@ -2020,7 +2020,7 @@ Describe 'GroupResource Unit Tests' {
 
                         $errorMessage = $script:localizedData.IncludeAndExcludeConflict -f $script:testUserPrincipal1.Name, 'MembersToInclude', 'MembersToExclude'
 
-                        { Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToInclude $testMembersToInclude -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw $errorMessage
+                        { Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToInclude $testMembersToInclude -MembersToExclude $testMembersToExclude -Ensure 'Present' } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
             }
@@ -2197,7 +2197,7 @@ Describe 'GroupResource Unit Tests' {
                         Mock -CommandName 'Test-IsLocalMachine' -MockWith { return $false }
                         Mock -CommandName 'Get-GroupMembersFromDirectoryEntry' -MockWith { return @( $memberDirectoryEntry1, $memberDirectoryEntry2 ) }
 
-                        $getMembersResult = Get-MembersAsPrincipalsList -Group $script:testGroup -Credential $script:testCredential -PrincipalContextCache $principalContextCache -Disposables $disposables
+                        $null = Get-MembersAsPrincipalsList -Group $script:testGroup -Credential $script:testCredential -PrincipalContextCache $principalContextCache -Disposables $disposables
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext' -ParameterFilter { $Credential -eq $script:testCredential }
                         Assert-MockCalled -CommandName 'Get-PrincipalContext' -ParameterFilter { $Credential -eq $script:testCredential}
@@ -2212,7 +2212,7 @@ Describe 'GroupResource Unit Tests' {
 
                         $errorMessage = ($script:localizedData.DomainCredentialsRequired -f 'accountname')
 
-                        { Get-MembersAsPrincipalsList -Group $script:testGroup -PrincipalContextCache $principalContextCache -Disposables $disposables } | Should -Throw $errorMessage
+                        { Get-MembersAsPrincipalsList -Group $script:testGroup -PrincipalContextCache $principalContextCache -Disposables $disposables } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
             }
@@ -2347,10 +2347,10 @@ Describe 'GroupResource Unit Tests' {
 
                         $errorMessage = ($script:localizedData.CouldNotFindPrincipal -f $script:testUserPrincipal1.Name)
 
-                        { $convertToPrincipalResult = ConvertTo-Principal `
+                        { $null = ConvertTo-Principal `
                             -MemberName $script:testUserPrincipal1.Name `
                             -PrincipalContextCache $principalContextCache `
-                            -Disposables $disposables } | Should -Throw $errorMessage
+                            -Disposables $disposables } | Should -Throw -ExpectedMessage $errorMessage
                     }
                 }
             }
@@ -2488,7 +2488,7 @@ Describe 'GroupResource Unit Tests' {
                 }
 
                 Context 'When called with a domain principal that does not exist in the principal cache and with a Credential with a domain' {
-                    It 'Should create a new custom principal context with a credential with a domain' {
+                    It 'Should create a new custom principal context with a Credential with a domain' {
                         $principalContextCache = @{}
                         $disposables = New-Object -TypeName 'System.Collections.ArrayList'
 

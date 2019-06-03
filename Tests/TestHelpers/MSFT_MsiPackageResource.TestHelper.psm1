@@ -12,11 +12,11 @@ $testJobPrefix = 'MsiPackageTestJob'
 #>
 function Test-PackageInstalledById
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
-        [String]
+        [System.String]
         $ProductId
     )
 
@@ -25,7 +25,7 @@ function Test-PackageInstalledById
 
     $productEntry = $null
 
-    if (-not [String]::IsNullOrEmpty($ProductId))
+    if (-not [System.String]::IsNullOrEmpty($ProductId))
     {
         $productEntryKeyLocation = Join-Path -Path $uninstallRegistryKey -ChildPath $ProductId
         $productEntry = Get-Item -Path $productEntryKeyLocation -ErrorAction 'SilentlyContinue'
@@ -69,16 +69,16 @@ function Test-PackageInstalledById
 #>
 function Start-Server
 {
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $FilePath,
 
-        [String]
+        [System.String]
         $LogPath = (Join-Path -Path $PSScriptRoot -ChildPath 'PackageTestLogFile.txt'),
 
         [System.Boolean]
@@ -232,12 +232,12 @@ function Start-Server
             (
                 [Parameter(Mandatory = $true)]
                 [ValidateNotNullOrEmpty()]
-                [ScriptBlock]
+                [System.Management.Automation.ScriptBlock]
                 $Callback
             )
 
             # Add the CallbackEventBridge type if it's not already defined
-            if (-not ('CallbackEventBridge' -as [Type]))
+            if (-not ('CallbackEventBridge' -as [System.Type]))
             {
                 Add-Type @'
                     using System;
@@ -292,15 +292,15 @@ function Start-Server
             param
             (
                 [Parameter(Mandatory = $true)]
-                [String]
+                [System.String]
                 $Target,
 
                 [Parameter(Mandatory = $true)]
-                [String]
+                [System.String]
                 $Action,
 
                 [Parameter(Mandatory = $true)]
-                [ScriptBlock]
+                [System.Management.Automation.ScriptBlock]
                 $ScriptBlock
             )
 
@@ -337,11 +337,11 @@ function Start-Server
             param
             (
                 [Parameter(Mandatory = $true)]
-                [String]
+                [System.String]
                 $LogFile,
 
                 [Parameter(Mandatory = $true)]
-                [String]
+                [System.String]
                 $Message
             )
 
@@ -423,7 +423,7 @@ function Start-Server
                 Write-Log -LogFile $LogPath -Message 'Starting request listener'
 
                 $asyncState = $Result.AsyncState
-                [System.Net.HttpListener]$listener = $asyncState.Listener
+                [System.Net.HttpListener] $listener = $asyncState.Listener
                 $filepath = $asyncState.FilePath
 
                 Write-Log -LogFile $LogPath -Message (ConvertTo-Json $asyncState)
@@ -440,7 +440,7 @@ function Start-Server
                     $numBytes = $fileInfo.Length
                     $fileStream = New-Object -TypeName 'System.IO.FileStream' -ArgumentList @( $filePath, 'Open' )
                     $binaryReader = New-Object -TypeName 'System.IO.BinaryReader' -ArgumentList @( $fileStream )
-                    [Byte[]] $buf = $binaryReader.ReadBytes($numBytes)
+                    [System.Byte[]] $buf = $binaryReader.ReadBytes($numBytes)
                     $fileStream.Close()
 
                     Write-Log -LogFile $LogPath -Message 'Buffer prepared for response'
@@ -528,7 +528,7 @@ function Start-Server
     # Verify that the job is receivable and does not contain an exception. If it does, re-throw it.
     try
     {
-        $receivedJob = $job | Receive-Job
+        $null = $job | Receive-Job
     }
     catch
     {
@@ -613,7 +613,7 @@ function New-TestMsi
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $DestinationPath
     )
 

@@ -64,7 +64,7 @@ try
             # Verify the environmnet variable $envVar is successfully created
             $retrievedVar.Ensure | Should -Be 'Absent'
 
-            # Verify the create environmnet variable's value is set to default value [String]::Empty
+            # Verify the create environmnet variable's value is set to default value [System.String]::Empty
             $retrievedVar.Value | Should -Be $null
 
             # Remove the created test variable
@@ -189,6 +189,7 @@ try
         It 'Should return true when an environment variable is present and should be' {
             $envVar = 'BlahVar'
             $val = 'A;B;C'
+
             Set-TargetResource -Name $envVar -Value $val
 
             # Test the created environmnet variable
