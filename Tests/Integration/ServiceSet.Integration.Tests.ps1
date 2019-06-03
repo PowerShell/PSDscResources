@@ -1,4 +1,4 @@
-﻿<#
+<#
     These tests should only be run in AppVeyor since they currently require the AppVeyor
     administrator account credential to run.
 

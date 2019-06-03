@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
         Expands the archive located at 'C:\ExampleArchivePath\Archive.zip' to the destination path
         'C:\ExampleDestinationPath\Destination'.
