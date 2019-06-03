@@ -57,7 +57,7 @@ function Get-TargetResource
 <#
     .SYNOPSIS
         Creates, modifies, or deletes a user.
-    
+
     .PARAMETER UserName
         The name of the user to create, modify, or delete.
 
@@ -91,7 +91,7 @@ function Get-TargetResource
         Specifies whether the user is allowed to change their password or not.
         By default this is set to $false
 
-    .NOTES 
+    .NOTES
         If Ensure is set to 'Present' then the password parameter is required.
 #>
 function Set-TargetResource
@@ -312,7 +312,7 @@ function Get-TargetResourceOnFullSKU
 <#
     .SYNOPSIS
         Creates, modifies, or deletes a user when on a full server.
-    
+
     .PARAMETER UserName
         The name of the user to create, modify, or delete.
 
@@ -346,7 +346,7 @@ function Get-TargetResourceOnFullSKU
         Specifies whether the user is allowed to change their password or not.
         By default this is set to $false
 
-    .NOTES 
+    .NOTES
         If Ensure is set to 'Present' then the Password parameter is required.
 #>
 function Set-TargetResourceOnFullSKU
@@ -410,7 +410,7 @@ function Set-TargetResourceOnFullSKU
             try
             {
                 $user = Find-UserByNameOnFullSku -UserName $UserName
-                
+
             }
             catch
             {
@@ -456,7 +456,7 @@ function Set-TargetResourceOnFullSKU
             }
             elseif (-not $userExists)
             {
-                <# 
+                <#
                     For a newly created user, set the DisplayName property to an empty string
                     since by default DisplayName is set to user's name.
                 #>
@@ -793,7 +793,7 @@ function Get-TargetResourceOnNanoServer
 <#
     .SYNOPSIS
         Creates, modifies, or deletes a user when on Nano Server.
-    
+
     .PARAMETER UserName
         The name of the user to create, modify, or delete.
 
@@ -827,7 +827,7 @@ function Get-TargetResourceOnNanoServer
         Specifies whether the user is allowed to change their password or not.
         By default this is set to $false
 
-    .NOTES 
+    .NOTES
         If Ensure is set to 'Present' then the Password parameter is required.
 #>
 function Set-TargetResourceOnNanoServer
@@ -883,7 +883,7 @@ function Set-TargetResourceOnNanoServer
 
     # Try to find a user by a name.
     $userExists = $false
-    
+
     try
     {
         $user = Find-UserByNameOnNanoServer -UserName $UserName
@@ -965,12 +965,12 @@ function Set-TargetResourceOnNanoServer
         # NOTE: The parameter name and the property name have opposite meaning.
         $expected = (-not $PasswordChangeNotAllowed)
         $actual = $expected
-        
+
         if ($userExists)
         {
             $actual = $user.UserMayChangePassword
         }
-        
+
         if ($PSBoundParameters.ContainsKey('PasswordChangeNotAllowed') -and ((-not $userExists) -or ($expected -ne $actual)))
         {
             Set-LocalUser -Name $UserName -UserMayChangePassword $expected
@@ -1178,7 +1178,7 @@ function Assert-UserNameValid
 
     # Check if the name consists of only periods and/or white spaces
     $wrongName = $true
-    
+
     for ($i = 0; $i -lt $UserName.Length; $i++)
     {
         if (-not [Char]::IsWhiteSpace($UserName, $i) -and $UserName[$i] -ne '.')
@@ -1208,7 +1208,7 @@ function Assert-UserNameValid
 <#
     .SYNOPSIS
         Tests the local user's credentials on the local machine.
-    
+
     .PARAMETER UserName
         The username to validate the credentials of.
 
@@ -1314,7 +1314,7 @@ function Test-CredentialsValidOnNanoServer
     .SYNOPSIS
         Queries a user by the given username. If found the function returns a UserPrincipal object.
         Otherwise, the function returns $null.
-    
+
     .PARAMETER UserName
         The username to search for.
 #>
@@ -1342,7 +1342,7 @@ function Find-UserByNameOnFullSku
 <#
     .SYNOPSIS
         Adds a user with the given username and returns the new user object
-    
+
     .PARAMETER UserName
         The username for the new user
 #>
@@ -1383,7 +1383,7 @@ function Add-UserOnFullSku
 <#
     .SYNOPSIS
         Sets the password for the given user
-    
+
     .PARAMETER User
         The user to set the password for
 
@@ -1415,7 +1415,7 @@ function Set-UserPasswordOnFullSku
     .SYNOPSIS
         Validates the password is correct for the given user. Returns $true if the
         Password is correct for the given username, false otherwise.
-    
+
     .PARAMETER UserName
         The UserName to check
 
@@ -1440,17 +1440,53 @@ function Test-UserPasswordOnFullSku
         $Password
     )
 
-    $principalContext = New-Object `
-                -TypeName 'System.DirectoryServices.AccountManagement.PrincipalContext' `
-                -ArgumentList @( [System.DirectoryServices.AccountManagement.ContextType]::Machine )
-    try
+    $logonUserSignature =
+@'
+[DllImport("advapi32.dll")]
+public static extern bool LogonUser(String lpszUserName, String lpszDomain, String lpszPassword, int dwLogonType, int dwLogonProvider, ref IntPtr phToken);
+'@
+
+      $closeHandleSignature =
+@'
+[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+public static extern bool CloseHandle(IntPtr handle);
+'@
+
+    $advApi32 = Add-Type -MemberDefinition $logonUserSignature -Name 'AdvApi32' -Namespace 'PsInvoke.NativeMethods' -PassThru
+    $kernel32 = Add-Type -MemberDefinition $closeHandleSignature -Name 'Kernel32' -Namespace 'PsInvoke.NativeMethods' -PassThru
+    $null = [Reflection.Assembly]::LoadWithPartialName('System.Security')
+<#
+    LOGON32_PROVIDER_DEFAULT, Use the standard logon provider for the system
+    Constant = 0, reference WinSDK\WinBase.h
+    For more details on advapi32.dll LogonUser parameter values
+     see - https://docs.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-logonusera
+#>
+    $logon32ProviderDefault = 0
+<#
+    LOGON32_LOGON_INTERACTIVE, This logon type is intended for users who will
+     be interactively using the computer, such as a user being logged on by
+     a terminal server, remote shell, or similar process.
+    Constant = 2, reference WinSDK\WinBase.h
+    For more details on advapi32.dll LogonUser parameter values
+     see - https://docs.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-logonusera
+#>
+    $Logon32LogonInteractive = 2
+
+    $tokenHandle = [IntPtr]::Zero
+    $success = $false
+    $domainName = $null
+
+    #Attempt a logon using this credential
+    $success = $advApi32::LogonUser($UserName, $domainName, $Password.GetNetworkCredential().Password, $Logon32LogonInteractive, $logon32ProviderDefault, [Ref]$tokenHandle)
+
+    if (-not $success)
     {
-        $credentailsValid = $principalContext.ValidateCredentials($UserName, $Password.GetNetworkCredential().Password)
-        return $credentailsValid
+        return $false
     }
-    finally
+    else
     {
-        $principalContext.Dispose()
+        $null = $kernel32::CloseHandle( $tokenHandle )
+        return $true
     }
 }
 
@@ -1459,7 +1495,7 @@ function Test-UserPasswordOnFullSku
     .SYNOPSIS
         Queries a user by the given username. If found the function returns a UserPrincipal object.
         Otherwise, the function returns $null.
-    
+
     .PARAMETER UserName
         The username to search for.
 #>
@@ -1498,7 +1534,7 @@ function Remove-UserOnFullSku
 <#
     .SYNOPSIS
         Saves changes for the given user on a machine.
-    
+
     .PARAMETER User
         The user to save the changes of
 #>
@@ -1519,7 +1555,7 @@ function Save-UserOnFullSku
 <#
     .SYNOPSIS
         Expires the password of the given user.
-    
+
     .PARAMETER User
         The user to expire the password of.
 #>
@@ -1541,7 +1577,7 @@ function Revoke-UserPassword
     .SYNOPSIS
         Queries a user by the given username. If found the function returns a LocalUser object.
         Otherwise, the function throws an error that the user was not found.
-    
+
     .PARAMETER UserName
         The username to search for.
 #>

@@ -592,6 +592,8 @@ The following parameters will be the same for each process in the set:
 ## Versions
 
 ### Unreleased
+* User
+  * Fixed Test-TargetResource throws System.InvalidOperationException when defined user lacks login permissions - Fixes [Issue #116](https://github.com/PowerShell/PSDscResources/issues/116)
 
 * Fixes issue where MsiPackage Integration tests fail if the test HttpListener
   fails to start. Moves the test HttpListener objects to dynamically assigned,
