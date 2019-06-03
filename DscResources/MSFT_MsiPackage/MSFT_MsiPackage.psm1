@@ -269,7 +269,7 @@ function Set-TargetResource
                     }
                     finally
                     {
-                        if ($null -ne $responseStream)
+                        if ((Test-Path -Path variable:responseStream) -and ($null -ne $responseStream))
                         {
                             Close-Stream -Stream $responseStream
                         }

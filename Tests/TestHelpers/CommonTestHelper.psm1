@@ -157,7 +157,7 @@ function Invoke-ExpectedMocksAreCalledTest
         Each item in the array is a hashtable that contains the name of the command
         being mocked, the number of times it is called (can be 0) and, optionally,
         an extra custom string to make the test name more descriptive. The custom
-        string will only work if the command has a corresponding variable in the 
+        string will only work if the command has a corresponding variable in the
         string data name.
 
     .PARAMETER ShouldThrow
@@ -227,7 +227,7 @@ function Invoke-GenericUnitTest {
         Each item in the array is a hashtable that contains the name of the command
         being mocked, the number of times it is called (can be 0) and, optionally,
         an extra custom string to make the test name more descriptive. The custom
-        string will only work if the command has a corresponding variable in the 
+        string will only work if the command has a corresponding variable in the
         string data name.
 
     .PARAMETER ExpectedReturnValue
@@ -288,7 +288,7 @@ function Invoke-GetTargetResourceUnitTest
         Each item in the array is a hashtable that contains the name of the command
         being mocked, the number of times it is called (can be 0) and, optionally,
         an extra custom string to make the test name more descriptive. The custom
-        string will only work if the command has a corresponding variable in the 
+        string will only work if the command has a corresponding variable in the
         string data name.
 
     .PARAMETER ShouldThrow
@@ -354,7 +354,7 @@ function Invoke-SetTargetResourceUnitTest {
         Each item in the array is a hashtable that contains the name of the command
         being mocked, the number of times it is called (can be 0) and, optionally,
         an extra custom string to make the test name more descriptive. The custom
-        string will only work if the command has a corresponding variable in the 
+        string will only work if the command has a corresponding variable in the
         string data name.
 
     .PARAMETER ExpectedReturnValue
@@ -573,7 +573,7 @@ function Test-IsFileLocked
     .PARAMETER ExpectedOutput
         The output expected to be in the output from running WhatIf with the Set-TargetResource cmdlet.
         If this parameter is empty or null, this cmdlet will check that there was no output from
-        Set-TargetResource with WhatIf specified.    
+        Set-TargetResource with WhatIf specified.
 #>
 function Test-SetTargetResourceWithWhatIf
 {
@@ -584,7 +584,7 @@ function Test-SetTargetResourceWithWhatIf
         [Parameter(Mandatory = $true)]
         [Hashtable]
         $Parameters,
-     
+
         [String[]]
         $ExpectedOutput
     )
@@ -792,101 +792,82 @@ function Exit-DscResourceTestEnvironment
 
 <#
     .SYNOPSIS
-        Enables strong crypto for .NET v4.0.30319. Returns a Hashtable
-        containing the relevant, original registry settings, prior to
-        modification.
+        Finds an unused TCP port in the specified port range. By default,
+        searches within ports 38473 - 38799, which at the time of writing, show
+        as unassigned in:
+        https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
+
+    .PARAMETER LowestPortNumber
+        The TCP port number at which to begin the unused port search. Must be
+        greater than 0.
+
+    .PARAMETER HighestPortNumber
+        The highest TCP port number to search for unused ports within. Must be
+        greater than 0, and greater than LowestPortNumber.
+
+    .PARAMETER ExcludePorts
+        TCP ports to exclude from the search, even if they fall within the
+        LowestPortNumber and HighestPortNumber range.
 #>
-function Enable-StrongCryptoForDotNetFour
+function Get-UnusedTcpPort
 {
-    [OutputType([System.Collections.Hashtable])]
-    [CmdletBinding()]
-    param ()
-
-    $originalValues = @{}
-
-    $regBases = @(
-        'HKLM:\SOFTWARE'
-        'HKLM:\SOFTWARE\Wow6432Node'
-    )
-
-    $net4Suffix = 'Microsoft\.NetFramework\v4.0.30319'
-
-    foreach ($regBase in $regBases)
-    {
-        $regPath = Join-Path -Path $regBase -ChildPath $net4Suffix
-
-        if ($null -ne (Get-Item -Path $regPath -ErrorAction SilentlyContinue))
-        {
-            $useStrongCryptoProp = Get-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -ErrorAction SilentlyContinue
-            $needsUpdate = $false
-
-            if ($null -eq $useStrongCryptoProp)
-            {
-                $originalValues.Add($regPath, $null)
-                $needsUpdate = $true
-            }
-            else
-            {
-                $originalValues.Add($regPath, $useStrongCryptoProp.SchUseStrongCrypto)
-
-                if ($useStrongCryptoProp.SchUseStrongCrypto -ne 1)
-                {
-                    $needsUpdate = $true
-                }
-            }
-
-            if ($needsUpdate)
-            {
-                Write-Verbose -Message "Setting property SchUseStrongCrypto at path '$regPath' to 1"
-
-                Set-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -ErrorAction Stop
-            }
-        }
-        else
-        {
-            Write-Warning -Message "Failed to find registry key at path: $regPath. Skipping setting SchUseStrongCrypto to 1. This may cause Integration tests to fail that depend on this setting."
-            continue
-        }
-    }
-
-    return $originalValues
-}
-
-<#
-    .SYNOPSIS
-        Restores strong crypto for .NET v4.0.30319 settings to what they were
-        prior to calling Enable-StrongCryptoForDotNetFour.
-
-    .PARAMETER OriginalSettings
-        A Hashtable containing the original registry settings for strong crypto
-        for .NET v4.0.30319.
-#>
-function Undo-ChangesToStrongCryptoForDotNetFour
-{
+    [OutputType([System.UInt16])]
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [System.Collections.Hashtable]
-        $OriginalSettings
+        [Parameter()]
+        [ValidateScript({$_ -gt 0})]
+        [System.UInt16]
+        $LowestPortNumber = 38473,
+
+        [Parameter()]
+        [ValidateScript({$_ -gt $0})]
+        [System.UInt16]
+        $HighestPortNumber = 38799,
+
+        [Parameter()]
+        [System.UInt16[]]
+        $ExcludePorts = @()
     )
 
-    foreach ($regPath in $OriginalSettings.Keys)
+    if ($HighestPortNumber -lt $LowestPortNumber)
     {
-        $useStrongCryptoProp = Get-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -ErrorAction SilentlyContinue
+        throw 'HighestPortNumber must be greater than or equal to LowestPortNumber'
+    }
 
-        # The SchUseStrongCrypto value previously didn't exist, but now does. Delete it.
-        if ($null -eq $OriginalSettings[$regPath] -and $null -ne $useStrongCryptoProp)
+    [System.UInt16] $unusedPort = 0
+
+    [System.Collections.ArrayList] $usedAndExcludedPorts = (Get-NetTCPConnection).LocalPort | Where-Object -FilterScript {
+        $_ -ge $LowestPortNumber -and $_ -le $HighestPortNumber
+    }
+
+    if (!(Test-Path -Path variable:usedAndExcludedPorts) -or ($null -eq $usedAndExcludedPorts))
+    {
+        [System.Collections.ArrayList] $usedAndExcludedPorts = @()
+    }
+
+    if (!(Test-Path -Path variable:ExcludePorts) -or ($null -eq $ExcludePorts))
+    {
+        $ExcludePorts = @()
+    }
+
+    $null = $usedAndExcludedPorts.Add($ExcludePorts)
+
+    foreach ($port in $LowestPortNumber..$HighestPortNumber)
+    {
+        if (!($usedAndExcludedPorts.Contains($port)))
         {
-            Remove-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -ErrorAction Stop
-        }
-        # The SchUseStrongCrypto value previously existed but had a different value.
-        elseif($OriginalSettings[$regPath] -ne $useStrongCryptoProp.SchUseStrongCrypto)
-        {
-            Set-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -Value $OriginalSettings[$regPath] -Type DWord -ErrorAction Stop
+            $unusedPort = $port
+            break
         }
     }
+
+    if ($unusedPort -eq 0)
+    {
+        throw "Failed to find unused TCP port between ports $LowestPortNumber and $HighestPortNumber."
+    }
+
+    return $unusedPort
 }
 
 Export-ModuleMember -Function @(
@@ -901,7 +882,6 @@ Export-ModuleMember -Function @(
     'Invoke-SetTargetResourceUnitTest', `
     'Invoke-TestTargetResourceUnitTest', `
     'Invoke-ExpectedMocksAreCalledTest', `
-    'Invoke-GenericUnitTest',
-    'Enable-StrongCryptoForDotNetFour',
-    'Undo-ChangesToStrongCryptoForDotNetFour'
+    'Invoke-GenericUnitTest', `
+    'Get-UnusedTcpPort'
 )
