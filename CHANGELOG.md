@@ -14,6 +14,7 @@
 * Improved speed of Test-IsNanoServer function
 * Remove the Byte Order Mark (BOM) from all affected files
 * Opt-in to 'Validate Module Files' and 'Validate Script Files' common meta-tests
+* Opt-in to 'Common Tests - Relative Path Length' common meta-test
 * Fix README markdownlint validation failures
 * Move change log from README.md to CHANGELOG.md
 
