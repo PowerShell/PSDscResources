@@ -9,13 +9,7 @@ $script:testsFolderFilePath = Split-Path -Path $PSScriptRoot -Parent
 $script:moduleRootFilePath = Split-Path -Path $script:testsFolderFilePath -Parent
 $script:dscResourcesFolderFilePath = Join-Path -Path $script:moduleRootFilePath -ChildPath 'DscResources'
 $script:resourceSetHelperFilePath = Join-Path -Path $script:dscResourcesFolderFilePath -ChildPath ($resourceSetHelperName + '.psm1')
-
-# Remove module if it is already imported before re-import.
-#If (Get-Module $resourceSetHelperName)
-#{
-#    Remove-Module $resourceSetHelperName
-#}
-#Import-Module -Name $script:resourceSetHelperFilePath
+Import-Module -Name $script:resourceSetHelperFilePath
 
 InModuleScope 'ResourceSetHelper' {
     Describe 'ResourceSetHelper\New-ResourceSetCommonParameterString' {
@@ -24,7 +18,7 @@ InModuleScope 'ResourceSetHelper' {
                 Name = 'Name'
                 CommonStringParameter1 = 'CommonParameter1'
             }
-        
+
             $keyParameterName = 'Name'
 
             $commonParameterString = New-ResourceSetCommonParameterString -KeyParameterName $keyParameterName -Parameters $parameters
@@ -34,12 +28,12 @@ InModuleScope 'ResourceSetHelper' {
         It 'Should return string containing one variable reference for one credential common parameter' {
             $testUserName = 'testUserName'
             $secureTestPassword = ConvertTo-SecureString -String 'testPassword' -AsPlainText -Force
-            
+
             $parameters = @{
                 Name = 'Name'
                 CommonCredentialParameter1 = New-Object -TypeName 'PSCredential' -ArgumentList @( $testUsername, $secureTestPassword )
             }
-        
+
             $keyParameterName = 'Name'
 
             $commonParameterString = New-ResourceSetCommonParameterString -KeyParameterName $keyParameterName -Parameters $parameters
@@ -107,7 +101,7 @@ InModuleScope 'ResourceSetHelper' {
                 CommonParameter2 = 'CommonParameterValue2'
             }
         }
-        
+
         $newResourceSetConfigurationScriptBlock = New-ResourceSetConfigurationScriptBlock @newResourceSetConfigurationParams
 
         It 'Should return a ScriptBlock' {
