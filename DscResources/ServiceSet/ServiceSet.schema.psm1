@@ -51,32 +51,32 @@ Configuration ServiceSet
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true, HelpMessage="An array of the names of the services to configure.")]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [System.String[]]
         $Name,
 
-        [Parameter(HelpMessage="Specifies whether or not the set of services should exist. Set this property to Present to modify a set of services. Set this property to Absent to remove a set of services.")]
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [System.String]
         $Ensure,
 
-        [Parameter(HelpMessage="The startup type each service in the set should have.")]
+        [Parameter()]
         [ValidateSet('Automatic', 'Manual', 'Disabled')]
         [System.String]
         $StartupType,
 
-        [Parameter(HelpMessage="The built-in account each service in the set should start under. Cannot be specified at the same time as Credential. The user account specified by this property must have access to the service executable paths in order to start the services.")]
+        [Parameter()]
         [ValidateSet('LocalSystem', 'LocalService', 'NetworkService')]
         [System.String]
         $BuiltInAccount,
 
-        [Parameter(HelpMessage="The state each service in the set should be in. From the default value defined in Service, the default will be Running.")]
+        [Parameter()]
         [ValidateSet('Running', 'Stopped', 'Ignore')]
         [System.String]
         $State,
 
-        [Parameter(HelpMessage="he credential of the user account each service in the set should start under. Cannot be specified at the same time as BuiltInAccount. The user specified by this credential will automatically be granted the Log on as a Service right. The user account specified by this property must have access to the service executable paths in order to start the services.")]
+        [Parameter()]
         [ValidateNotNull()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]

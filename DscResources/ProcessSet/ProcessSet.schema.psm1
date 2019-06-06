@@ -51,38 +51,38 @@ Configuration ProcessSet
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true, HelpMessage="The file paths to the executables of the processes to start or stop. Only the names of the files may be specified if they are all accessible through the environment path. Relative paths are not supported.")]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [System.String[]]
         $Path,
 
-        [Parameter(HelpMessage="Specifies whether or not the processes should exist. To start processes, set this property to Present. To stop processes, set this property to Absent.")]
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [System.String]
         $Ensure,
 
-        [Parameter(HelpMessage="The credential of the user account to start the processes under.")]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,
 
-        [Parameter(HelpMessage="The file path to write the standard output to. Any existing file at this path will be overwritten.This property cannot be specified at the same time as Credential when running the processes as a local user.")]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.String]
         $StandardOutputPath,
 
-        [Parameter(HelpMessage="The file path to write the standard error output to. Any existing file at this path will be overwritten.")]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.String]
         $StandardErrorPath,
 
-        [Parameter(HelpMessage="The file path to get standard input from. This property cannot be specified at the same time as Credential when running the processes as a local user.")]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.String]
         $StandardInputPath,
 
-        [Parameter(HelpMessage="The file path to use as the working directory for the processes. Any existing file at this path will be overwritten. This property cannot be specified at the same time as Credential when running the processes as a local user.")]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.String]
         $WorkingDirectory

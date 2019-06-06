@@ -37,25 +37,25 @@ Configuration GroupSet
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true, HelpMessage="The names of the groups for which you want to ensure a specific state.")]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [System.String[]]
         $GroupName,
 
-        [Parameter( HelpMessage="Indicates whether the groups exist. Set this property to Absent to ensure that the groups do not exist. Setting it to Present (the default value) ensures that the groups exist.")]
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [System.String]
         $Ensure,
 
-        [Parameter( HelpMessage="Use this property to add members to the existing membership of the group. The value of this property is an array of strings of the form Domain\UserName. If you set this property in a configuration, do not use the Members property. Doing so will generate an error.")]
+        [Parameter()]
         [System.String[]]
         $MembersToInclude,
 
-        [Parameter( HelpMessage="Use this property to remove members from the existing membership of the groups. The value of this property is an array of strings of the form Domain\UserName. If you set this property in a configuration, do not use the Members property. Doing so will generate an error.")]
+        [Parameter()]
         [System.String[]]
         $MembersToExclude,
 
-        [Parameter( HelpMessage="The credentials required to access remote resources. Note: This account must have the appropriate Active Directory permissions to add all non-local accounts to the group; otherwise, an error will occur.")]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
