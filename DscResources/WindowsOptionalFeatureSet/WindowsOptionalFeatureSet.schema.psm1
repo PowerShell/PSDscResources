@@ -41,35 +41,32 @@ Configuration WindowsOptionalFeatureSet
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true, HelpMessage="The names of the Windows optional features to enable or disable.")]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String[]]
+        [System.String[]]
         $Name,
 
-        [Parameter(Mandatory = $true, HelpMessage="Specifies whether the features should be enabled or disabled.
-
-        To enable a set of features, set this property to Present.
-        To disable a set of features, set this property to Absent.")]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure,
 
-        [Parameter(HelpMessage="Specifies whether or not to remove all files associated with the features when they are disabled.")]
-        [Boolean]
+        [Parameter()]
+        [System.Boolean]
         $RemoveFilesOnDisable,
 
-        [Parameter(HelpMessage="Specifies whether or not DISM should contact Windows Update (WU) when searching for the source files to restore Windows optional features on an online image.")]
-        [Boolean]
+        [Parameter()]
+        [System.Boolean]
         $NoWindowsUpdateCheck,
 
-        [Parameter(HelpMessage="The file path to which to log the opertation.")]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $LogPath,
 
-        [Parameter(HelpMessage="The level of detail to include in the log.")]
+        [Parameter()]
         [ValidateSet('ErrorsOnly', 'ErrorsAndWarning', 'ErrorsAndWarningAndInformation')]
-        [String]
+        [System.String]
         $LogLevel
     )
 
@@ -79,7 +76,7 @@ Configuration WindowsOptionalFeatureSet
         KeyParameterName = 'Name'
         Parameters = $PSBoundParameters
     }
-    
+
     $configurationScriptBlock = New-ResourceSetConfigurationScriptBlock @newResourceSetConfigurationParams
 
     # This script block must be run directly in this configuration in order to resolve variables

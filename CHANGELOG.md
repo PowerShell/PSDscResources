@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Ports most of the style upgrades from xPSDesiredStateConfiguration that have
+  been made in files in the DscResources folder.
 * Ports fixes for the following issues:
   [Issue #505](https://github.com/PowerShell/xPSDesiredStateConfiguration/issues/505)
   [Issue #590](https://github.com/PowerShell/xPSDesiredStateConfiguration/issues/590)

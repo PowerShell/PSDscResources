@@ -87,13 +87,13 @@ if (-not (Test-IsNanoServer))
 #>
 function Get-TargetResource
 {
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
@@ -186,28 +186,28 @@ function Set-TargetResource
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $Members,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToInclude,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToExclude,
 
         [Parameter()]
@@ -284,34 +284,34 @@ function Set-TargetResource
 #>
 function Test-TargetResource
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $Members,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToInclude,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToExclude,
 
         [Parameter()]
@@ -347,13 +347,13 @@ function Test-TargetResource
 #>
 function Get-TargetResourceOnFullSKU
 {
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
@@ -416,13 +416,13 @@ function Get-TargetResourceOnFullSKU
 #>
 function Get-TargetResourceOnNanoServer
 {
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
@@ -520,28 +520,28 @@ function Set-TargetResourceOnFullSKU
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $Members,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToInclude,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToExclude,
 
         [Parameter()]
@@ -642,7 +642,7 @@ function Set-TargetResourceOnFullSKU
 
                     if ($Members.Count -eq 0 -and $null -ne $actualMembersAsPrincipals -and $actualMembersAsPrincipals.Count -ne 0)
                     {
-                        Clear-GroupMembers -Group $group
+                        Clear-GroupMember -Group $group
                         $saveChanges = $true
                     }
                     elseif ($Members.Count -ne 0)
@@ -877,28 +877,28 @@ function Set-TargetResourceOnNanoServer
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $Members,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToInclude,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToExclude,
 
         [Parameter()]
@@ -992,7 +992,7 @@ function Set-TargetResourceOnNanoServer
             }
             elseif ($PSBoundParameters.ContainsKey('MembersToInclude') -or $PSBoundParameters.ContainsKey('MembersToExclude'))
             {
-                [array]$groupMembers = Get-MembersOnNanoServer -Group $group
+                [System.Array] $groupMembers = Get-MembersOnNanoServer -Group $group
 
                 $uniqueMembersToInclude = $MembersToInclude | Select-Object -Unique
                 $uniqueMembersToExclude = $MembersToExclude | Select-Object -Unique
@@ -1110,34 +1110,34 @@ function Set-TargetResourceOnNanoServer
 #>
 function Test-TargetResourceOnFullSKU
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $Members,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToInclude,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToExclude,
 
         [Parameter()]
@@ -1377,34 +1377,34 @@ function Test-TargetResourceOnFullSKU
 #>
 function Test-TargetResourceOnNanoServer
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $Members,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToInclude,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToExclude,
 
         [Parameter()]
@@ -1458,7 +1458,7 @@ function Test-TargetResourceOnNanoServer
             }
         }
 
-        [array]$groupMembers = Get-MembersOnNanoServer -Group $group
+        [System.Array] $groupMembers = Get-MembersOnNanoServer -Group $group
 
         # Remove duplicate names as strings.
         $uniqueMembers = $Members | Select-Object -Unique
@@ -1600,7 +1600,7 @@ function Get-MembersOnFullSKU
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
-        [Hashtable]
+        [System.Collections.Hashtable]
         [AllowEmptyCollection()]
         $PrincipalContextCache,
 
@@ -1686,7 +1686,7 @@ function Get-MembersAsPrincipalsList
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
-        [Hashtable]
+        [System.Collections.Hashtable]
         [AllowEmptyCollection()]
         $PrincipalContextCache,
 
@@ -1804,7 +1804,7 @@ function Assert-GroupNameValid
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName
     )
 
@@ -1813,7 +1813,7 @@ function Assert-GroupNameValid
     if ($GroupName.IndexOfAny($invalidCharacters) -ne -1)
     {
         New-InvalidArgumentException -ArgumentName 'GroupName' `
-            -Message ($script:localizedData.InvalidGroupName -f $GroupName, [String]::Join(' ', $invalidCharacters))
+            -Message ($script:localizedData.InvalidGroupName -f $GroupName, [System.String]::Join(' ', $invalidCharacters))
     }
 
     $nameContainsOnlyWhitspaceOrDots = $true
@@ -1821,7 +1821,7 @@ function Assert-GroupNameValid
     # Check if the name consists of only periods and/or white spaces.
     for ($groupNameIndex = 0; $groupNameIndex -lt $GroupName.Length; $groupNameIndex++)
     {
-        if (-not [Char]::IsWhiteSpace($GroupName, $groupNameIndex) -and $GroupName[$groupNameIndex] -ne '.')
+        if (-not [System.Char]::IsWhiteSpace($GroupName, $groupNameIndex) -and $GroupName[$groupNameIndex] -ne '.')
         {
             $nameContainsOnlyWhitspaceOrDots = $false
             break
@@ -1831,7 +1831,7 @@ function Assert-GroupNameValid
     if ($nameContainsOnlyWhitspaceOrDots)
     {
         New-InvalidArgumentException -ArgumentName 'GroupName' `
-            -Message ($script:localizedData.InvalidGroupName -f $GroupName, [String]::Join(' ', $invalidCharacters))
+            -Message ($script:localizedData.InvalidGroupName -f $GroupName, [System.String]::Join(' ', $invalidCharacters))
     }
 }
 
@@ -1859,12 +1859,12 @@ function ConvertTo-UniquePrincipalsList
     param
     (
         [Parameter(Mandatory = $true)]
-        [String[]]
+        [System.String[]]
         $MemberNames,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
-        [Hashtable]
+        [System.Collections.Hashtable]
         [AllowEmptyCollection()]
         $PrincipalContextCache,
 
@@ -1949,12 +1949,12 @@ function ConvertTo-Principal
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
-        [String]
+        [System.String]
         $MemberName,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
-        [Hashtable]
+        [System.Collections.Hashtable]
         [AllowEmptyCollection()]
         $PrincipalContextCache,
 
@@ -2051,7 +2051,7 @@ function Resolve-SidToPrincipal
         $PrincipalContext,
 
         [Parameter(Mandatory = $true)]
-        [String]
+        [System.String]
         $Scope
     )
 
@@ -2101,7 +2101,7 @@ function Get-PrincipalContext
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Scope,
 
         [Parameter()]
@@ -2111,7 +2111,7 @@ function Get-PrincipalContext
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
-        [Hashtable]
+        [System.Collections.Hashtable]
         [AllowEmptyCollection()]
         $PrincipalContextCache,
 
@@ -2151,7 +2151,7 @@ function Get-PrincipalContext
         # Create a PrincipalContext targeting $Scope using the network credentials that were passed in.
         $credentialDomain = $Credential.GetNetworkCredential().Domain
         $credentialUserName = $Credential.GetNetworkCredential().UserName
-        if ($credentialDomain -ne [String]::Empty)
+        if ($credentialDomain -ne [System.String]::Empty)
         {
             $principalContextName = "$credentialDomain\$credentialUserName"
         }
@@ -2191,13 +2191,13 @@ function Get-PrincipalContext
 #>
 function Test-IsLocalMachine
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Scope
     )
 
@@ -2284,7 +2284,7 @@ function Split-MemberName
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $MemberName
     )
 
@@ -2370,7 +2370,7 @@ function Find-Principal
         $PrincipalContext,
 
         [Parameter(Mandatory = $true)]
-        [String]
+        [System.String]
         $IdentityValue,
 
         [Parameter()]
@@ -2415,7 +2415,7 @@ function Get-Group
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter(Mandatory = $true)]
@@ -2470,7 +2470,7 @@ function Get-GroupMembersFromDirectoryEntry
     .PARAMETER Group
         The group to clear the members of.
 #>
-function Clear-GroupMembers
+function Clear-GroupMember
 {
     [CmdletBinding()]
     param
