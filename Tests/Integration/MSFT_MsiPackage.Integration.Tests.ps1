@@ -117,34 +117,34 @@ try
                         -Path $script:msiLocation `
                         -ProductId $script:packageId
 
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
 
                     $testTargetResourceResult = Test-TargetResource `
                         -Ensure 'Absent' `
                         -Path $script:msiLocation `
                         -ProductId $script:packageId
 
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should return correct value when package is present' {
                     Set-TargetResource -Ensure 'Present' -Path $script:msiLocation -ProductId $script:packageId
 
-                    Test-PackageInstalledById -ProductId $script:packageId | Should -Be $true
+                    Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
 
                     $testTargetResourceResult = Test-TargetResource `
                             -Ensure 'Present' `
                             -Path $script:msiLocation `
                             -ProductId $script:packageId `
 
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
 
                     $testTargetResourceResult = Test-TargetResource `
                         -Ensure 'Absent' `
                         -Path $script:msiLocation `
                         -ProductId $script:packageId `
 
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
             }
 
@@ -152,7 +152,7 @@ try
                 It 'Should correctly install and remove a .msi package' {
                     Set-TargetResource -Ensure 'Present' -Path $script:msiLocation -ProductId $script:packageId
 
-                    Test-PackageInstalledById -ProductId $script:packageId | Should -Be $true
+                    Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
 
                     $getTargetResourceResult = Get-TargetResource -Path $script:msiLocation -ProductId $script:packageId
 
@@ -164,7 +164,7 @@ try
 
                     Set-TargetResource -Ensure 'Absent' -Path $script:msiLocation -ProductId $script:packageId
 
-                    Test-PackageInstalledById -ProductId $script:packageId | Should -Be $false
+                    Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
                 }
 
                 It 'Should throw with incorrect product id' {
@@ -200,10 +200,10 @@ try
                         { Set-TargetResource -Ensure 'Present' -Path $baseUrl -ProductId $script:packageId } | Should -Throw
 
                         Set-TargetResource -Ensure 'Present' -Path $msiUrl -ProductId $script:packageId
-                        Test-PackageInstalledById -ProductId $script:packageId | Should -Be $true
+                        Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
 
                         Set-TargetResource -Ensure 'Absent' -Path $msiUrl -ProductId $script:packageId
-                        Test-PackageInstalledById -ProductId $script:packageId | Should -Be $false
+                        Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
                     }
                     catch
                     {
@@ -248,10 +248,10 @@ try
                         { Set-TargetResource -Ensure 'Present' -Path $baseUrl -ProductId $script:packageId } | Should -Throw
 
                         Set-TargetResource -Ensure 'Present' -Path $msiUrl -ProductId $script:packageId
-                        Test-PackageInstalledById -ProductId $script:packageId | Should -Be $true
+                        Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
 
                         Set-TargetResource -Ensure 'Absent' -Path $msiUrl -ProductId $script:packageId
-                        Test-PackageInstalledById -ProductId $script:packageId | Should -Be $false
+                        Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
                     }
                     catch
                     {
@@ -279,7 +279,7 @@ try
 
                     Set-TargetResource -Ensure 'Present' -Path $script:msiLocation -LogPath $logPath -ProductId $script:packageId
 
-                    Test-Path -Path $logPath | Should -Be $true
+                    Test-Path -Path $logPath | Should -BeTrue
                     Get-Content -Path $logPath | Should -Not -Be $null
                 }
 

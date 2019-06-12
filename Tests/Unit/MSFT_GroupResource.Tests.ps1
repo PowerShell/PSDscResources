@@ -311,7 +311,7 @@ Describe 'GroupResource Unit Tests' {
                         $LocalMachineScope
                     )
 
-                    Test-IsLocalMachine -Scope $LocalMachineScope | Should -Be $true
+                    Test-IsLocalMachine -Scope $LocalMachineScope | Should -BeTrue
                 }
 
                 $customLocalIPAddress = '123.4.5.6'
@@ -319,7 +319,7 @@ Describe 'GroupResource Unit Tests' {
                 It 'Should return true if custom local IP address provided and Get-CimInstance contains matching IP address' {
                     Mock -CommandName 'Get-CimInstance' -MockWith { return @{ IPAddress = @($customLocalIPAddress, '789.1.2.3')} }
 
-                    Test-IsLocalMachine -Scope $customLocalIPAddress | Should -Be $true
+                    Test-IsLocalMachine -Scope $customLocalIPAddress | Should -BeTrue
                 }
             }
 
@@ -327,13 +327,13 @@ Describe 'GroupResource Unit Tests' {
                 $customLocalIPAddress = '123.4.5.6'
 
                 It 'Should return false if custom local IP address provided and Get-CimInstance returns null' {
-                    Test-IsLocalMachine -Scope $customLocalIPAddress | Should -Be $false
+                    Test-IsLocalMachine -Scope $customLocalIPAddress | Should -BeFalse
                 }
 
                 It 'Should return false if custom local IP address provided and Get-CimInstance do not contain matching IP addresses' {
                     Mock -CommandName 'Get-CimInstance' -MockWith { return @{ IPAddress = @('789.1.2.3')} }
 
-                    Test-IsLocalMachine -Scope $customLocalIPAddress | Should -Be $false
+                    Test-IsLocalMachine -Scope $customLocalIPAddress | Should -BeFalse
                 }
             }
         }
@@ -429,7 +429,7 @@ Describe 'GroupResource Unit Tests' {
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
 
-                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                         $getTargetResourceResult.Keys.Count | Should -Be 2
                         $getTargetResourceResult.GroupName | Should -Be $script:testGroupName
                         $getTargetResourceResult.Ensure | Should -Be 'Absent'
@@ -457,7 +457,7 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group -eq $script:testLocalGroup }
 
-                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                         $getTargetResourceResult.Keys.Count | Should -Be 4
                         $getTargetResourceResult.GroupName | Should -Be $script:testGroupName
                         $getTargetResourceResult.Ensure | Should -Be 'Present'
@@ -478,7 +478,7 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group -eq $script:testLocalGroup }
 
-                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                         $getTargetResourceResult.Keys.Count | Should -Be 4
                         $getTargetResourceResult.GroupName | Should -Be $script:testGroupName
                         $getTargetResourceResult.Ensure | Should -Be 'Present'
@@ -903,7 +903,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return true and expected mocks are called' {
                         Mock -CommandName 'Get-LocalGroup' -MockWith { Write-Error -Message 'Test error message' -CategoryReason 'GroupNotFoundException' }
 
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Absent' | Should -Be $true
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Absent' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                     }
@@ -911,7 +911,7 @@ Describe 'GroupResource Unit Tests' {
 
                 Context 'When Ensure is absent and the group exists' {
                     It 'Should return false and expected mocks are called' {
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Absent' | Should -Be $false
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Absent' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                     }
@@ -921,7 +921,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return false and expected mocks are called' {
                         Mock -CommandName 'Get-LocalGroup' -MockWith { Write-Error -Message 'Test error message' -CategoryReason 'GroupNotFoundException' }
 
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Present' | Should -Be $false
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Present' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                     }
@@ -937,7 +937,7 @@ Describe 'GroupResource Unit Tests' {
 
                 Context 'When Ensure is present and the group exists' {
                     It 'Should return true and expected mocks are called' {
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Present' | Should -Be $true
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Ensure 'Present' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                     }
@@ -947,7 +947,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return true and expected mocks are called' {
                         $script:testLocalGroup.Description = $script:testGroupDescription
 
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Description $script:testGroupDescription -Ensure 'Present' | Should -Be $true
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Description $script:testGroupDescription -Ensure 'Present' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                     }
@@ -957,7 +957,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return false and expected mocks are called' {
                         $script:testLocalGroup.Description = $script:testGroupDescription
 
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Description 'Wrong description' -Ensure 'Present' | Should -Be $false
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Description 'Wrong description' -Ensure 'Present' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                     }
@@ -967,7 +967,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return true and expected mocks are called' {
                         $testMembers = @( )
 
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -Be $true
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
@@ -978,7 +978,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return false and expected mocks are called' {
                         $testMembers = @( $script:testMemberName1 )
 
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -Be $false
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
@@ -989,7 +989,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return false and expected mocks are called' {
                         $testMembers = @( $script:testMemberName1 )
 
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present' | Should -Be $false
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
@@ -1000,7 +1000,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return true and expected mocks are called' {
                         $testMembers = @( $script:testMemberName1 )
 
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present' | Should -Be $true
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
@@ -1013,7 +1013,7 @@ Describe 'GroupResource Unit Tests' {
 
                         Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { @( $script:testMemberName1, $script:testMemberName2 ) }
 
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present' | Should -Be $false
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
@@ -1026,7 +1026,7 @@ Describe 'GroupResource Unit Tests' {
 
                         Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { @( $script:testMemberName1, $script:testMemberName2 ) }
 
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present' | Should -Be $true
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
@@ -1039,7 +1039,7 @@ Describe 'GroupResource Unit Tests' {
 
                         Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { @( $script:testMemberName1, $script:testMemberName2 ) }
 
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -Be $true
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
@@ -1053,7 +1053,7 @@ Describe 'GroupResource Unit Tests' {
                         Mock -CommandName 'Get-LocalGroup' -MockWith { return $script:testLocalGroup }
                         Mock -CommandName 'Get-MembersOnNanoServer' -MockWith { @( $script:testMemberName1, $script:testMemberName2 ) }
 
-                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -Be $false
+                        Test-TargetResourceOnNanoServer -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-LocalGroup' -ParameterFilter { $Name -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Get-MembersOnNanoServer' -ParameterFilter { $Group.Name -eq $script:testGroupName }
@@ -1158,7 +1158,7 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
                         Assert-MockCalled -CommandName 'Remove-DisposableObject'
 
-                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                         $getTargetResourceResult.Keys.Count | Should -Be 2
                         $getTargetResourceResult.GroupName | Should -Be $script:testGroupName
                         $getTargetResourceResult.Ensure | Should -Be 'Absent'
@@ -1177,7 +1177,7 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'Get-MembersOnFullSKU' -ParameterFilter { $Group -eq $script:testGroup }
                         Assert-MockCalled -CommandName 'Remove-DisposableObject'
 
-                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                         $getTargetResourceResult.Keys.Count | Should -Be 4
                         $getTargetResourceResult.GroupName | Should -Be $script:testGroupName
                         $getTargetResourceResult.Ensure | Should -Be 'Present'
@@ -1199,7 +1199,7 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'Get-MembersOnFullSKU' -ParameterFilter { $Group -eq $script:testGroup }
                         Assert-MockCalled -CommandName 'Remove-DisposableObject'
 
-                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                        $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                         $getTargetResourceResult.Keys.Count | Should -Be 4
                         $getTargetResourceResult.GroupName | Should -Be $script:testGroupName
                         $getTargetResourceResult.Ensure | Should -Be 'Present'
@@ -1770,7 +1770,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return true and expected mocks are called' {
                         Mock -CommandName 'Get-Group' -MockWith { }
 
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Ensure 'Absent' | Should -Be $true
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Ensure 'Absent' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext' -Scope 'It'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName } -Scope 'It'
@@ -1780,7 +1780,7 @@ Describe 'GroupResource Unit Tests' {
 
                 Context 'When Ensure is absent and the group exists' {
                     It 'Should return false and expected mocks are called' {
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Ensure 'Absent' | Should -Be $false
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Ensure 'Absent' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext' -Scope 'It'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName } -Scope 'It'
@@ -1792,7 +1792,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return false and expected mocks are called' {
                         Mock -CommandName 'Get-Group' -MockWith { }
 
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Ensure 'Present' | Should -Be $false
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Ensure 'Present' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
@@ -1802,7 +1802,7 @@ Describe 'GroupResource Unit Tests' {
 
                 Context 'When Ensure is present and the group exists' {
                     It 'Should return true and expected mocks are called' {
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Ensure 'Present' | Should -Be $true
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Ensure 'Present' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
@@ -1814,7 +1814,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return true and expected mocks are called' {
                         $script:testGroup.Description = $script:testGroupDescription
 
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Description $script:testGroupDescription -Ensure 'Present' | Should -Be $true
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Description $script:testGroupDescription -Ensure 'Present' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
@@ -1826,7 +1826,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return false and expected mocks are called' {
                         $script:testGroup.Description = $script:testGroupDescription
 
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Description 'Wrong description' -Ensure 'Present' | Should -Be $false
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Description 'Wrong description' -Ensure 'Present' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
@@ -1838,7 +1838,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return true and expected mocks are called' {
                         $testMembers = @( )
 
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -Be $true
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
@@ -1851,7 +1851,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return false and expected mocks are called' {
                         $testMembers = @( $script:testUserPrincipal1.Name )
 
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -Be $false
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
@@ -1864,7 +1864,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return false and expected mocks are called' {
                         $testMembers = @( $script:testUserPrincipal1.Name )
 
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present' | Should -Be $false
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
@@ -1877,7 +1877,7 @@ Describe 'GroupResource Unit Tests' {
                     It 'Should return true and expected mocks are called' {
                         $testMembers = @( $script:testUserPrincipal1.Name )
 
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present' | Should -Be $true
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
@@ -1892,7 +1892,7 @@ Describe 'GroupResource Unit Tests' {
 
                         $testMembers = @( $script:testUserPrincipal1.Name )
 
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present' | Should -Be $false
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToExclude $testMembers -Ensure 'Present' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
@@ -1907,7 +1907,7 @@ Describe 'GroupResource Unit Tests' {
 
                         $testMembers = @( $script:testUserPrincipal1.Name )
 
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present' | Should -Be $true
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -MembersToInclude $testMembers -Ensure 'Present' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
@@ -1922,7 +1922,7 @@ Describe 'GroupResource Unit Tests' {
 
                         $testMembers = @( $script:testUserPrincipal1, $script:testUserPrincipal2 )
 
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -Be $true
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -BeTrue
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
@@ -1937,7 +1937,7 @@ Describe 'GroupResource Unit Tests' {
 
                         $testMembers = @( $script:testUserPrincipal1, $script:testUserPrincipal3 )
 
-                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -Be $false
+                        Test-TargetResourceOnFullSKU -GroupName $script:testGroupName -Members $testMembers -Ensure 'Present' | Should -BeFalse
 
                         Assert-MockCalled -CommandName 'Get-PrincipalContext'
                         Assert-MockCalled -CommandName 'Get-Group' -ParameterFilter { $GroupName -eq $script:testGroupName }
@@ -2422,9 +2422,9 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'Test-IsLocalMachine' -ParameterFilter { $Scope -eq $localScope }
                         Assert-MockCalled -CommandName 'New-Object' -ParameterFilter { $TypeName -eq 'System.DirectoryServices.AccountManagement.PrincipalContext' -and $ArgumentList.Contains($localMachineContext) }
 
-                        $principalContextCache.ContainsKey($localScope) | Should -Be $false
+                        $principalContextCache.ContainsKey($localScope) | Should -BeFalse
                         $principalContextCache.$script:localDomain | Should -Be $fakePrincipalContext
-                        $disposables.Contains($fakePrincipalContext) | Should -Be $true
+                        $disposables.Contains($fakePrincipalContext) | Should -BeTrue
                     }
                 }
 
@@ -2441,7 +2441,7 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'New-Object' -ParameterFilter { $TypeName -eq 'System.DirectoryServices.AccountManagement.PrincipalContext' } -Times 0 -Scope 'It'
 
                         $principalContextCache.$script:localDomain | Should -Not -Be $fakePrincipalContext
-                        $disposables.Contains($fakePrincipalContext) | Should -Be $false
+                        $disposables.Contains($fakePrincipalContext) | Should -BeFalse
                     }
                 }
 
@@ -2462,7 +2462,7 @@ Describe 'GroupResource Unit Tests' {
                             (Compare-Object -ReferenceObject $principalContextArgumentList -DifferenceObject $ArgumentList) -eq $null }
 
                         $principalContextCache.$customDomain | Should -Be $fakePrincipalContext
-                        $disposables.Contains($fakePrincipalContext) | Should -Be $true
+                        $disposables.Contains($fakePrincipalContext) | Should -BeTrue
                     }
                 }
 
@@ -2483,7 +2483,7 @@ Describe 'GroupResource Unit Tests' {
                             (Compare-Object -ReferenceObject $principalContextArgumentList -DifferenceObject $ArgumentList) -eq $null }
 
                         $principalContextCache.$customDomain | Should -Be $fakePrincipalContext
-                        $disposables.Contains($fakePrincipalContext) | Should -Be $true
+                        $disposables.Contains($fakePrincipalContext) | Should -BeTrue
                     }
                 }
 
@@ -2510,7 +2510,7 @@ Describe 'GroupResource Unit Tests' {
                             (Compare-Object -ReferenceObject $principalContextArgumentList -DifferenceObject $ArgumentList) -eq $null }
 
                         $principalContextCache.$customDomain | Should -Be $fakePrincipalContext
-                        $disposables.Contains($fakePrincipalContext) | Should -Be $true
+                        $disposables.Contains($fakePrincipalContext) | Should -BeTrue
                     }
                 }
 
@@ -2527,7 +2527,7 @@ Describe 'GroupResource Unit Tests' {
                         Assert-MockCalled -CommandName 'New-Object' -ParameterFilter { $TypeName -eq 'System.DirectoryServices.AccountManagement.PrincipalContext' } -Times 0 -Scope 'It'
 
                         $principalContextCache.$customDomain | Should -Not -Be $fakePrincipalContext
-                        $disposables.Contains($fakePrincipalContext) | Should -Be $false
+                        $disposables.Contains($fakePrincipalContext) | Should -BeFalse
                     }
                 }
             }

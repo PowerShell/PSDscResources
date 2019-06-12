@@ -72,7 +72,7 @@ try
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -Be $true
+                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -BeTrue
             }
         }
 
@@ -108,7 +108,7 @@ try
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -Be $true
+                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -BeTrue
             }
         }
 
@@ -146,7 +146,7 @@ try
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -Be $true
+                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -BeTrue
             }
         }
 
@@ -206,7 +206,7 @@ try
                 }
 
                 It 'Should return true from Test-TargetResource with the same parameters' {
-                    MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -Be $true
+                    MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -BeTrue
                 }
             }
         }
@@ -247,7 +247,7 @@ try
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -Be $true
+                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -BeTrue
             }
         }
 
@@ -286,7 +286,7 @@ try
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -Be $true
+                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -BeTrue
             }
         }
 
@@ -318,7 +318,7 @@ try
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -Be $true
+                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -BeTrue
             }
         }
 
@@ -352,7 +352,7 @@ try
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -Be $true
+                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -BeTrue
             }
         }
 
@@ -384,7 +384,7 @@ try
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -Be $true
+                MSFT_RegistryResource\Test-TargetResource @registryParameters | Should -BeTrue
             }
         }
     }

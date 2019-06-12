@@ -113,13 +113,13 @@ try
                 It 'Should return the correct configuration' {
                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                    $currentConfig.Name | Should -Be $script:testFeatureName
-                   $currentConfig.IncludeAllSubFeature | Should -Be $false
+                   $currentConfig.IncludeAllSubFeature | Should -BeFalse
                    $currentConfig.Ensure | Should -Be 'Present'
                 }
 
                 It 'Should be Installed' {
                     $feature = Get-WindowsFeature -Name $script:testFeatureName
-                    $feature.Installed | Should -Be $true
+                    $feature.Installed | Should -BeTrue
                 }
             }
             finally
@@ -162,13 +162,13 @@ try
                 It 'Should return the correct configuration' {
                    $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                    $currentConfig.Name | Should -Be $script:testFeatureName
-                   $currentConfig.IncludeAllSubFeature | Should -Be $false
+                   $currentConfig.IncludeAllSubFeature | Should -BeFalse
                    $currentConfig.Ensure | Should -Be 'Absent'
                 }
 
                 It 'Should not be installed' {
                     $feature = Get-WindowsFeature -Name $script:testFeatureName
-                    $feature.Installed | Should -Be $false
+                    $feature.Installed | Should -BeFalse
                 }
             }
             finally
@@ -225,18 +225,18 @@ try
                 It 'Should return the correct configuration' -Skip:$script:skipLongTests {
                     $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Name | Should Be $script:testFeatureWithSubFeaturesName
-                    $currentConfig.IncludeAllSubFeature | Should Be $true
+                    $currentConfig.IncludeAllSubFeature | Should -BeTrue
                     $currentConfig.Ensure | Should Be 'Present'
                 }
 
                 It 'Should be Installed (includes check for subFeatures)' -Skip:$script:skipLongTests {
                     $feature = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
-                    $feature.Installed | Should Be $true
+                    $feature.Installed | Should -BeTrue
 
                     foreach ($subFeatureName in $feature.SubFeatures)
                     {
                         $subFeature = Get-WindowsFeature -Name $subFeatureName
-                        $subFeature.Installed | Should Be $true
+                        $subFeature.Installed | Should -BeTrue
                     }
                 }
             }
@@ -266,18 +266,18 @@ try
                 It 'Should return the correct configuration' -Skip:$script:skipLongTests  {
                     $currentConfig = Get-DscConfiguration -ErrorAction 'Stop'
                     $currentConfig.Name | Should Be $script:testFeatureWithSubFeaturesName
-                    $currentConfig.IncludeAllSubFeature | Should Be $false
+                    $currentConfig.IncludeAllSubFeature | Should -BeFalse
                     $currentConfig.Ensure | Should Be 'Absent'
                 }
 
                 It 'Should not be installed (includes check for subFeatures)' -Skip:$script:skipLongTests {
                     $feature = Get-WindowsFeature -Name $script:testFeatureWithSubFeaturesName
-                    $feature.Installed | Should Be $false
+                    $feature.Installed | Should -BeFalse
 
                     foreach ($subFeatureName in $feature.SubFeatures)
                     {
                         $subFeature = Get-WindowsFeature -Name $subFeatureName
-                        $subFeature.Installed | Should Be $false
+                        $subFeature.Installed | Should -BeFalse
                     }
                 }
             }

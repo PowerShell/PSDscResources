@@ -55,7 +55,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             It 'Should not be able to find the log file before configuration' {
                 $pathResult = Test-Path -Path $logFilePath
-                $pathResult | Should Be $false
+                $pathResult | Should -BeFalse
             }
 
             It 'Should compile and run configuration' {
@@ -86,7 +86,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             It 'Should not be able to find the log file after configuration' {
                 $pathResult = Test-Path -Path $logFilePath
-                $pathResult | Should Be $false
+                $pathResult | Should -BeFalse
             }
         }
 
@@ -110,7 +110,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             It 'Should not be able to find the log file before configuration' {
                 $pathResult = Test-Path -Path $logFilePath
-                $pathResult | Should Be $false
+                $pathResult | Should -BeFalse
             }
 
             It 'Should compile and run configuration' {
@@ -142,7 +142,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             It 'Should be able to find the log file after configuration' {
                 $pathResult = Test-Path -Path $logFilePath
-                $pathResult | Should Be $true
+                $pathResult | Should -BeTrue
             }
         }
 
@@ -171,7 +171,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             It 'Should be able to find the log file before configuration' {
                 $pathResult = Test-Path -Path $logFilePath
-                $pathResult | Should Be $true
+                $pathResult | Should -BeTrue
             }
 
             It 'Should compile and run configuration' {
@@ -203,7 +203,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             It 'Should be able to find the log file after configuration' {
                 $pathResult = Test-Path -Path $logFilePath
-                $pathResult | Should Be $true
+                $pathResult | Should -BeTrue
             }
         }
 
@@ -232,7 +232,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             It 'Should be able to find the log file before configuration' {
                 $pathResult = Test-Path -Path $logFilePath
-                $pathResult | Should Be $true
+                $pathResult | Should -BeTrue
             }
 
             # Remove the created log file so that we can check that the configuration did not re-create it
@@ -266,7 +266,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             It 'Should not be able to find the log file after configuration' {
                 $pathResult = Test-Path -Path $logFilePath
-                $pathResult | Should Be $false
+                $pathResult | Should -BeFalse
             }
         }
 
@@ -290,7 +290,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             It 'Should not be able to find the log file before configuration' {
                 $pathResult = Test-Path -Path $logFilePath
-                $pathResult | Should Be $false
+                $pathResult | Should -BeFalse
             }
 
             It 'Should compile and run configuration' {
@@ -327,7 +327,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             It 'Should be able to find the log file after configuration' {
                 $pathResult = Test-Path -Path $logFilePath
-                $pathResult | Should Be $true
+                $pathResult | Should -BeTrue
             }
         }
 
@@ -361,7 +361,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             It 'Should be able to find the log file before configuration' {
                 $pathResult = Test-Path -Path $logFilePath
-                $pathResult | Should Be $true
+                $pathResult | Should -BeTrue
             }
 
             # Remove the created log file so that we can check that the configuration did not re-create it
@@ -395,7 +395,7 @@ Describe 'WindowsProcess Integration Tests' {
 
             It 'Should not be able to find the log file after configuration' {
                 $pathResult = Test-Path -Path $logFilePath
-                $pathResult | Should Be $false
+                $pathResult | Should -BeFalse
             }
         }
     }
@@ -437,7 +437,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 It 'Should not be able to find the log file before configuration' {
                     $pathResult = Test-Path -Path $logFilePath
-                    $pathResult | Should Be $false
+                    $pathResult | Should -BeFalse
                 }
 
                 It 'Should compile and run configuration' {
@@ -468,7 +468,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 It 'Should not be able to find the log file after configuration' {
                     $pathResult = Test-Path -Path $logFilePath
-                    $pathResult | Should Be $false
+                    $pathResult | Should -BeFalse
                 }
             }
 
@@ -493,7 +493,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 It 'Should not be able to find the log file before configuration' {
                     $pathResult = Test-Path -Path $logFilePath
-                    $pathResult | Should Be $false
+                    $pathResult | Should -BeFalse
                 }
 
                 It 'Should compile and run configuration' {
@@ -525,7 +525,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 It 'Should be able to find the log file after configuration' {
                     $pathResult = Test-Path -Path $logFilePath
-                    $pathResult | Should Be $true
+                    $pathResult | Should -BeTrue
                 }
             }
 
@@ -555,7 +555,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 It 'Should be able to find the log file before configuration' {
                     $pathResult = Test-Path -Path $logFilePath
-                    $pathResult | Should Be $true
+                    $pathResult | Should -BeTrue
                 }
 
                 It 'Should compile and run configuration' {
@@ -587,7 +587,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 It 'Should be able to find the log file after configuration' {
                     $pathResult = Test-Path -Path $logFilePath
-                    $pathResult | Should Be $true
+                    $pathResult | Should -BeTrue
                 }
             }
 
@@ -617,7 +617,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 It 'Should be able to find the log file before configuration' {
                     $pathResult = Test-Path -Path $logFilePath
-                    $pathResult | Should Be $true
+                    $pathResult | Should -BeTrue
                 }
 
                 # Remove the created log file so that we can check that the configuration did not re-create it
@@ -651,7 +651,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 It 'Should not be able to find the log file after configuration' {
                     $pathResult = Test-Path -Path $logFilePath
-                    $pathResult | Should Be $false
+                    $pathResult | Should -BeFalse
                 }
             }
 
@@ -676,7 +676,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 It 'Should not be able to find the log file before configuration' {
                     $pathResult = Test-Path -Path $logFilePath
-                    $pathResult | Should Be $false
+                    $pathResult | Should -BeFalse
                 }
 
                 It 'Should compile and run configuration' {
@@ -713,7 +713,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 It 'Should be able to find the log file after configuration' {
                     $pathResult = Test-Path -Path $logFilePath
-                    $pathResult | Should Be $true
+                    $pathResult | Should -BeTrue
                 }
             }
 
@@ -748,7 +748,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 It 'Should be able to find the log file before configuration' {
                     $pathResult = Test-Path -Path $logFilePath
-                    $pathResult | Should Be $true
+                    $pathResult | Should -BeTrue
                 }
 
                 # Remove the created log file so that we can check that the configuration did not re-create it
@@ -782,7 +782,7 @@ Describe 'WindowsProcess Integration Tests' {
 
                 It 'Should not be able to find the log file after configuration' {
                     $pathResult = Test-Path -Path $logFilePath
-                    $pathResult | Should Be $false
+                    $pathResult | Should -BeFalse
                 }
             }
         }

@@ -81,7 +81,7 @@ try
                 }
 
                 It "Should have uninstalled Windows feature $windowsFeatureName before the configuration" {
-                    $windowsFeature.Installed | Should -Be $false
+                    $windowsFeature.Installed | Should -BeFalse
                 }
             }
 
@@ -114,12 +114,12 @@ try
                 }
 
                 It "Should have installed Windows feature $windowsFeatureName after the configuration" {
-                    $windowsFeature.Installed | Should -Be $true
+                    $windowsFeature.Installed | Should -BeTrue
                 }
             }
 
             It 'Should have created the log file' {
-                Test-Path -Path $windowsFeatureSetParameters.LogPath | Should -Be $true
+                Test-Path -Path $windowsFeatureSetParameters.LogPath | Should -BeTrue
             }
 
             It 'Should have created content in the log file' {
@@ -160,7 +160,7 @@ try
                 }
 
                 It "Should have installed Windows feature $windowsFeatureName before the configuration" {
-                    $windowsFeature.Installed | Should -Be $true
+                    $windowsFeature.Installed | Should -BeTrue
                 }
             }
 
@@ -193,12 +193,12 @@ try
                 }
 
                 It "Should have uninstalled Windows feature $windowsFeatureName after the configuration" {
-                    $windowsFeature.Installed | Should -Be $false
+                    $windowsFeature.Installed | Should -BeFalse
                 }
             }
 
             It 'Should have created the log file' {
-                Test-Path -Path $windowsFeatureSetParameters.LogPath | Should -Be $true
+                Test-Path -Path $windowsFeatureSetParameters.LogPath | Should -BeTrue
             }
 
             It 'Should have created content in the log file' {

@@ -90,7 +90,7 @@ try
 
             $windowsPackage = Dism\Get-WindowsPackage -PackageName $resourceParameters.Name -Online
             $windowsPackage | Should -Not -Be $null
-            $windowsPackage.PackageState -in $script:installedStates | Should -Be $true
+            $windowsPackage.PackageState -in $script:installedStates | Should -BeTrue
         }
 
         It 'Should uninstall a Windows package through a cab file' -Skip:$script:cabPackageNotProvided {
@@ -133,7 +133,7 @@ try
                 Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
             } | Should -Throw
 
-            Test-Path -Path $resourceParameters.LogPath | Should -Be $true
+            Test-Path -Path $resourceParameters.LogPath | Should -BeTrue
 
             { Dism\Get-WindowsPackage -PackageName $resourceParameters.Name -Online } | Should -Throw
         }

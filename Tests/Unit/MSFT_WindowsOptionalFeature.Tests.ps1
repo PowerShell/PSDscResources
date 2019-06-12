@@ -64,11 +64,11 @@ try
                 }
 
                 It 'Should throw when the DISM module is not available' {
-                    Mock Import-Module -ParameterFilter { $Name -eq 'Dism' } -MockWith { Write-Error 'Cannot find module' }
+                    Mock -CommandName Import-Module -ParameterFilter { $Name -eq 'Dism' } -MockWith { Write-Error 'Cannot find module' }
                     { Assert-ResourcePrerequisitesValid } | Should -Throw -ExpectedMessage $script:localizedData.DismNotAvailable
                 }
 
-                Mock Import-Module -ParameterFilter { $Name -eq 'Dism' } -MockWith { }
+                Mock -CommandName Import-Module -ParameterFilter { $Name -eq 'Dism' } -MockWith { }
 
                 It 'Should throw when operating system is Server 2008 R2' {
                     Mock Get-CimInstance -ParameterFilter { $ClassName -eq 'Win32_OperatingSystem' } -MockWith { return $fakeWin32OSObjects['Server2008R2'] }
@@ -102,7 +102,7 @@ try
 
                 It 'Should return a Hashtable' {
                     $getTargetResourceResult = Get-TargetResource -Name $script:testFeatureName
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should call Assert-ResourcePrerequisitesValid with the feature name' {
@@ -132,11 +132,11 @@ try
                 Mock Dism\Get-WindowsOptionalFeature { $FeatureName -eq $script:testFeatureName } -MockWith { return $script:fakeEnabledFeature }
 
                 It 'Should return true when Ensure set to Present' {
-                    Test-TargetResource -Name $testFeatureName -Ensure 'Present' | Should -Be $true
+                    Test-TargetResource -Name $testFeatureName -Ensure 'Present' | Should -BeTrue
                 }
 
                 It 'Should return false when Ensure set to Absent' {
-                    Test-TargetResource -Name $testFeatureName -Ensure 'Absent' | Should -Be $false
+                    Test-TargetResource -Name $testFeatureName -Ensure 'Absent' | Should -BeFalse
                 }
 
             }
@@ -146,11 +146,11 @@ try
                 Mock Dism\Get-WindowsOptionalFeature { $FeatureName -eq $script:testFeatureName } -MockWith { return $script:fakeDisabledFeature }
 
                 It 'Should return false when Ensure set to Present' {
-                    Test-TargetResource -Name $testFeatureName -Ensure 'Present' | Should -Be $false
+                    Test-TargetResource -Name $testFeatureName -Ensure 'Present' | Should -BeFalse
                 }
 
                 It 'Should return true when Ensure set to Absent' {
-                    Test-TargetResource -Name $testFeatureName -Ensure 'Absent' | Should -Be $true
+                    Test-TargetResource -Name $testFeatureName -Ensure 'Absent' | Should -BeTrue
                 }
             }
 
@@ -159,11 +159,11 @@ try
                 Mock Dism\Get-WindowsOptionalFeature { $FeatureName -eq $script:testFeatureName } -MockWith { }
 
                 It 'Should return false when Ensure set to Present' {
-                    Test-TargetResource -Name $testFeatureName -Ensure 'Present' | Should -Be $false
+                    Test-TargetResource -Name $testFeatureName -Ensure 'Present' | Should -BeFalse
                 }
 
                 It 'Should return true when Ensure set to Absent' {
-                    Test-TargetResource -Name $testFeatureName -Ensure 'Absent' | Should -Be $true
+                    Test-TargetResource -Name $testFeatureName -Ensure 'Absent' | Should -BeTrue
                 }
             }
 
@@ -314,7 +314,7 @@ try
 
                     foreach ($objectNumber in @(1, 2, 3))
                     {
-                        $propertiesAsStrings.Contains("Name = Object $objectNumber, Value = Value $objectNumber, Path = Path $objectNumber") | Should -Be $true
+                        $propertiesAsStrings.Contains("Name = Object $objectNumber, Value = Value $objectNumber, Path = Path $objectNumber") | Should -BeTrue
                     }
                 }
             }

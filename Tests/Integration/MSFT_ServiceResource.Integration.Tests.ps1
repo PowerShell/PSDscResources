@@ -170,11 +170,11 @@ try
             }
 
             It 'Should have created a new service with the default desktop interaction setting as False' {
-                $serviceCimInstance.DesktopInteract | Should -Be $false
+                $serviceCimInstance.DesktopInteract | Should -BeFalse
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_ServiceResource\Test-TargetResource @resourceParameters | Should -Be $true
+                MSFT_ServiceResource\Test-TargetResource @resourceParameters | Should -BeTrue
             }
         }
 
@@ -233,11 +233,11 @@ try
             }
 
             It 'Should not have changed the service desktop interaction setting from False' {
-                $serviceCimInstance.DesktopInteract | Should -Be $false
+                $serviceCimInstance.DesktopInteract | Should -BeFalse
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_ServiceResource\Test-TargetResource @resourceParameters | Should -Be $true
+                MSFT_ServiceResource\Test-TargetResource @resourceParameters | Should -BeTrue
             }
         }
 
@@ -280,7 +280,7 @@ try
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_ServiceResource\Test-TargetResource @resourceParameters | Should -Be $true
+                MSFT_ServiceResource\Test-TargetResource @resourceParameters | Should -BeTrue
             }
         }
 
@@ -333,7 +333,7 @@ try
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_ServiceResource\Test-TargetResource @resourceParameters | Should -Be $true
+                MSFT_ServiceResource\Test-TargetResource @resourceParameters | Should -BeTrue
             }
         }
 
@@ -371,7 +371,7 @@ try
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_ServiceResource\Test-TargetResource @resourceParameters | Should -Be $true
+                MSFT_ServiceResource\Test-TargetResource @resourceParameters | Should -BeTrue
             }
         }
 
@@ -402,7 +402,7 @@ try
             }
 
             It 'Should return true from Test-TargetResource with the same parameters' {
-                MSFT_ServiceResource\Test-TargetResource @resourceParameters | Should -Be $true
+                MSFT_ServiceResource\Test-TargetResource @resourceParameters | Should -BeTrue
             }
         }
     }

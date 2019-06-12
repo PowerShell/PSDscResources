@@ -584,7 +584,7 @@ try {
                                                                         -Disabled (-not $existingUserValues.Enabled) `
                                                                         -PasswordNeverExpires $existingUserValues.PasswordNeverExpires `
                                                                         -PasswordChangeNotAllowed $existingUserValues.UserCanNotChangePassword
-                        $testTargetResourceResult | Should -Be $true
+                        $testTargetResourceResult | Should -BeTrue
 
                         Assert-MockCalled -CommandName Find-UserByNameOnFullSku -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Test-UserPasswordOnFullSku -Exactly 1 -Scope It
@@ -593,19 +593,19 @@ try {
                     It 'Should return true when user Absent and Ensure = Absent' {
                         $testTargetResourceResult = Test-TargetResource -UserName $absentUserName `
                                                                         -Ensure 'Absent'
-                        $testTargetResourceResult | Should -Be $true
+                        $testTargetResourceResult | Should -BeTrue
                     }
 
                     It 'Should return false when user Absent and Ensure = Present' {
                         $testTargetResourceResult = Test-TargetResource -UserName $absentUserName `
                                                                         -Ensure 'Present'
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should return false when user Present and Ensure = Absent' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Ensure 'Absent'
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should return false when Password is wrong' {
@@ -613,7 +613,7 @@ try {
 
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Password $newUserValues.Password
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
 
                         Assert-MockCalled -CommandName Find-UserByNameOnFullSku -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Test-UserPasswordOnFullSku -Exactly 1 -Scope It
@@ -622,33 +622,33 @@ try {
                     It 'Should return false when user Present and wrong Description' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Description 'Wrong description'
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should return false when FullName is incorrect' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -FullName 'Wrong FullName'
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should return false when Disabled is incorrect' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Disabled $existingUserValues.Enabled
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should return false when PasswordNeverExpires is incorrect' {
                         $testTargetResourceResult = Test-TargetResource `
                                               -UserName $existingUserName `
                                               -PasswordNeverExpires (-not $existingUserValues.PasswordNeverExpires)
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should return false when PasswordChangeNotAllowed is incorrect' {
                         $testTargetResourceResult = Test-TargetResource `
                                                -UserName $existingUserName `
                                                -PasswordChangeNotAllowed $existingUserValues.UserMayChangePassword
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
                 }
 
@@ -673,7 +673,7 @@ try {
                                                                         -Disabled (-not $existingUserValues.Enabled) `
                                                                         -PasswordNeverExpires $existingUserValues.PasswordNeverExpires `
                                                                         -PasswordChangeNotAllowed $existingUserValues.UserCanNotChangePassword
-                        $testTargetResourceResult | Should -Be $true
+                        $testTargetResourceResult | Should -BeTrue
 
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Test-CredentialsValidOnNanoServer -Exactly 1 -Scope It
@@ -682,19 +682,19 @@ try {
                     It 'Should return true when user Absent and Ensure = Absent' {
                         $testTargetResourceResult = Test-TargetResource -UserName $absentUserName `
                                                                         -Ensure 'Absent'
-                        $testTargetResourceResult | Should -Be $true
+                        $testTargetResourceResult | Should -BeTrue
                     }
 
                     It 'Should return false when user Absent and Ensure = Present' {
                         $testTargetResourceResult = Test-TargetResource -UserName $absentUserName `
                                                                         -Ensure 'Present'
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should return false when user Present and Ensure = Absent' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Ensure 'Absent'
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should return false when Password is wrong' {
@@ -702,7 +702,7 @@ try {
 
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Password $newUserValues.Password
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
 
                         Assert-MockCalled -CommandName Find-UserByNameOnNanoServer -Exactly 1 -Scope It
                         Assert-MockCalled -CommandName Test-CredentialsValidOnNanoServer -Exactly 1 -Scope It
@@ -711,33 +711,33 @@ try {
                     It 'Should return false when user Present and wrong Description' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Description 'Wrong description'
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should return false when FullName is incorrect' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -FullName 'Wrong FullName'
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should return false when Disabled is incorrect' {
                         $testTargetResourceResult = Test-TargetResource -UserName $existingUserName `
                                                                         -Disabled $existingUserValues.Enabled
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should return false when PasswordNeverExpires is incorrect' {
                         $testTargetResourceResult = Test-TargetResource `
                                               -UserName $existingUserName `
                                               -PasswordNeverExpires (-not $existingUserValues.PasswordNeverExpires)
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should return false when PasswordChangeNotAllowed is incorrect' {
                         $testTargetResourceResult = Test-TargetResource `
                                                -UserName $existingUserName `
                                                -PasswordChangeNotAllowed $existingUserValues.UserMayChangePassword
-                        $testTargetResourceResult | Should -Be $false
+                        $testTargetResourceResult | Should -BeFalse
                     }
 
                     It 'Should throw an Invalid Operation exception when there are multiple users with the given name' {

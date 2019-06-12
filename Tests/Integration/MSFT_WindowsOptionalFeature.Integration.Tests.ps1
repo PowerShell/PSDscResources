@@ -54,7 +54,7 @@ try
                 $windowsOptionalFeature = Dism\Get-WindowsOptionalFeature -FeatureName $resourceParameters.Name -Online
 
                 $windowsOptionalFeature | Should -Not -Be $null
-                $windowsOptionalFeature.State -in $script:enabledStates | Should -Be $true
+                $windowsOptionalFeature.State -in $script:enabledStates | Should -BeTrue
             }
             finally
             {
@@ -103,7 +103,7 @@ try
                 $windowsOptionalFeature = Dism\Get-WindowsOptionalFeature -FeatureName $resourceParameters.Name -Online
 
                 $windowsOptionalFeature | Should -Not -Be $null
-                $windowsOptionalFeature.State -in $script:disabledStates | Should -Be $true
+                $windowsOptionalFeature.State -in $script:disabledStates | Should -BeTrue
             }
             finally
             {
@@ -143,7 +143,7 @@ try
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
                 } | Should -Throw "Feature name $($resourceParameters.Name) is unknown."
 
-                Test-Path -Path $resourceParameters.LogPath | Should -Be $true
+                Test-Path -Path $resourceParameters.LogPath | Should -BeTrue
 
                 Dism\Get-WindowsOptionalFeature -FeatureName $resourceParameters.Name -Online | Should -Be $null
             }

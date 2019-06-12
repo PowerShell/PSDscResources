@@ -61,7 +61,7 @@ try
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should Be $true
+                    $getTargetResourceResult -is [Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return the service name' {
@@ -123,7 +123,7 @@ try
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should Be $true
+                    $getTargetResourceResult -is [Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return the service name' {
@@ -212,7 +212,7 @@ try
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should Be $true
+                    $getTargetResourceResult -is [Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return the service name' {
@@ -308,7 +308,7 @@ try
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should Be $true
+                    $getTargetResourceResult -is [Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return the service name' {
@@ -970,7 +970,7 @@ try
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
 
@@ -1001,7 +1001,7 @@ try
                 }
 
                 It 'Should return false' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $false
+                    Test-TargetResource @testTargetResourceParameters | Should -BeFalse
                 }
             }
 
@@ -1047,7 +1047,7 @@ try
                 }
 
                 It 'Should return false' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $false
+                    Test-TargetResource @testTargetResourceParameters | Should -BeFalse
                 }
             }
 
@@ -1078,7 +1078,7 @@ try
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
 
@@ -1106,7 +1106,7 @@ try
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
 
@@ -1132,8 +1132,6 @@ try
                     It 'Should not throw' {
                         { Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                     }
-
-
 
                     if ($mismatchingParameterName -eq 'StartupType')
                     {
@@ -1161,7 +1159,7 @@ try
                     }
 
                     It 'Should return false' {
-                        Test-TargetResource @testTargetResourceParameters | Should -Be $false
+                        Test-TargetResource @testTargetResourceParameters | Should -BeFalse
                     }
                 }
             }
@@ -1194,7 +1192,7 @@ try
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
 
@@ -1238,7 +1236,7 @@ try
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
 
@@ -1270,7 +1268,7 @@ try
                 }
 
                 It 'Should return false' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $false
+                    Test-TargetResource @testTargetResourceParameters | Should -BeFalse
                 }
             }
 
@@ -1314,7 +1312,7 @@ try
                     }
 
                     It 'Should return false' {
-                        Test-TargetResource @testTargetResourceParameters | Should -Be $false
+                        Test-TargetResource @testTargetResourceParameters | Should -BeFalse
                     }
                 }
             }
@@ -1363,7 +1361,7 @@ try
                     }
 
                     It 'Should return false' {
-                        Test-TargetResource @testTargetResourceParameters | Should -Be $false
+                        Test-TargetResource @testTargetResourceParameters | Should -BeFalse
                     }
                 }
 
@@ -1394,7 +1392,7 @@ try
                     }
 
                     It 'Should return true' {
-                        Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                        Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                     }
                 }
             }
@@ -1429,7 +1427,7 @@ try
                 }
 
                 It 'Should return false' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $false
+                    Test-TargetResource @testTargetResourceParameters | Should -BeFalse
                 }
             }
         }
@@ -1534,13 +1532,13 @@ try
             Context 'Specified paths match' {
                 It 'Should return true' {
                     $matchingPath = 'MatchingPath'
-                    Test-PathsMatch -ExpectedPath $matchingPath -ActualPath $matchingPath | Should -Be $true
+                    Test-PathsMatch -ExpectedPath $matchingPath -ActualPath $matchingPath | Should -BeTrue
                 }
             }
 
             Context 'Specified paths do not match' {
                 It 'Should return false' {
-                    Test-PathsMatch -ExpectedPath 'Path1' -ActualPath 'Path2' | Should -Be $false
+                    Test-PathsMatch -ExpectedPath 'Path1' -ActualPath 'Path2' | Should -BeFalse
                 }
             }
         }
@@ -1631,7 +1629,7 @@ try
                     }
 
                     It 'Should return false' {
-                        Set-ServicePath @setServicePathParameters | Should -Be $false
+                        Set-ServicePath @setServicePathParameters | Should -BeFalse
                     }
                 }
 
@@ -1660,7 +1658,7 @@ try
                     }
 
                     It 'Should return true' {
-                        Set-ServicePath @setServicePathParameters | Should -Be $true
+                        Set-ServicePath @setServicePathParameters | Should -BeTrue
                     }
                 }
 

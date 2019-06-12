@@ -81,8 +81,8 @@ try
                     $currentConfig.UserName | Should Be $script:testUserName
                     $currentConfig.Ensure | Should -Be 'Present'
                     $currentConfig.Description | Should Be $script:testDescription
-                    $currentConfig.PasswordNeverExpires | Should Be $false
-                    $currentConfig.Disabled | Should -Be $false
+                    $currentConfig.PasswordNeverExpires | Should -BeFalse
+                    $currentConfig.Disabled | Should -BeFalse
                     $currentConfig.PasswordChangeRequired | Should -Be $null
                 }
             }
@@ -128,8 +128,8 @@ try
                     $currentConfig.UserName | Should Be $script:testUserName
                     $currentConfig.Ensure | Should Be 'Present'
                     $currentConfig.Description | Should Be $newTestDescription
-                    $currentConfig.PasswordNeverExpires | Should Be $false
-                    $currentConfig.Disabled | Should Be $false
+                    $currentConfig.PasswordNeverExpires | Should -BeFalse
+                    $currentConfig.Disabled | Should -BeFalse
                     $currentConfig.PasswordChangeRequired | Should Be $null
                 }
             }
@@ -178,8 +178,8 @@ try
                     $currentConfig.Ensure | Should -Be 'Present'
                     $currentConfig.Description | Should Be $script:testDescription
                     $currentConfig.FullName | Should Be $newFullName
-                    $currentConfig.PasswordNeverExpires | Should Be $true
-                    $currentConfig.Disabled | Should -Be $false
+                    $currentConfig.PasswordNeverExpires | Should -BeTrue
+                    $currentConfig.Disabled | Should -BeFalse
                     $currentConfig.PasswordChangeRequired | Should -Be $null
                 }
             }

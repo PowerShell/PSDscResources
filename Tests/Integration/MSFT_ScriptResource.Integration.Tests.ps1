@@ -62,7 +62,7 @@ Describe 'Script Integration Tests' {
         }
 
         It 'Should have removed test file before the configuration' {
-            Test-Path -Path $resourceParameters.FilePath | Should Be $false
+            Test-Path -Path $resourceParameters.FilePath | Should -BeFalse
         }
 
         It 'Should compile and apply the MOF without throwing' {
@@ -74,7 +74,7 @@ Describe 'Script Integration Tests' {
         }
 
         It 'Should have created the test file' {
-            Test-Path -Path $resourceParameters.FilePath | Should Be $true
+            Test-Path -Path $resourceParameters.FilePath | Should -BeTrue
         }
 
         It 'Should have set file content correctly' {
@@ -100,7 +100,7 @@ Describe 'Script Integration Tests' {
             }
 
             It 'Should have removed test file before config runs' {
-                Test-Path -Path $resourceParameters.FilePath | Should -Be $false
+                Test-Path -Path $resourceParameters.FilePath | Should -BeFalse
             }
 
             $configData = @{
@@ -122,7 +122,7 @@ Describe 'Script Integration Tests' {
             }
 
             It 'Should have created the test file' {
-                Test-Path -Path $resourceParameters.FilePath | Should -Be $true
+                Test-Path -Path $resourceParameters.FilePath | Should -BeTrue
             }
 
             It 'Should have set file content correctly' {

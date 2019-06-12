@@ -53,7 +53,7 @@ try
                 }
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return the environment variable name' {
@@ -77,7 +77,7 @@ try
                 }
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return the environment variable name' {
@@ -101,7 +101,7 @@ try
                 }
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return the environment variable name' {
@@ -125,7 +125,7 @@ try
                 }
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return the environment variable name' {
@@ -149,7 +149,7 @@ try
                 }
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return the environment variable name' {
@@ -173,7 +173,7 @@ try
                 }
 
                 It 'Should return a hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return the environment variable name' {
@@ -1176,7 +1176,7 @@ try
                     $testTargetResourceResult = Test-TargetResource -Name $script:mockEnvironmentVarName `
                                                                     -Ensure 'Present' `
                                                                     -Path $true
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1194,7 +1194,7 @@ try
                     $testTargetResourceResult = Test-TargetResource -Name $script:mockEnvironmentVarName `
                                                                     -Ensure 'Present' `
                                                                     -Path $true
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1212,7 +1212,7 @@ try
                                                                     -Value $expectedValue `
                                                                     -Ensure 'Present' `
                                                                     -Path $false
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1230,7 +1230,7 @@ try
                                                                     -Value $expectedValue `
                                                                     -Ensure 'Present' `
                                                                     -Path $false
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1248,7 +1248,7 @@ try
                                                                     -Value $expectedValue `
                                                                     -Ensure 'Present' `
                                                                     -Path $true
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1267,7 +1267,7 @@ try
                                                                     -Value $expectedValue `
                                                                     -Ensure 'Present' `
                                                                     -Path $true
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1298,7 +1298,7 @@ try
                                                                     -Value $expectedValue `
                                                                     -Ensure 'Present' `
                                                                     -Path $true
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1320,7 +1320,7 @@ try
                                                                     -Value $expectedValue `
                                                                     -Ensure 'Present' `
                                                                     -Path $true
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1338,7 +1338,7 @@ try
                     $testTargetResourceResult = Test-TargetResource -Name $script:mockEnvironmentVarName `
                                                                     -Ensure 'Absent' `
                                                                     -Path $true
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1356,7 +1356,7 @@ try
                     $testTargetResourceResult = Test-TargetResource -Name $script:mockEnvironmentVarName `
                                                                     -Ensure 'Absent' `
                                                                     -Path $true
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1374,7 +1374,7 @@ try
                                                                     -Value $expectedValue `
                                                                     -Ensure 'Absent' `
                                                                     -Path $false
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1392,7 +1392,7 @@ try
                                                                     -Value $expectedValue `
                                                                     -Ensure 'Absent' `
                                                                     -Path $false
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1424,7 +1424,7 @@ try
                                                                     -Value $expectedValue `
                                                                     -Ensure 'Absent' `
                                                                     -Path $true
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1446,7 +1446,7 @@ try
                                                                     -Value $expectedValue `
                                                                     -Ensure 'Absent' `
                                                                     -Path $true
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1464,7 +1464,7 @@ try
                                                                     -Value 'nonExistentValue' `
                                                                     -Ensure 'Absent' `
                                                                     -Path $true
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1486,7 +1486,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $true `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1503,7 +1503,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $true `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1523,7 +1523,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $false `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1542,7 +1542,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $false `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1561,7 +1561,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $true `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1580,7 +1580,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $true `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1611,7 +1611,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $true `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1629,7 +1629,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $true `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1646,7 +1646,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $true `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1663,7 +1663,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $true `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1681,7 +1681,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $false `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1700,7 +1700,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $false `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1731,7 +1731,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $true `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1752,7 +1752,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $true `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1772,7 +1772,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $true `
                                                                     -Target @('Process')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1794,7 +1794,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $true `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1813,7 +1813,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $true `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1832,7 +1832,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $false `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1851,7 +1851,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $false `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1870,7 +1870,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $true `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1892,7 +1892,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $true `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1924,7 +1924,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $true `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1947,7 +1947,7 @@ try
                                                                     -Ensure 'Present' `
                                                                     -Path $true `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1965,7 +1965,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $true `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -1983,7 +1983,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $true `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -2002,7 +2002,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $false `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -2021,7 +2021,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $false `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -2054,7 +2054,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $true `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $false
+                    $testTargetResourceResult | Should -BeFalse
                 }
 
                 It 'Should have called the correct mocks' {
@@ -2077,7 +2077,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $true `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -2096,7 +2096,7 @@ try
                                                                     -Ensure 'Absent' `
                                                                     -Path $true `
                                                                     -Target @('Machine')
-                    $testTargetResourceResult | Should -Be $true
+                    $testTargetResourceResult | Should -BeTrue
                 }
 
                 It 'Should have called the correct mocks' {
@@ -2311,21 +2311,21 @@ try
                     $testPathInPathListWithCriteriaResult = Test-PathsInValue -ExistingPaths $existingPaths `
                                                                                             -QueryPaths 'path3' `
                                                                                             -FindCriteria 'Any'
-                    $testPathInPathListWithCriteriaResult | Should -Be $true
+                    $testPathInPathListWithCriteriaResult | Should -BeTrue
                 }
 
                 It 'Should return true when one of many paths is contained in path list' {
                     $testPathInPathListWithCriteriaResult = Test-PathsInValue -ExistingPaths $existingPaths `
                                                                                             -QueryPaths 'path0;path7;path3;path8'`
                                                                                             -FindCriteria 'Any'
-                    $testPathInPathListWithCriteriaResult | Should -Be $true
+                    $testPathInPathListWithCriteriaResult | Should -BeTrue
                 }
 
                 It 'Should return false when no path is contained in path list' {
                     $testPathInPathListWithCriteriaResult = Test-PathsInValue -ExistingPaths $existingPaths `
                                                                                             -QueryPaths 'path0;path7;path8;path9' `
                                                                                             -FindCriteria 'Any'
-                    $testPathInPathListWithCriteriaResult | Should -Be $false
+                    $testPathInPathListWithCriteriaResult | Should -BeFalse
                 }
             }
 
@@ -2334,21 +2334,21 @@ try
                     $testPathInPathListWithCriteriaResult = Test-PathsInValue -ExistingPaths $existingPaths `
                                                                                             -QueryPaths 'path3' `
                                                                                             -FindCriteria 'All'
-                    $testPathInPathListWithCriteriaResult | Should -Be $true
+                    $testPathInPathListWithCriteriaResult | Should -BeTrue
                 }
 
                 It 'Should return false when path is not contained in path list' {
                     $testPathInPathListWithCriteriaResult = Test-PathsInValue -ExistingPaths $existingPaths `
                                                                                             -QueryPaths 'path4' `
                                                                                             -FindCriteria 'All'
-                    $testPathInPathListWithCriteriaResult | Should -Be $false
+                    $testPathInPathListWithCriteriaResult | Should -BeFalse
                 }
 
                 It 'Should return false when one of many paths is not contained in path list' {
                     $testPathInPathListWithCriteriaResult = Test-PathsInValue -ExistingPaths $existingPaths `
                                                                                             -QueryPaths 'path1;path2;path3;path4' `
                                                                                             -FindCriteria 'All'
-                    $testPathInPathListWithCriteriaResult | Should -Be $false
+                    $testPathInPathListWithCriteriaResult | Should -BeFalse
                 }
             }
         }

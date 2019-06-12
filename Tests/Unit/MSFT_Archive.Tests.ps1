@@ -137,7 +137,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -211,7 +211,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -292,7 +292,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -374,7 +374,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -455,7 +455,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -537,7 +537,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -631,7 +631,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -1398,7 +1398,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $false
+                    Test-TargetResource @testTargetResourceParameters | Should -BeFalse
                 }
             }
 
@@ -1425,7 +1425,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
 
@@ -1454,7 +1454,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
 
@@ -1481,7 +1481,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $false
+                    Test-TargetResource @testTargetResourceParameters | Should -BeFalse
                 }
             }
 
@@ -1512,7 +1512,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
 
@@ -1541,7 +1541,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
         }
@@ -1817,7 +1817,7 @@ Describe 'Archive Unit Tests' {
                 $testChecksumIsShaResult = Test-ChecksumIsSha @testChecksumIsShaParameters
 
                 It 'Should return true' {
-                    $testChecksumIsShaResult | Should -Be $true
+                    $testChecksumIsShaResult | Should -BeTrue
                 }
             }
 
@@ -1833,7 +1833,7 @@ Describe 'Archive Unit Tests' {
                 $testChecksumIsShaResult = Test-ChecksumIsSha @testChecksumIsShaParameters
 
                 It 'Should return false' {
-                    $testChecksumIsShaResult | Should -Be $false
+                    $testChecksumIsShaResult | Should -BeFalse
                 }
             }
 
@@ -1849,7 +1849,7 @@ Describe 'Archive Unit Tests' {
                 $testChecksumIsShaResult = Test-ChecksumIsSha @testChecksumIsShaParameters
 
                 It 'Should return false' {
-                    $testChecksumIsShaResult | Should -Be $false
+                    $testChecksumIsShaResult | Should -BeFalse
                 }
             }
         }
@@ -1999,7 +1999,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters | Should -Be $true
+                    Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters | Should -BeTrue
                 }
             }
 
@@ -2088,7 +2088,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should return false' {
                     $script:timesGetFileHashCalled = 0
-                    Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters | Should -Be $false
+                    Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters | Should -BeFalse
                 }
             }
         }
@@ -2287,7 +2287,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -Be $false
+                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -BeFalse
                 }
             }
 
@@ -2347,7 +2347,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -Be $true
+                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -BeTrue
                 }
             }
 
@@ -2403,7 +2403,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -Be $false
+                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -BeFalse
                 }
             }
 
@@ -2459,7 +2459,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -Be $true
+                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -BeTrue
                 }
             }
         }
@@ -2475,7 +2475,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -Be $false
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -BeFalse
                 }
             }
 
@@ -2489,7 +2489,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -Be $false
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -BeFalse
                 }
             }
 
@@ -2503,7 +2503,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -Be $false
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -BeFalse
                 }
             }
 
@@ -2517,7 +2517,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -Be $true
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -BeTrue
                 }
             }
 
@@ -2531,7 +2531,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -Be $true
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -BeTrue
                 }
             }
         }
@@ -2629,7 +2629,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -2715,7 +2715,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -2801,7 +2801,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -2892,7 +2892,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $true
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeTrue
                 }
             }
 
@@ -2974,7 +2974,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -3060,7 +3060,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -3146,7 +3146,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -3232,7 +3232,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $true
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeTrue
                 }
             }
 
@@ -3325,7 +3325,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -3420,7 +3420,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $true
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeTrue
                 }
             }
         }

@@ -87,7 +87,7 @@ try
                 }
 
                 It "Should have disabled Windows optional feature $windowsOptionalFeatureName before the configuration" {
-                    $windowsOptionalFeature.State -in $script:disabledStates | Should -Be $true
+                    $windowsOptionalFeature.State -in $script:disabledStates | Should -BeTrue
                 }
             }
 
@@ -117,12 +117,12 @@ try
                 }
 
                 It "Should have enabled Windows optional feature $windowsOptionalFeatureName after the configuration" {
-                    $windowsOptionalFeature.State -in $script:enabledStates | Should -Be $true
+                    $windowsOptionalFeature.State -in $script:enabledStates | Should -BeTrue
                 }
             }
 
             It 'Should have created the log file' {
-                Test-Path -Path $wofSetParameters.LogPath | Should -Be $true
+                Test-Path -Path $wofSetParameters.LogPath | Should -BeTrue
             }
 
             It 'Should have created content in the log file' {
@@ -163,7 +163,7 @@ try
                 }
 
                 It "Should have enabled Windows optional feature $windowsOptionalFeatureName before the configuration" {
-                    $windowsOptionalFeature.State -in $script:enabledStates | Should -Be $true
+                    $windowsOptionalFeature.State -in $script:enabledStates | Should -BeTrue
                 }
             }
 
@@ -193,12 +193,12 @@ try
                 }
 
                 It "Should have disabled Windows optional feature $windowsOptionalFeatureName after the confguration" {
-                    $windowsOptionalFeature.State -in $script:disabledStates | Should -Be $true
+                    $windowsOptionalFeature.State -in $script:disabledStates | Should -BeTrue
                 }
             }
 
             It 'Should have created the log file' {
-                Test-Path -Path $wofSetParameters.LogPath | Should -Be $true
+                Test-Path -Path $wofSetParameters.LogPath | Should -BeTrue
             }
 
             It 'Should have created content in the log file' {
