@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Ports style fixes that were recently made in xPSDesiredStateConfiguration
+  on test related files.
 * Ports most of the style upgrades from xPSDesiredStateConfiguration that have
   been made in files in the DscResources folder.
 * Ports fixes for the following issues:

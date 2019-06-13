@@ -32,7 +32,7 @@ Describe 'CommonResourceHelper Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-IsNanoServer | Should -Be $true
+                    Test-IsNanoServer | Should -BeTrue
                 }
             }
 
@@ -49,7 +49,7 @@ Describe 'CommonResourceHelper Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-IsNanoServer | Should -Be $false
+                    Test-IsNanoServer | Should -BeFalse
                 }
             }
 
@@ -65,7 +65,7 @@ Describe 'CommonResourceHelper Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-IsNanoServer | Should -Be $false
+                    Test-IsNanoServer | Should -BeFalse
                 }
             }
         }
@@ -89,7 +89,7 @@ Describe 'CommonResourceHelper Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-CommandExists -Name $testCommandName | Should -Be $true
+                    Test-CommandExists -Name $testCommandName | Should -BeTrue
                 }
             }
 
@@ -109,7 +109,7 @@ Describe 'CommonResourceHelper Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-CommandExists -Name $testCommandName | Should -Be $false
+                    Test-CommandExists -Name $testCommandName | Should -BeFalse
                 }
             }
         }
