@@ -32,18 +32,18 @@ $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_WindowsProcess'
 #>
 function Get-TargetResource
 {
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Path,
 
         [Parameter(Mandatory = $true)]
         [AllowEmptyString()]
-        [String]
+        [System.String]
         $Arguments,
 
         [Parameter()]
@@ -98,6 +98,7 @@ function Get-TargetResource
     }
 
     Write-Verbose -Message ($script:localizedData.GetTargetResourceEndMessage -f $Path)
+
     return $processToReturn
 }
 
@@ -152,12 +153,12 @@ function Set-TargetResource
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Path,
 
         [Parameter(Mandatory = $true)]
         [AllowEmptyString()]
-        [String]
+        [System.String]
         $Arguments,
 
         [Parameter()]
@@ -168,23 +169,23 @@ function Set-TargetResource
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $StandardOutputPath,
 
         [Parameter()]
-        [String]
+        [System.String]
         $StandardErrorPath,
 
         [Parameter()]
-        [String]
+        [System.String]
         $StandardInputPath,
 
         [Parameter()]
-        [String]
+        [System.String]
         $WorkingDirectory
     )
 
@@ -218,6 +219,7 @@ function Set-TargetResource
         Assert-HashtableDoesNotContainKey @assertHashtableParams
 
         $whatIfShouldProcess = $PSCmdlet.ShouldProcess($Path, $script:localizedData.StoppingProcessWhatif)
+
         if ($processCimInstance.Count -gt 0 -and $whatIfShouldProcess)
         {
             # If there are multiple process Ids, all will be included to be stopped
@@ -238,6 +240,7 @@ function Set-TargetResource
 
                 New-InvalidOperationException -Message $errorMessage
            }
+
            <#
                Before returning from Set-TargetResource we have to ensure a subsequent
                Test-TargetResource is going to work
@@ -265,7 +268,7 @@ function Set-TargetResource
 
         foreach ($shouldBeRootedPathArgument in $shouldBeRootedPathArguments)
         {
-            if (-not [String]::IsNullOrEmpty($PSBoundParameters[$shouldBeRootedPathArgument]))
+            if (-not [System.String]::IsNullOrEmpty($PSBoundParameters[$shouldBeRootedPathArgument]))
             {
                 $assertPathArgumentRootedParams = @{
                     PathArgumentName = $shouldBeRootedPathArgument
@@ -279,7 +282,7 @@ function Set-TargetResource
 
         foreach ($shouldExistPathArgument in $shouldExistPathArguments)
         {
-            if (-not [String]::IsNullOrEmpty($PSBoundParameters[$shouldExistPathArgument]))
+            if (-not [System.String]::IsNullOrEmpty($PSBoundParameters[$shouldExistPathArgument]))
             {
                 $assertPathArgumentValidParams = @{
                     PathArgumentName = $shouldExistPathArgument
@@ -334,7 +337,7 @@ function Set-TargetResource
                 if (($PSBoundParameters.ContainsKey('Credential')) -and (Test-IsRunFromLocalSystemUser))
                 {
                     # Throw an exception if any of the below parameters are included with Credential passed
-                    foreach ($key in @('StandardOutputPath','StandardInputPath','WorkingDirectory'))
+                    foreach ($key in @('StandardOutputPath', 'StandardInputPath', 'WorkingDirectory'))
                     {
                         if ($PSBoundParameters.Keys -contains $key)
                         {
@@ -345,6 +348,7 @@ function Set-TargetResource
                             New-InvalidArgumentException @newInvalidArgumentExceptionParams
                         }
                     }
+
                     try
                     {
                         Start-ProcessAsLocalSystemUser -Path $Path -Arguments $Arguments -Credential $Credential
@@ -365,7 +369,7 @@ function Set-TargetResource
                     catch [System.Exception]
                     {
                         $errorMessage = ($script:localizedData.ErrorStarting -f $Path, $_.Exception.Message)
-                        
+
                         New-InvalidOperationException -Message $errorMessage
                     }
                 }
@@ -429,45 +433,45 @@ function Set-TargetResource
 #>
 function Test-TargetResource
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Path,
 
         [Parameter(Mandatory = $true)]
         [AllowEmptyString()]
-        [String]
+        [System.String]
         $Arguments,
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [PSCredential]
+        [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [String]
+        [System.String]
         $StandardOutputPath,
 
         [Parameter()]
-        [String]
+        [System.String]
         $StandardErrorPath,
 
         [Parameter()]
-        [String]
+        [System.String]
         $StandardInputPath,
 
         [Parameter()]
-        [String]
+        [System.String]
         $WorkingDirectory
     )
 
@@ -511,13 +515,13 @@ function Test-TargetResource
 #>
 function Expand-Path
 {
-    [OutputType([String])]
+    [OutputType([System.String])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Path
     )
 
@@ -536,11 +540,12 @@ function Expand-Path
 
     # Check to see if the path to the file exists in the current location. If so, return the full rooted path.
     $rootedPath = [System.IO.Path]::GetFullPath($Path)
+
     if ([System.IO.File]::Exists($rootedPath))
     {
         return $rootedPath
     }
-    
+
     # If the path is not found, throw an exception
     New-InvalidArgumentException -ArgumentName 'Path' -Message ($script:localizedData.FileNotFound -f $Path)
 }
@@ -566,17 +571,17 @@ function Expand-Path
 #>
 function Get-ProcessCimInstance
 {
-    [OutputType([CimInstance[]])]
+    [OutputType([Microsoft.Management.Infrastructure.CimInstance[]])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Path,
 
         [Parameter()]
-        [String]
+        [System.String]
         $Arguments,
 
         [Parameter()]
@@ -586,8 +591,8 @@ function Get-ProcessCimInstance
         $Credential,
 
         [Parameter()]
-        [ValidateRange(0, [Int]::MaxValue)]
-        [Int]
+        [ValidateRange(0, [System.Int32]::MaxValue)]
+        [System.Int32]
         $UseGetCimInstanceThreshold = 8
     )
 
@@ -640,7 +645,7 @@ function Get-ProcessCimInstance
 
     if ($null -eq $Arguments)
     {
-        $Arguments = [String]::Empty
+        $Arguments = [System.String]::Empty
     }
 
     $processesWithMatchingArguments = @()
@@ -666,17 +671,17 @@ function Get-ProcessCimInstance
 #>
 function ConvertTo-EscapedStringForWqlFilter
 {
-    [OutputType([String])]
+    [OutputType([System.String])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $FilterString
     )
 
-    return $FilterString.Replace("\","\\").Replace('"','\"').Replace("'","\'")
+    return $FilterString.Replace("\", "\\").Replace('"', '\"').Replace("'", "\'")
 }
 
 <#
@@ -692,13 +697,13 @@ function ConvertTo-EscapedStringForWqlFilter
 #>
 function Get-ProcessOwner
 {
-    [OutputType([String])]
+    [OutputType([System.String])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
-        [Object]
+        [System.Object]
         $Process
     )
 
@@ -717,7 +722,7 @@ function Get-ProcessOwner
         }
     }
 
-    return ''
+    return [System.String]::Empty
 }
 
 <#
@@ -733,13 +738,13 @@ function Get-ProcessOwner
 #>
 function Get-ProcessOwnerCimInstance
 {
-    [OutputType([CimInstance])]
+    [OutputType([Microsoft.Management.Infrastructure.CimInstance])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
-        [Object]
+        [System.Object]
         $Process
     )
 
@@ -759,36 +764,36 @@ function Get-ProcessOwnerCimInstance
 #>
 function Get-ArgumentsFromCommandLineInput
 {
-    [OutputType([String])]
+    [OutputType([System.String])]
     [CmdletBinding()]
     param
     (
         [Parameter()]
-        [String]
+        [System.String]
         $CommandLineInput
     )
 
-    if ([String]::IsNullOrWhitespace($CommandLineInput))
+    if ([System.String]::IsNullOrWhitespace($CommandLineInput))
     {
-        return [String]::Empty
+        return [System.String]::Empty
     }
 
     $CommandLineInput = $CommandLineInput.Trim()
 
     if ($CommandLineInput.StartsWith('"'))
     {
-        $endOfCommandChar = [Char]'"'
+        $endOfCommandChar = [System.Char] '"'
     }
     else
     {
-        $endOfCommandChar = [Char]' '
+        $endOfCommandChar = [System.Char] ' '
     }
 
     $endofCommandIndex = $CommandLineInput.IndexOf($endOfCommandChar, 1)
 
     if ($endofCommandIndex -eq -1)
     {
-        return [String]::Empty
+        return [System.String]::Empty
     }
 
     return $CommandLineInput.Substring($endofCommandIndex + 1).Trim()
@@ -810,11 +815,11 @@ function Assert-HashtableDoesNotContainKey
     param
     (
         [Parameter(Mandatory = $true)]
-        [Hashtable]
+        [System.Collections.Hashtable]
         $Hashtable,
 
         [Parameter(Mandatory = $true)]
-        [String[]]
+        [System.String[]]
         $Key
     )
 
@@ -846,31 +851,31 @@ function Assert-HashtableDoesNotContainKey
 #>
 function Wait-ProcessCount
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [Hashtable]
+        [System.Collections.Hashtable]
         $ProcessSettings,
 
         [Parameter(Mandatory = $true)]
-        [ValidateRange(0, [Int]::MaxValue)]
-        [Int]
+        [ValidateRange(0, [System.Int32]::MaxValue)]
+        [System.Int32]
         $ProcessCount,
 
         [Parameter()]
-        [Int]
+        [System.Int32]
         $WaitTime = 200000
     )
 
-    $startTime = [DateTime]::Now
+    $startTime = [System.DateTime]::Now
 
     do
     {
         $actualProcessCount = @( Get-ProcessCimInstance @ProcessSettings ).Count
-    } while ($actualProcessCount -ne $ProcessCount -and ([DateTime]::Now - $startTime).TotalMilliseconds -lt $WaitTime)
+    } while ($actualProcessCount -ne $ProcessCount -and ([System.DateTime]::Now - $startTime).TotalMilliseconds -lt $WaitTime)
 
     return $actualProcessCount -eq $ProcessCount
 }
@@ -892,12 +897,12 @@ function Assert-PathArgumentRooted
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $PathArgumentName,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $PathArgument
     )
 
@@ -927,19 +932,19 @@ function Assert-PathArgumentValid
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $PathArgumentName,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $PathArgument
     )
 
     if (-not (Test-Path -Path $PathArgument))
     {
         $message = $script:localizedData.PathShouldExist -f $PathArgument, $PathArgumentName
-                   
+
         New-InvalidArgumentException -ArgumentName 'Path' `
                                      -Message $message
     }
@@ -951,7 +956,7 @@ function Assert-PathArgumentValid
 #>
 function Test-IsRunFromLocalSystemUser
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param ()
 
@@ -977,16 +982,16 @@ function Test-IsRunFromLocalSystemUser
 function Start-ProcessAsLocalSystemUser
 {
     [CmdletBinding()]
-    param 
+    param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Path,
 
         [Parameter(Mandatory = $true)]
         [AllowEmptyString()]
-        [String]
+        [System.String]
         $Arguments,
 
         [Parameter(Mandatory = $true)]
@@ -1024,7 +1029,7 @@ function Start-ProcessAsLocalSystemUser
 #>
 function Split-Credential
 {
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     [CmdletBinding()]
     param
     (
@@ -1069,7 +1074,7 @@ function Split-Credential
     }
     else
     {
-        # support for default domain (localhost)
+        # Support for default domain (localhost)
         $domain = $env:computerName
         $userName = $Credential.UserName
     }
@@ -1099,7 +1104,7 @@ function Split-Credential
 function Assert-PsDscContextNotRunAsUser
 {
     [CmdletBinding()]
-    param 
+    param
     ()
 
     Set-StrictMode -Off
@@ -1110,6 +1115,7 @@ function Assert-PsDscContextNotRunAsUser
             ArgumentName = 'PsDscRunAsCredential'
             Message = ($script:localizedData.ErrorRunAsCredentialParameterNotSupported -f $PsDscContext.RunAsUser)
         }
+
         New-InvalidArgumentException @newInvalidArgumentExceptionParams
     }
 }
@@ -1122,387 +1128,387 @@ function Assert-PsDscContextNotRunAsUser
 #>
 function Import-DscNativeMethods
 {
-$dscNativeMethodsSource = @"  
-  
-using System;  
-using System.Collections.Generic;  
-using System.Text;  
-using System.Security;  
-using System.Runtime.InteropServices;  
-using System.Diagnostics;  
-using System.Security.Principal;  
-#if !CORECLR  
-using System.ComponentModel;  
-#endif  
-using System.IO;  
-  
-namespace PSDesiredStateConfiguration  
-{  
-#if !CORECLR  
-    [SuppressUnmanagedCodeSecurity]  
-#endif  
-    public static class NativeMethods  
-    {  
-        //The following structs and enums are used by the various Win32 API's that are used in the code below  
-  
-        [StructLayout(LayoutKind.Sequential)]  
-        public struct STARTUPINFO  
-        {  
-            public Int32 cb;  
-            public string lpReserved;  
-            public string lpDesktop;  
-            public string lpTitle;  
-            public Int32 dwX;  
-            public Int32 dwY;  
-            public Int32 dwXSize;  
-            public Int32 dwXCountChars;  
-            public Int32 dwYCountChars;  
-            public Int32 dwFillAttribute;  
-            public Int32 dwFlags;  
-            public Int16 wShowWindow;  
-            public Int16 cbReserved2;  
-            public IntPtr lpReserved2;  
-            public IntPtr hStdInput;  
-            public IntPtr hStdOutput;  
-            public IntPtr hStdError;  
-        }  
-  
-        [StructLayout(LayoutKind.Sequential)]  
-        public struct PROCESS_INFORMATION  
-        {  
-            public IntPtr hProcess;  
-            public IntPtr hThread;  
-            public Int32 dwProcessID;  
-            public Int32 dwThreadID;  
-        }  
-  
-        [Flags]  
-        public enum LogonType  
-        {  
-            LOGON32_LOGON_INTERACTIVE = 2,  
-            LOGON32_LOGON_NETWORK = 3,  
-            LOGON32_LOGON_BATCH = 4,  
-            LOGON32_LOGON_SERVICE = 5,  
-            LOGON32_LOGON_UNLOCK = 7,  
-            LOGON32_LOGON_NETWORK_CLEARTEXT = 8,  
-            LOGON32_LOGON_NEW_CREDENTIALS = 9  
-        }  
-  
-        [Flags]  
-        public enum LogonProvider  
-        {  
-            LOGON32_PROVIDER_DEFAULT = 0,  
-            LOGON32_PROVIDER_WINNT35,  
-            LOGON32_PROVIDER_WINNT40,  
-            LOGON32_PROVIDER_WINNT50  
-        }  
-        [StructLayout(LayoutKind.Sequential)]  
-        public struct SECURITY_ATTRIBUTES  
-        {  
-            public Int32 Length;  
-            public IntPtr lpSecurityDescriptor;  
-            public bool bInheritHandle;  
-        }  
-  
-        public enum SECURITY_IMPERSONATION_LEVEL  
-        {  
-            SecurityAnonymous,  
-            SecurityIdentification,  
-            SecurityImpersonation,  
-            SecurityDelegation  
-        }  
-  
-        public enum TOKEN_TYPE  
-        {  
-            TokenPrimary = 1,  
-            TokenImpersonation  
-        }  
-  
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]  
-        internal struct TokPriv1Luid  
-        {  
-            public int Count;  
-            public long Luid;  
-            public int Attr;  
-        }  
-  
-        public const int GENERIC_ALL_ACCESS = 0x10000000;  
-        public const int CREATE_NO_WINDOW = 0x08000000;  
-        internal const int SE_PRIVILEGE_ENABLED = 0x00000002;  
-        internal const int TOKEN_QUERY = 0x00000008;  
-        internal const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;  
-        internal const string SE_INCRASE_QUOTA = "SeIncreaseQuotaPrivilege";  
-  
-#if CORECLR  
-        [DllImport("api-ms-win-core-handle-l1-1-0.dll",  
-#else  
-        [DllImport("kernel32.dll",  
-#endif  
-              EntryPoint = "CloseHandle", SetLastError = true,  
-              CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]  
-        public static extern bool CloseHandle(IntPtr handle);  
-  
-#if CORECLR  
-        [DllImport("api-ms-win-core-processthreads-l1-1-2.dll",  
-#else  
-        [DllImport("advapi32.dll",  
-#endif  
-              EntryPoint = "CreateProcessAsUser", SetLastError = true,  
-              CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]  
-        public static extern bool CreateProcessAsUser(  
-            IntPtr hToken,  
-            string lpApplicationName,  
-            string lpCommandLine,  
-            ref SECURITY_ATTRIBUTES lpProcessAttributes,  
-            ref SECURITY_ATTRIBUTES lpThreadAttributes,  
-            bool bInheritHandle,  
-            Int32 dwCreationFlags,  
-            IntPtr lpEnvrionment,  
-            string lpCurrentDirectory,  
-            ref STARTUPINFO lpStartupInfo,  
-            ref PROCESS_INFORMATION lpProcessInformation  
-            );  
-  
-#if CORECLR  
-        [DllImport("api-ms-win-security-base-l1-1-0.dll", EntryPoint = "DuplicateTokenEx")]  
-#else  
-        [DllImport("advapi32.dll", EntryPoint = "DuplicateTokenEx")]  
-#endif  
-        public static extern bool DuplicateTokenEx(  
-            IntPtr hExistingToken,  
-            Int32 dwDesiredAccess,  
-            ref SECURITY_ATTRIBUTES lpThreadAttributes,  
-            Int32 ImpersonationLevel,  
-            Int32 dwTokenType,  
-            ref IntPtr phNewToken  
-            );  
-  
-#if CORECLR  
-        [DllImport("api-ms-win-security-logon-l1-1-1.dll", CharSet = CharSet.Unicode, SetLastError = true)]  
-#else  
-        [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]  
-#endif  
-        public static extern Boolean LogonUser(  
-            String lpszUserName,  
-            String lpszDomain,  
-            IntPtr lpszPassword,  
-            LogonType dwLogonType,  
-            LogonProvider dwLogonProvider,  
-            out IntPtr phToken  
-            );  
-  
-#if CORECLR  
-        [DllImport("api-ms-win-security-base-l1-1-0.dll", ExactSpelling = true, SetLastError = true)]  
-#else  
-        [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]  
-#endif  
-        internal static extern bool AdjustTokenPrivileges(  
-            IntPtr htok,  
-            bool disall,  
-            ref TokPriv1Luid newst,  
-            int len,  
-            IntPtr prev,  
-            IntPtr relen  
-            );  
-  
-#if CORECLR  
-        [DllImport("api-ms-win-downlevel-kernel32-l1-1-0.dll", ExactSpelling = true)]  
-#else  
-        [DllImport("kernel32.dll", ExactSpelling = true)]  
-#endif  
-        internal static extern IntPtr GetCurrentProcess();  
-  
-#if CORECLR  
-        [DllImport("api-ms-win-downlevel-advapi32-l1-1-1.dll", ExactSpelling = true, SetLastError = true)]  
-#else  
-        [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]  
-#endif  
-        internal static extern bool OpenProcessToken(  
-            IntPtr h,  
-            int acc,  
-            ref IntPtr phtok  
-            );  
-  
-#if CORECLR  
-        [DllImport("api-ms-win-downlevel-kernel32-l1-1-0.dll", ExactSpelling = true)]  
-#else  
-        [DllImport("kernel32.dll", ExactSpelling = true)]  
-#endif  
-        internal static extern int WaitForSingleObject(  
-            IntPtr h,   
-            int milliseconds  
-            );  
-  
-#if CORECLR  
-        [DllImport("api-ms-win-downlevel-kernel32-l1-1-0.dll", ExactSpelling = true)]  
-#else  
-        [DllImport("kernel32.dll", ExactSpelling = true)]  
-#endif  
-        internal static extern bool GetExitCodeProcess(  
-            IntPtr h,   
-            out int exitcode  
-            );  
-  
-#if CORECLR  
-        [DllImport("api-ms-win-downlevel-advapi32-l4-1-0.dll", SetLastError = true)]  
-#else  
-        [DllImport("advapi32.dll", SetLastError = true)]  
-#endif  
-        internal static extern bool LookupPrivilegeValue(  
-            string host,  
-            string name,  
-            ref long pluid  
-            );  
-  
-        internal static void ThrowException(  
-            string message  
-            )  
-        {  
-#if CORECLR  
-            throw new Exception(message);  
-#else  
-            throw new Win32Exception(message);  
-#endif  
-        }  
-  
-        public static void CreateProcessAsUser(string strCommand, string strDomain, string strName, SecureString secureStringPassword, bool waitForExit, ref int ExitCode)  
-        {  
-            var hToken = IntPtr.Zero;  
-            var hDupedToken = IntPtr.Zero;  
-            TokPriv1Luid tp;  
-            var pi = new PROCESS_INFORMATION();  
-            var sa = new SECURITY_ATTRIBUTES();  
-            sa.Length = Marshal.SizeOf(sa);  
-            Boolean bResult = false;  
-            try  
-            {  
-                IntPtr unmanagedPassword = IntPtr.Zero;  
-                try  
-                {  
-#if CORECLR  
-                    unmanagedPassword = SecureStringMarshal.SecureStringToCoTaskMemUnicode(secureStringPassword);  
-#else  
-                    unmanagedPassword = Marshal.SecureStringToGlobalAllocUnicode(secureStringPassword);  
-#endif  
-                    bResult = LogonUser(  
-                        strName,  
-                        strDomain,  
-                        unmanagedPassword,  
-                        LogonType.LOGON32_LOGON_NETWORK_CLEARTEXT,  
-                        LogonProvider.LOGON32_PROVIDER_DEFAULT,  
-                        out hToken  
-                        );  
-                }  
-                finally  
-                {  
-                    Marshal.ZeroFreeGlobalAllocUnicode(unmanagedPassword);  
-                }  
-                if (!bResult)  
-                {  
-                    ThrowException("$($script:localizedData.UserCouldNotBeLoggedError)" + Marshal.GetLastWin32Error().ToString());  
-                }  
-                IntPtr hproc = GetCurrentProcess();  
-                IntPtr htok = IntPtr.Zero;  
-                bResult = OpenProcessToken(  
-                        hproc,  
-                        TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,  
-                        ref htok  
-                    );  
-                if (!bResult)  
-                {  
-                    ThrowException("$($script:localizedData.OpenProcessTokenError)" + Marshal.GetLastWin32Error().ToString());  
-                }  
-                tp.Count = 1;  
-                tp.Luid = 0;  
-                tp.Attr = SE_PRIVILEGE_ENABLED;  
-                bResult = LookupPrivilegeValue(  
-                    null,  
-                    SE_INCRASE_QUOTA,  
-                    ref tp.Luid  
-                    );  
-                if (!bResult)  
-                {  
-                    ThrowException("$($script:localizedData.PrivilegeLookingUpError)" + Marshal.GetLastWin32Error().ToString());  
-                }  
-                bResult = AdjustTokenPrivileges(  
-                    htok,  
-                    false,  
-                    ref tp,  
-                    0,  
-                    IntPtr.Zero,  
-                    IntPtr.Zero  
-                    );  
-                if (!bResult)  
-                {  
-                    ThrowException("$($script:localizedData.TokenElevationError)" + Marshal.GetLastWin32Error().ToString());  
-                }  
-  
-                bResult = DuplicateTokenEx(  
-                    hToken,  
-                    GENERIC_ALL_ACCESS,  
-                    ref sa,  
-                    (int)SECURITY_IMPERSONATION_LEVEL.SecurityIdentification,  
-                    (int)TOKEN_TYPE.TokenPrimary,  
-                    ref hDupedToken  
-                    );  
-                if (!bResult)  
-                {  
-                    ThrowException("$($script:localizedData.DuplicateTokenError)" + Marshal.GetLastWin32Error().ToString());  
-                }  
-                var si = new STARTUPINFO();  
-                si.cb = Marshal.SizeOf(si);  
-                si.lpDesktop = "";  
-                bResult = CreateProcessAsUser(  
-                    hDupedToken,  
-                    null,  
-                    strCommand,  
-                    ref sa,  
-                    ref sa,  
-                    false,  
-                    0,  
-                    IntPtr.Zero,  
-                    null,  
-                    ref si,  
-                    ref pi  
-                    );  
-                if (!bResult)  
-                {  
-                    ThrowException("$($script:localizedData.CouldNotCreateProcessError)" + Marshal.GetLastWin32Error().ToString());  
-                }  
-                if (waitForExit) {  
-                    int status = WaitForSingleObject(pi.hProcess, -1);  
-                    if(status == -1)  
-                    {  
-                        ThrowException("$($script:localizedData.WaitFailedError)" + Marshal.GetLastWin32Error().ToString());  
-                    }  
-  
-                    bResult = GetExitCodeProcess(pi.hProcess, out ExitCode);  
-                    if(!bResult)  
-                    {  
-                        ThrowException("$($script:localizedData.RetriveStatusError)" + Marshal.GetLastWin32Error().ToString());  
-                    }  
-                }  
-            }  
-            finally  
-            {  
-                if (pi.hThread != IntPtr.Zero)  
-                {  
-                    CloseHandle(pi.hThread);  
-                }  
-                if (pi.hProcess != IntPtr.Zero)  
-                {  
-                    CloseHandle(pi.hProcess);  
-                }  
-                if (hDupedToken != IntPtr.Zero)  
-                {  
-                    CloseHandle(hDupedToken);  
-                }  
-            }  
-        }  
-    }  
-}  
-  
+    $dscNativeMethodsSource = @"
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Security;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Security.Principal;
+#if !CORECLR
+using System.ComponentModel;
+#endif
+using System.IO;
+
+namespace PSDesiredStateConfiguration
+{
+#if !CORECLR
+    [SuppressUnmanagedCodeSecurity]
+#endif
+    public static class NativeMethods
+    {
+        //The following structs and enums are used by the various Win32 API's that are used in the code below
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct STARTUPINFO
+        {
+            public Int32 cb;
+            public string lpReserved;
+            public string lpDesktop;
+            public string lpTitle;
+            public Int32 dwX;
+            public Int32 dwY;
+            public Int32 dwXSize;
+            public Int32 dwXCountChars;
+            public Int32 dwYCountChars;
+            public Int32 dwFillAttribute;
+            public Int32 dwFlags;
+            public Int16 wShowWindow;
+            public Int16 cbReserved2;
+            public IntPtr lpReserved2;
+            public IntPtr hStdInput;
+            public IntPtr hStdOutput;
+            public IntPtr hStdError;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct PROCESS_INFORMATION
+        {
+            public IntPtr hProcess;
+            public IntPtr hThread;
+            public Int32 dwProcessID;
+            public Int32 dwThreadID;
+        }
+
+        [Flags]
+        public enum LogonType
+        {
+            LOGON32_LOGON_INTERACTIVE = 2,
+            LOGON32_LOGON_NETWORK = 3,
+            LOGON32_LOGON_BATCH = 4,
+            LOGON32_LOGON_SERVICE = 5,
+            LOGON32_LOGON_UNLOCK = 7,
+            LOGON32_LOGON_NETWORK_CLEARTEXT = 8,
+            LOGON32_LOGON_NEW_CREDENTIALS = 9
+        }
+
+        [Flags]
+        public enum LogonProvider
+        {
+            LOGON32_PROVIDER_DEFAULT = 0,
+            LOGON32_PROVIDER_WINNT35,
+            LOGON32_PROVIDER_WINNT40,
+            LOGON32_PROVIDER_WINNT50
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        public struct SECURITY_ATTRIBUTES
+        {
+            public Int32 Length;
+            public IntPtr lpSecurityDescriptor;
+            public bool bInheritHandle;
+        }
+
+        public enum SECURITY_IMPERSONATION_LEVEL
+        {
+            SecurityAnonymous,
+            SecurityIdentification,
+            SecurityImpersonation,
+            SecurityDelegation
+        }
+
+        public enum TOKEN_TYPE
+        {
+            TokenPrimary = 1,
+            TokenImpersonation
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        internal struct TokPriv1Luid
+        {
+            public int Count;
+            public long Luid;
+            public int Attr;
+        }
+
+        public const int GENERIC_ALL_ACCESS = 0x10000000;
+        public const int CREATE_NO_WINDOW = 0x08000000;
+        internal const int SE_PRIVILEGE_ENABLED = 0x00000002;
+        internal const int TOKEN_QUERY = 0x00000008;
+        internal const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
+        internal const string SE_INCRASE_QUOTA = "SeIncreaseQuotaPrivilege";
+
+#if CORECLR
+        [DllImport("api-ms-win-core-handle-l1-1-0.dll",
+#else
+        [DllImport("kernel32.dll",
+#endif
+              EntryPoint = "CloseHandle", SetLastError = true,
+              CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern bool CloseHandle(IntPtr handle);
+
+#if CORECLR
+        [DllImport("api-ms-win-core-processthreads-l1-1-2.dll",
+#else
+        [DllImport("advapi32.dll",
+#endif
+              EntryPoint = "CreateProcessAsUser", SetLastError = true,
+              CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        public static extern bool CreateProcessAsUser(
+            IntPtr hToken,
+            string lpApplicationName,
+            string lpCommandLine,
+            ref SECURITY_ATTRIBUTES lpProcessAttributes,
+            ref SECURITY_ATTRIBUTES lpThreadAttributes,
+            bool bInheritHandle,
+            Int32 dwCreationFlags,
+            IntPtr lpEnvrionment,
+            string lpCurrentDirectory,
+            ref STARTUPINFO lpStartupInfo,
+            ref PROCESS_INFORMATION lpProcessInformation
+            );
+
+#if CORECLR
+        [DllImport("api-ms-win-security-base-l1-1-0.dll", EntryPoint = "DuplicateTokenEx")]
+#else
+        [DllImport("advapi32.dll", EntryPoint = "DuplicateTokenEx")]
+#endif
+        public static extern bool DuplicateTokenEx(
+            IntPtr hExistingToken,
+            Int32 dwDesiredAccess,
+            ref SECURITY_ATTRIBUTES lpThreadAttributes,
+            Int32 ImpersonationLevel,
+            Int32 dwTokenType,
+            ref IntPtr phNewToken
+            );
+
+#if CORECLR
+        [DllImport("api-ms-win-security-logon-l1-1-1.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+#else
+        [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+#endif
+        public static extern Boolean LogonUser(
+            String lpszUserName,
+            String lpszDomain,
+            IntPtr lpszPassword,
+            LogonType dwLogonType,
+            LogonProvider dwLogonProvider,
+            out IntPtr phToken
+            );
+
+#if CORECLR
+        [DllImport("api-ms-win-security-base-l1-1-0.dll", ExactSpelling = true, SetLastError = true)]
+#else
+        [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
+#endif
+        internal static extern bool AdjustTokenPrivileges(
+            IntPtr htok,
+            bool disall,
+            ref TokPriv1Luid newst,
+            int len,
+            IntPtr prev,
+            IntPtr relen
+            );
+
+#if CORECLR
+        [DllImport("api-ms-win-downlevel-kernel32-l1-1-0.dll", ExactSpelling = true)]
+#else
+        [DllImport("kernel32.dll", ExactSpelling = true)]
+#endif
+        internal static extern IntPtr GetCurrentProcess();
+
+#if CORECLR
+        [DllImport("api-ms-win-downlevel-advapi32-l1-1-1.dll", ExactSpelling = true, SetLastError = true)]
+#else
+        [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
+#endif
+        internal static extern bool OpenProcessToken(
+            IntPtr h,
+            int acc,
+            ref IntPtr phtok
+            );
+
+#if CORECLR
+        [DllImport("api-ms-win-downlevel-kernel32-l1-1-0.dll", ExactSpelling = true)]
+#else
+        [DllImport("kernel32.dll", ExactSpelling = true)]
+#endif
+        internal static extern int WaitForSingleObject(
+            IntPtr h,
+            int milliseconds
+            );
+
+#if CORECLR
+        [DllImport("api-ms-win-downlevel-kernel32-l1-1-0.dll", ExactSpelling = true)]
+#else
+        [DllImport("kernel32.dll", ExactSpelling = true)]
+#endif
+        internal static extern bool GetExitCodeProcess(
+            IntPtr h,
+            out int exitcode
+            );
+
+#if CORECLR
+        [DllImport("api-ms-win-downlevel-advapi32-l4-1-0.dll", SetLastError = true)]
+#else
+        [DllImport("advapi32.dll", SetLastError = true)]
+#endif
+        internal static extern bool LookupPrivilegeValue(
+            string host,
+            string name,
+            ref long pluid
+            );
+
+        internal static void ThrowException(
+            string message
+            )
+        {
+#if CORECLR
+            throw new Exception(message);
+#else
+            throw new Win32Exception(message);
+#endif
+        }
+
+        public static void CreateProcessAsUser(string strCommand, string strDomain, string strName, SecureString secureStringPassword, bool waitForExit, ref int ExitCode)
+        {
+            var hToken = IntPtr.Zero;
+            var hDupedToken = IntPtr.Zero;
+            TokPriv1Luid tp;
+            var pi = new PROCESS_INFORMATION();
+            var sa = new SECURITY_ATTRIBUTES();
+            sa.Length = Marshal.SizeOf(sa);
+            Boolean bResult = false;
+            try
+            {
+                IntPtr unmanagedPassword = IntPtr.Zero;
+                try
+                {
+#if CORECLR
+                    unmanagedPassword = SecureStringMarshal.SecureStringToCoTaskMemUnicode(secureStringPassword);
+#else
+                    unmanagedPassword = Marshal.SecureStringToGlobalAllocUnicode(secureStringPassword);
+#endif
+                    bResult = LogonUser(
+                        strName,
+                        strDomain,
+                        unmanagedPassword,
+                        LogonType.LOGON32_LOGON_NETWORK_CLEARTEXT,
+                        LogonProvider.LOGON32_PROVIDER_DEFAULT,
+                        out hToken
+                        );
+                }
+                finally
+                {
+                    Marshal.ZeroFreeGlobalAllocUnicode(unmanagedPassword);
+                }
+                if (!bResult)
+                {
+                    ThrowException("$($script:localizedData.UserCouldNotBeLoggedError)" + Marshal.GetLastWin32Error().ToString());
+                }
+                IntPtr hproc = GetCurrentProcess();
+                IntPtr htok = IntPtr.Zero;
+                bResult = OpenProcessToken(
+                        hproc,
+                        TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
+                        ref htok
+                    );
+                if (!bResult)
+                {
+                    ThrowException("$($script:localizedData.OpenProcessTokenError)" + Marshal.GetLastWin32Error().ToString());
+                }
+                tp.Count = 1;
+                tp.Luid = 0;
+                tp.Attr = SE_PRIVILEGE_ENABLED;
+                bResult = LookupPrivilegeValue(
+                    null,
+                    SE_INCRASE_QUOTA,
+                    ref tp.Luid
+                    );
+                if (!bResult)
+                {
+                    ThrowException("$($script:localizedData.PrivilegeLookingUpError)" + Marshal.GetLastWin32Error().ToString());
+                }
+                bResult = AdjustTokenPrivileges(
+                    htok,
+                    false,
+                    ref tp,
+                    0,
+                    IntPtr.Zero,
+                    IntPtr.Zero
+                    );
+                if (!bResult)
+                {
+                    ThrowException("$($script:localizedData.TokenElevationError)" + Marshal.GetLastWin32Error().ToString());
+                }
+
+                bResult = DuplicateTokenEx(
+                    hToken,
+                    GENERIC_ALL_ACCESS,
+                    ref sa,
+                    (int)SECURITY_IMPERSONATION_LEVEL.SecurityIdentification,
+                    (int)TOKEN_TYPE.TokenPrimary,
+                    ref hDupedToken
+                    );
+                if (!bResult)
+                {
+                    ThrowException("$($script:localizedData.DuplicateTokenError)" + Marshal.GetLastWin32Error().ToString());
+                }
+                var si = new STARTUPINFO();
+                si.cb = Marshal.SizeOf(si);
+                si.lpDesktop = "";
+                bResult = CreateProcessAsUser(
+                    hDupedToken,
+                    null,
+                    strCommand,
+                    ref sa,
+                    ref sa,
+                    false,
+                    0,
+                    IntPtr.Zero,
+                    null,
+                    ref si,
+                    ref pi
+                    );
+                if (!bResult)
+                {
+                    ThrowException("$($script:localizedData.CouldNotCreateProcessError)" + Marshal.GetLastWin32Error().ToString());
+                }
+                if (waitForExit) {
+                    int status = WaitForSingleObject(pi.hProcess, -1);
+                    if(status == -1)
+                    {
+                        ThrowException("$($script:localizedData.WaitFailedError)" + Marshal.GetLastWin32Error().ToString());
+                    }
+
+                    bResult = GetExitCodeProcess(pi.hProcess, out ExitCode);
+                    if(!bResult)
+                    {
+                        ThrowException("$($script:localizedData.RetriveStatusError)" + Marshal.GetLastWin32Error().ToString());
+                    }
+                }
+            }
+            finally
+            {
+                if (pi.hThread != IntPtr.Zero)
+                {
+                    CloseHandle(pi.hThread);
+                }
+                if (pi.hProcess != IntPtr.Zero)
+                {
+                    CloseHandle(pi.hProcess);
+                }
+                if (hDupedToken != IntPtr.Zero)
+                {
+                    CloseHandle(hDupedToken);
+                }
+            }
+        }
+    }
+}
+
 "@
     # if not on Nano:
     Add-Type -TypeDefinition $dscNativeMethodsSource -ReferencedAssemblies 'System.ServiceProcess'
-} 
+}

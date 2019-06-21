@@ -1,4 +1,4 @@
-param 
+param
 (
     [Parameter(Mandatory)]
     [System.String]
@@ -8,8 +8,8 @@ param
 Configuration $ConfigurationName
 {
     param
-    (   
-        [Parameter(Mandatory = $true)]     
+    (
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Name,
 
@@ -20,9 +20,9 @@ Configuration $ConfigurationName
         [System.Boolean]
         $IncludeAllSubFeature = $false
     )
-    
+
     Import-DscResource -ModuleName 'PSDscResources'
-    
+
     Node Localhost
     {
         WindowsFeature WindowsFeatureTest
