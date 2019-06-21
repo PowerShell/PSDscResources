@@ -140,7 +140,7 @@ Describe 'Archive End to End Tests' {
         $destination = Join-Path -Path $TestDrive -ChildPath 'NonExistentDestinationForExpand'
 
         It 'Destination should not exist before configuration' {
-            Test-Path -Path $destination | Should -Be $false
+            Test-Path -Path $destination | Should -BeFalse
         }
 
         $archiveParameters = @{
@@ -151,7 +151,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return false from Test-TargetResource with the same parameters before configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $false
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeFalse
         }
 
         It 'Should compile and apply the MOF without throwing an exception' {
@@ -163,15 +163,15 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Destination should exist after configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
     }
 
@@ -199,25 +199,25 @@ Describe 'Archive End to End Tests' {
         $otherItems[$otherFilePath] = $otherFileContent
 
         It 'Destination should exist before configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         foreach ($otherItemPath in $otherItems.Keys)
         {
             $otherItemName = Split-Path -Path $otherItemPath -Leaf
             $otherItemExpectedContent = $otherItems[$otherItemPath]
-            $otherItemIsDirectory = [String]::IsNullOrEmpty($otherItemExpectedContent)
+            $otherItemIsDirectory = [System.String]::IsNullOrEmpty($otherItemExpectedContent)
 
             if ($otherItemIsDirectory)
             {
                 It "Other item under destination $otherItemName should exist as a directory before configuration" {
-                    Test-Path -Path $otherItemPath -PathType 'Container' | Should -Be $true
+                    Test-Path -Path $otherItemPath -PathType 'Container' | Should -BeTrue
                 }
             }
             else
             {
                 It "Other item under destination $otherItemName should exist as a file before configuration" {
-                    Test-Path -Path $otherItemPath -PathType 'Leaf' | Should -Be $true
+                    Test-Path -Path $otherItemPath -PathType 'Leaf' | Should -BeTrue
                 }
 
                 It "Other file under destination $otherItemName should have the expected content before configuration" {
@@ -234,7 +234,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return false from Test-TargetResource with the same parameters before configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $false
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeFalse
         }
 
         It 'Should compile and apply the MOF without throwing an exception' {
@@ -246,29 +246,29 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Destination should exist after configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         foreach ($otherItemPath in $otherItems.Keys)
         {
             $otherItemName = Split-Path -Path $otherItemPath -Leaf
             $otherItemExpectedContent = $otherItems[$otherItemPath]
-            $otherItemIsDirectory = [String]::IsNullOrEmpty($otherItemExpectedContent)
+            $otherItemIsDirectory = [System.String]::IsNullOrEmpty($otherItemExpectedContent)
 
             if ($otherItemIsDirectory)
             {
                 It "Other item under destination $otherItemName should exist as a directory after configuration" {
-                    Test-Path -Path $otherItemPath -PathType 'Container' | Should -Be $true
+                    Test-Path -Path $otherItemPath -PathType 'Container' | Should -BeTrue
                 }
             }
             else
             {
                 It "Other item under destination $otherItemName should exist as a file after configuration" {
-                    Test-Path -Path $otherItemPath -PathType 'Leaf' | Should -Be $true
+                    Test-Path -Path $otherItemPath -PathType 'Leaf' | Should -BeTrue
                 }
 
                 It "Other file under destination $otherItemName should have the expected after before configuration" {
@@ -278,7 +278,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
     }
 
@@ -291,11 +291,11 @@ Describe 'Archive End to End Tests' {
         $null = Expand-Archive -Path $script:testArchiveFilePath -DestinationPath $destination -Force
 
         It 'Destination should exist before configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive before configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         $archiveParameters = @{
@@ -306,7 +306,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return true from Test-TargetResource with the same parameters before configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
 
         It 'Should compile and apply the MOF without throwing an exception' {
@@ -318,15 +318,15 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Destination should exist after configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
     }
 
@@ -339,15 +339,15 @@ Describe 'Archive End to End Tests' {
         $null = Expand-Archive -Path $script:testArchiveFileWithDifferentFileContentPath -DestinationPath $destination -Force
 
         It 'Destination should exist before configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive before configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         It 'File contents of destination should not match the file contents of the archive' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -Be $false
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -BeFalse
         }
 
         $archiveParameters = @{
@@ -361,7 +361,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return false from Test-TargetResource with the same parameters before configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $false
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeFalse
         }
 
         It 'Should compile and run configuration and throw an error for attempting to overwrite files without Force specified' {
@@ -374,19 +374,19 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Destination should exist after configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         It 'File contents of destination should not match the file contents of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -Be $false
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -BeFalse
         }
 
         It 'Should return false from Test-TargetResource with the same parameters after configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $false
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeFalse
         }
     }
 
@@ -399,15 +399,15 @@ Describe 'Archive End to End Tests' {
         $null = Expand-Archive -Path $script:testArchiveFileWithDifferentFileContentPath -DestinationPath $destination -Force
 
         It 'Destination should exist before configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive before configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         It 'File contents of destination should not match the file contents of the archive before configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -Be $false
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -BeFalse
         }
 
         $archiveParameters = @{
@@ -421,7 +421,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return false from Test-TargetResource with the same parameters before configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $false
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeFalse
         }
 
         It 'Should compile and apply the MOF without throwing an exception' {
@@ -433,19 +433,19 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Destination should exist after configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         It 'File contents of destination should match the file contents of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -BeTrue
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
     }
 
@@ -458,15 +458,15 @@ Describe 'Archive End to End Tests' {
         $null = Expand-Archive -Path $script:testArchiveFilePath -DestinationPath $destination -Force
 
         It 'Destination should exist before configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive before configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         It 'File contents of destination should match the file contents of the archive before configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -BeTrue
         }
 
         $archiveParameters = @{
@@ -480,7 +480,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return true from Test-TargetResource with the same parameters before configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
 
         It 'Should compile and apply the MOF without throwing an exception' {
@@ -492,19 +492,19 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Destination should exist after configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         It 'File contents of destination should match the file contents of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -BeTrue
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
     }
 
@@ -517,11 +517,11 @@ Describe 'Archive End to End Tests' {
         $null = Expand-Archive -Path $script:testArchiveFilePath -DestinationPath $destination -Force
 
         It 'Destination should exist before configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive before configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         $archiveParameters = @{
@@ -532,7 +532,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return false from Test-TargetResource with the same parameters before configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $false
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeFalse
         }
 
         It 'Should compile and apply the MOF without throwing an exception' {
@@ -544,15 +544,15 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Destination should exist after configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should not match the file structure of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $false
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeFalse
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
     }
 
@@ -582,25 +582,25 @@ Describe 'Archive End to End Tests' {
         $otherItems[$otherFilePath] = $otherFileContent
 
         It 'Destination should exist before configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         foreach ($otherItemPath in $otherItems.Keys)
         {
             $otherItemName = Split-Path -Path $otherItemPath -Leaf
             $otherItemExpectedContent = $otherItems[$otherItemPath]
-            $otherItemIsDirectory = [String]::IsNullOrEmpty($otherItemExpectedContent)
+            $otherItemIsDirectory = [System.String]::IsNullOrEmpty($otherItemExpectedContent)
 
             if ($otherItemIsDirectory)
             {
                 It "Other item under destination $otherItemName should exist as a directory before configuration" {
-                    Test-Path -Path $otherItemPath -PathType 'Container' | Should -Be $true
+                    Test-Path -Path $otherItemPath -PathType 'Container' | Should -BeTrue
                 }
             }
             else
             {
                 It "Other item under destination $otherItemName should exist as a file before configuration" {
-                    Test-Path -Path $otherItemPath -PathType 'Leaf' | Should -Be $true
+                    Test-Path -Path $otherItemPath -PathType 'Leaf' | Should -BeTrue
                 }
 
                 It "Other file under destination $otherItemName should have the expected content before configuration" {
@@ -610,7 +610,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'File structure of destination should match the file structure of the archive before configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         $archiveParameters = @{
@@ -621,7 +621,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return false from Test-TargetResource with the same parameters before configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $false
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeFalse
         }
 
         It 'Should compile and apply the MOF without throwing an exception' {
@@ -633,25 +633,25 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Destination should exist after configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         foreach ($otherItemPath in $otherItems.Keys)
         {
             $otherItemName = Split-Path -Path $otherItemPath -Leaf
             $otherItemExpectedContent = $otherItems[$otherItemPath]
-            $otherItemIsDirectory = [String]::IsNullOrEmpty($otherItemExpectedContent)
+            $otherItemIsDirectory = [System.String]::IsNullOrEmpty($otherItemExpectedContent)
 
             if ($otherItemIsDirectory)
             {
                 It "Other item under destination $otherItemName should exist as a directory before configuration" {
-                    Test-Path -Path $otherItemPath -PathType 'Container' | Should -Be $true
+                    Test-Path -Path $otherItemPath -PathType 'Container' | Should -BeTrue
                 }
             }
             else
             {
                 It "Other item under destination $otherItemName should exist as a file before configuration" {
-                    Test-Path -Path $otherItemPath -PathType 'Leaf' | Should -Be $true
+                    Test-Path -Path $otherItemPath -PathType 'Leaf' | Should -BeTrue
                 }
 
                 It "Other file under destination $otherItemName should have the expected content before configuration" {
@@ -661,11 +661,11 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'File structure of destination should not match the file structure of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $false
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeFalse
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
     }
 
@@ -676,11 +676,11 @@ Describe 'Archive End to End Tests' {
         $null = New-Item -Path $destination -ItemType 'Directory'
 
         It 'Destination should exist before configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should not match the file structure of the archive before configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $false
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeFalse
         }
 
         $archiveParameters = @{
@@ -691,7 +691,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return true from Test-TargetResource with the same parameters before configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
 
         It 'Should compile and apply the MOF without throwing an exception' {
@@ -703,15 +703,15 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Destination should exist after configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should not match the file structure of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $false
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeFalse
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
     }
 
@@ -721,7 +721,7 @@ Describe 'Archive End to End Tests' {
         $destination = Join-Path -Path $TestDrive -ChildPath 'NonexistentDestinationForRemove'
 
         It 'Destination should not exist before configuration' {
-            Test-Path -Path $destination | Should -Be $false
+            Test-Path -Path $destination | Should -BeFalse
         }
 
         $archiveParameters = @{
@@ -732,7 +732,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return true from Test-TargetResource with the same parameters before configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
 
         It 'Should compile and apply the MOF without throwing an exception' {
@@ -744,11 +744,11 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Destination should not exist after configuration' {
-            Test-Path -Path $destination | Should -Be $false
+            Test-Path -Path $destination | Should -BeFalse
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
     }
 
@@ -761,15 +761,15 @@ Describe 'Archive End to End Tests' {
         $null = Expand-Archive -Path $script:testArchiveFileWithDifferentFileContentPath -DestinationPath $destination -Force
 
         It 'Destination should exist before configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive before configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         It 'File contents of destination should not match the file contents of the archive before configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -Be $false
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -BeFalse
         }
 
         $archiveParameters = @{
@@ -783,7 +783,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return true from Test-TargetResource with the same parameters before configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
 
         It 'Should compile and apply the MOF without throwing an exception' {
@@ -795,19 +795,19 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Destination should exist after configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should match the file structure of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeTrue
         }
 
         It 'File contents of destination should not match the file contents of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -Be $false
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -BeFalse
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
     }
 
@@ -820,11 +820,11 @@ Describe 'Archive End to End Tests' {
         $null = Expand-Archive -Path $script:testArchiveFilePath -DestinationPath $destination -Force
 
         It 'Destination should exist before configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure and contents of destination should match the file contents of the archive before configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -Be $true
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination -CheckContents | Should -BeTrue
         }
 
         $archiveParameters = @{
@@ -838,7 +838,7 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Should return false from Test-TargetResource with the same parameters before configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $false
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeFalse
         }
 
         It 'Should compile and apply the MOF without throwing an exception' {
@@ -850,15 +850,15 @@ Describe 'Archive End to End Tests' {
         }
 
         It 'Destination should exist after configuration' {
-            Test-Path -Path $destination | Should -Be $true
+            Test-Path -Path $destination | Should -BeTrue
         }
 
         It 'File structure of destination should not match the file structure of the archive after configuration' {
-            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -Be $false
+            Test-FileStructuresMatch -SourcePath $script:testArchiveFilePathWithoutExtension -DestinationPath $destination | Should -BeFalse
         }
 
         It 'Should return false from Test-TargetResource with the same parameters after configuration' {
-            MSFT_Archive\Test-TargetResource @archiveParameters | Should -Be $true
+            MSFT_Archive\Test-TargetResource @archiveParameters | Should -BeTrue
         }
     }
 }

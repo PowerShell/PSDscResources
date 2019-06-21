@@ -41,42 +41,34 @@ Configuration WindowsFeatureSet
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true, HelpMessage="The name of the roles or features to install or uninstall.")]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String[]]
+        [System.String[]]
         $Name,
 
-        [Parameter(HelpMessage="Specifies whether the roles or features should be installed or uninstalled.
-
-        To install the features, set this property to Present.
-        To uninstall the features, set this property to Absent.")]
+        [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure,
 
-        [Parameter(HelpMessage="Specify the source")]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Source,
 
-        [Parameter(HelpMessage="Specifies whether or not all subfeatures should be installed or uninstalled alongside the specified roles or features.
-
-        If this property is true and Ensure is set to Present, all subfeatures will be installed.
-        If this property is false and Ensure is set to Present, subfeatures will not be installed or uninstalled.
-        If Ensure is set to Absent, all subfeatures will be uninstalled.")]
-        [Boolean]
+        [Parameter()]
+        [System.Boolean]
         $IncludeAllSubFeature,
 
-        [Parameter(HelpMessage="The credential of the user account under which to install or uninstall the roles or features.")]
+        [Parameter()]
         [ValidateNotNull()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential,
 
-        [Parameter(HelpMessage="The custom file path to which to log this operation. 
-        If not passed in, the default log path will be used (%windir%\logs\ServerManager.log).")]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $LogPath
     )
 
@@ -86,7 +78,7 @@ Configuration WindowsFeatureSet
         KeyParameterName = 'Name'
         Parameters = $PSBoundParameters
     }
-    
+
     $configurationScriptBlock = New-ResourceSetConfigurationScriptBlock @newResourceSetConfigurationParams
 
     # This script block must be run directly in this configuration in order to resolve variables
