@@ -1,4 +1,4 @@
-﻿Set-StrictMode -Version 'latest'
+Set-StrictMode -Version 'latest'
 $errorActionPreference = 'Stop'
 
 <#

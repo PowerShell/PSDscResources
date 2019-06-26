@@ -1,4 +1,4 @@
-﻿
+
 $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
@@ -31,24 +31,24 @@ if (-not (Test-IsNanoServer))
 #>
 function Test-GroupExists
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $Members,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToInclude,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToExclude
     )
 
@@ -80,25 +80,25 @@ function Test-GroupExists
 #>
 function Test-GroupExistsOnFullSKU
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $Members,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToInclude,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToExclude
     )
 
@@ -217,25 +217,25 @@ function Test-GroupExistsOnFullSKU
 #>
 function Test-GroupExistsOnNanoServer
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $Members,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToInclude,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $MembersToExclude
     )
 
@@ -375,15 +375,15 @@ function New-Group
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $Members
     )
 
@@ -422,19 +422,19 @@ function New-GroupOnFullSKU
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $Members
     )
 
-    $adsiComputerEntry = [ADSI] "WinNT://$env:computerName"
+    $adsiComputerEntry = [System.DirectoryServices.DirectoryEntry] "WinNT://$env:computerName"
     $adsiGroupEntry = $adsiComputerEntry.Create('Group', $GroupName)
 
     if ($PSBoundParameters.ContainsKey('Description'))
@@ -446,7 +446,7 @@ function New-GroupOnFullSKU
 
     if ($PSBoundParameters.ContainsKey("Members"))
     {
-        $adsiGroupEntry = [ADSI]"WinNT://$env:computerName/$GroupName,group"
+        $adsiGroupEntry = [System.DirectoryServices.DirectoryEntry] "WinNT://$env:computerName/$GroupName,group"
 
         foreach ($memberUserName in $Members)
         {
@@ -475,15 +475,15 @@ function New-GroupOnNanoServer
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName,
 
         [Parameter()]
-        [String]
+        [System.String]
         $Description,
 
         [Parameter()]
-        [String[]]
+        [System.String[]]
         $Members
     )
 
@@ -514,7 +514,7 @@ function Remove-Group
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName
     )
 
@@ -547,11 +547,11 @@ function Remove-GroupOnFullSKU
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName
     )
 
-    $adsiComputerEntry = [ADSI]("WinNT://$env:computerName")
+    $adsiComputerEntry = [System.DirectoryServices.DirectoryEntry] ("WinNT://$env:computerName")
     $null = $adsiComputerEntry.Delete('Group', $GroupName)
 }
 
@@ -569,7 +569,7 @@ function Remove-GroupOnNanoServer
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $GroupName
     )
 
@@ -585,12 +585,12 @@ function Remove-GroupOnNanoServer
 #>
 function Test-UserExists
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
-        [String]
+        [System.String]
         $Username
     )
 
@@ -613,12 +613,12 @@ function Test-UserExists
 #>
 function Test-UserExistsOnFullSKU
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
-        [String]
+        [System.String]
         $Username
     )
 
@@ -642,12 +642,12 @@ function Test-UserExistsOnFullSKU
 #>
 function Test-UserExistsOnNanoServer
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
-        [String]
+        [System.String]
         $Username
     )
 
@@ -726,7 +726,7 @@ function New-UserOnFullSKU
     $userName = $Credential.UserName
     $password = $Credential.GetNetworkCredential().Password
 
-    $adsiComputerEntry = [ADSI]("WinNT://$env:computerName")
+    $adsiComputerEntry = [System.DirectoryServices.DirectoryEntry] ("WinNT://$env:computerName")
     $adsiUserEntry = $adsiComputerEntry.Create('User', $userName)
     $null = $adsiUserEntry.SetPassword($password)
     $null = $adsiUserEntry.SetInfo()
@@ -769,7 +769,7 @@ function Remove-User
     param
     (
         [Parameter(Mandatory = $true)]
-        [String]
+        [System.String]
         $UserName
     )
 
@@ -801,11 +801,11 @@ function Remove-UserOnFullSKU
     param
     (
         [Parameter(Mandatory = $true)]
-        [String]
+        [System.String]
         $UserName
     )
 
-    $adsiComputerEntry = [ADSI]("WinNT://$env:computerName")
+    $adsiComputerEntry = [System.DirectoryServices.DirectoryEntry] ("WinNT://$env:computerName")
     $null = $adsiComputerEntry.Delete('User', $UserName)
 }
 
@@ -822,7 +822,7 @@ function Remove-UserOnNanoServer
     param
     (
         [Parameter(Mandatory = $true)]
-        [String]
+        [System.String]
         $UserName
     )
 

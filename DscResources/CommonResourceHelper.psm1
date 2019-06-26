@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
         Tests if the current machine is a Nano server.
 #>
@@ -8,21 +8,24 @@ function Test-IsNanoServer
     [CmdletBinding()]
     param ()
 
-    $isNanoServer = $false
+    $serverLevelsRegKey = 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels'
 
-    if (Test-CommandExists -Name 'Get-ComputerInfo')
+    if (Test-Path -Path $serverLevelsRegKey)
     {
-        $computerInfo = Get-ComputerInfo -ErrorAction 'SilentlyContinue'
+        $serverLevels = Get-ItemProperty -Path $serverLevelsRegKey
 
-        if ($null -ne $computerInfo)
+        if ($serverLevels.NanoServer -eq 1)
         {
-            $computerIsServer = 'Server' -ieq $computerInfo.OsProductType
-
-            if ($computerIsServer)
-            {
-                $isNanoServer = 'NanoServer' -ieq $computerInfo.OsServerLevel
-            }
+            $isNanoServer = $true
         }
+        else
+        {
+            $isNanoServer = $false
+        }
+    }
+    else
+    {
+        $isNanoServer = $false
     }
 
     return $isNanoServer
@@ -43,7 +46,8 @@ function Test-CommandExists
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [System.String] $Name
+        [System.String]
+        $Name
     )
 
     $command = Get-Command -Name $Name -ErrorAction 'SilentlyContinue'
@@ -52,13 +56,13 @@ function Test-CommandExists
 
 <#
     .SYNOPSIS
-        Creates and throws an invalid argument exception
+        Creates and throws an invalid argument exception.
 
     .PARAMETER Message
-        The message explaining why this error is being thrown
+        The message explaining why this error is being thrown.
 
     .PARAMETER ArgumentName
-        The name of the invalid argument that is causing this error to be thrown
+        The name of the invalid argument that is causing this error to be thrown.
 #>
 function New-InvalidArgumentException
 {
@@ -77,9 +81,9 @@ function New-InvalidArgumentException
     )
 
     $argumentException = New-Object -TypeName 'ArgumentException' `
-                                    -ArgumentList @($Message, $ArgumentName)
+        -ArgumentList @($Message, $ArgumentName)
     $newObjectParams = @{
-        TypeName = 'System.Management.Automation.ErrorRecord'
+        TypeName     = 'System.Management.Automation.ErrorRecord'
         ArgumentList = @($argumentException, $ArgumentName, 'InvalidArgument', $null)
     }
     $errorRecord = New-Object @newObjectParams
@@ -89,13 +93,14 @@ function New-InvalidArgumentException
 
 <#
     .SYNOPSIS
-        Creates and throws an invalid operation exception
+        Creates and throws an invalid operation exception.
 
     .PARAMETER Message
-        The message explaining why this error is being thrown
+        The message explaining why this error is being thrown.
 
     .PARAMETER ErrorRecord
-        The error record containing the exception that is causing this terminating error
+        The error record containing the exception that is causing this terminating
+        error.
 #>
 function New-InvalidOperationException
 {
@@ -120,18 +125,17 @@ function New-InvalidOperationException
     elseif ($null -eq $ErrorRecord)
     {
         $invalidOperationException = New-Object -TypeName 'InvalidOperationException' `
-                                                -ArgumentList @($Message)
+            -ArgumentList @( $Message )
     }
     else
     {
         $invalidOperationException = New-Object -TypeName 'InvalidOperationException' `
-                                                -ArgumentList @($Message, $ErrorRecord.Exception)
+            -ArgumentList @( $Message, $ErrorRecord.Exception )
     }
 
     $newObjectParams = @{
-        TypeName = 'System.Management.Automation.ErrorRecord'
-        ArgumentList = @( $invalidOperationException.ToString(), 'MachineStateIncorrect',
-                          'InvalidOperation', $null )
+        TypeName     = 'System.Management.Automation.ErrorRecord'
+        ArgumentList = @( $invalidOperationException.ToString(), 'MachineStateIncorrect', 'InvalidOperation', $null )
     }
 
     $errorRecordToThrow = New-Object @newObjectParams
@@ -144,7 +148,8 @@ function New-InvalidOperationException
         Falls back to en-US strings if the machine's culture is not supported.
 
     .PARAMETER ResourceName
-        The name of the resource as it appears before '.strings.psd1' of the localized string file.
+        The name of the resource as it appears before '.strings.psd1' of the localized
+        string file.
         For example:
             For WindowsOptionalFeature: MSFT_WindowsOptionalFeature
             For Service: MSFT_ServiceResource

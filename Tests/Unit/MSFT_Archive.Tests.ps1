@@ -28,7 +28,7 @@ Describe 'Archive Unit Tests' {
 
         $script:testCredential = New-Object -TypeName 'System.Management.Automation.PSCredential' -ArgumentList @( $testUsername, $secureTestPassword )
 
-        $script:testGuid = [Guid]::NewGuid()
+        $script:testGuid = [System.Guid]::NewGuid()
 
         Describe 'Get-TargetResource' {
             $testPSDrive = @{
@@ -55,7 +55,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw an error for Checksum specified while Validate is false' {
                     $errorMessage = $script:localizedData.ChecksumSpecifiedAndValidateFalse -f $getTargetResourceParameters.Checksum, $getTargetResourceParameters.Path, $getTargetResourceParameters.Destination
-                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Throw $errorMessage
+                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Throw -ExpectedMessage $errorMessage
                 }
             }
 
@@ -66,7 +66,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should throw an error for invalid archive path' {
-                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Throw $testInvalidArchivePathErrorMessage
+                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Throw -ExpectedMessage $testInvalidArchivePathErrorMessage
                 }
             }
 
@@ -79,7 +79,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should throw an error for invalid destination' {
-                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Throw $testInvalidDestinationErrorMessage
+                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Throw -ExpectedMessage $testInvalidDestinationErrorMessage
                 }
             }
 
@@ -137,7 +137,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -211,7 +211,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -292,7 +292,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -374,7 +374,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -455,7 +455,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -537,7 +537,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -631,7 +631,7 @@ Describe 'Archive Unit Tests' {
                 $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
 
                 It 'Should return a Hashtable' {
-                    $getTargetResourceResult -is [Hashtable] | Should -Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return a Hashtable with 3 properties' {
@@ -679,7 +679,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw an error for Checksum specified while Validate is false' {
                     $errorMessage = $script:localizedData.ChecksumSpecifiedAndValidateFalse -f $setTargetResourceParameters.Checksum, $setTargetResourceParameters.Path, $setTargetResourceParameters.Destination
-                    { Set-TargetResource @setTargetResourceParameters } | Should -Throw $errorMessage
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Throw -ExpectedMessage $errorMessage
                 }
             }
 
@@ -690,7 +690,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should throw an error for invalid archive path' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should -Throw $testInvalidArchivePathErrorMessage
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Throw -ExpectedMessage $testInvalidArchivePathErrorMessage
                 }
             }
 
@@ -703,7 +703,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should throw an error for invalid destination' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should -Throw $testInvalidDestinationErrorMessage
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Throw -ExpectedMessage $testInvalidDestinationErrorMessage
                 }
             }
 
@@ -1398,7 +1398,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $false
+                    Test-TargetResource @testTargetResourceParameters | Should -BeFalse
                 }
             }
 
@@ -1425,7 +1425,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
 
@@ -1454,7 +1454,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
 
@@ -1481,7 +1481,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $false
+                    Test-TargetResource @testTargetResourceParameters | Should -BeFalse
                 }
             }
 
@@ -1512,7 +1512,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
 
@@ -1541,7 +1541,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-TargetResource @testTargetResourceParameters | Should -Be $true
+                    Test-TargetResource @testTargetResourceParameters | Should -BeTrue
                 }
             }
         }
@@ -1596,7 +1596,7 @@ Describe 'Archive Unit Tests' {
                 It 'Should throw an error for failed PSDrive creation' {
                     $expectedPath = $mountPSDriveWithCredentialParameters.Path.Substring(0, $mountPSDriveWithCredentialParameters.Path.IndexOf('\'))
                     $expectedErrorMessage = $script:localizedData.ErrorCreatingPSDrive -f $expectedPath, $mountPSDriveWithCredentialParameters.Credential.UserName
-                    { $null = Mount-PSDriveWithCredential @mountPSDriveWithCredentialParameters } | Should -Throw $expectedErrorMessage
+                    { $null = Mount-PSDriveWithCredential @mountPSDriveWithCredentialParameters } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
 
@@ -1701,7 +1701,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw an error for an invalid path' {
                     $expectedErrorMessage = $script:localizedData.PathDoesNotContainValidPSDriveRoot -f $mountPSDriveWithCredentialParameters.Path
-                    { $null = Mount-PSDriveWithCredential @mountPSDriveWithCredentialParameters } | Should -Throw $expectedErrorMessage
+                    { $null = Mount-PSDriveWithCredential @mountPSDriveWithCredentialParameters } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
         }
@@ -1739,7 +1739,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw an error for non-existent path' {
                     $expectedErrorMessage = $script:localizedData.PathDoesNotExistAsLeaf -f $assertPathExistsAsLeafParameters.Path
-                    { Assert-PathExistsAsLeaf @assertPathExistsAsLeafParameters } | Should -Throw $expectedErrorMessage
+                    { Assert-PathExistsAsLeaf @assertPathExistsAsLeafParameters } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
         }
@@ -1799,7 +1799,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw error for file at destination' {
                     $expectedErrorMessage = $script:localizedData.DestinationExistsAsFile -f $assertDestinationDoesNotExistAsFileParameters.Destination
-                    { Assert-DestinationDoesNotExistAsFile @assertDestinationDoesNotExistAsFileParameters } | Should -Throw $expectedErrorMessage
+                    { Assert-DestinationDoesNotExistAsFile @assertDestinationDoesNotExistAsFileParameters } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
         }
@@ -1817,7 +1817,7 @@ Describe 'Archive Unit Tests' {
                 $testChecksumIsShaResult = Test-ChecksumIsSha @testChecksumIsShaParameters
 
                 It 'Should return true' {
-                    $testChecksumIsShaResult | Should -Be $true
+                    $testChecksumIsShaResult | Should -BeTrue
                 }
             }
 
@@ -1833,7 +1833,7 @@ Describe 'Archive Unit Tests' {
                 $testChecksumIsShaResult = Test-ChecksumIsSha @testChecksumIsShaParameters
 
                 It 'Should return false' {
-                    $testChecksumIsShaResult | Should -Be $false
+                    $testChecksumIsShaResult | Should -BeFalse
                 }
             }
 
@@ -1849,7 +1849,7 @@ Describe 'Archive Unit Tests' {
                 $testChecksumIsShaResult = Test-ChecksumIsSha @testChecksumIsShaParameters
 
                 It 'Should return false' {
-                    $testChecksumIsShaResult | Should -Be $false
+                    $testChecksumIsShaResult | Should -BeFalse
                 }
             }
         }
@@ -1893,7 +1893,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw error for failure while opening archive entry' {
                     $expectedErrorMessage = $script:localizedData.ErrorComparingHashes -f $testFileHashMatchesArchiveEntryHashParameters.FilePath, $testArchiveEntryFullName, $testFileHashMatchesArchiveEntryHashParameters.HashAlgorithmName
-                    { $null = Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters } | Should -Throw $expectedErrorMessage
+                    { $null = Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
 
@@ -1908,7 +1908,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw error for failure while opening a stream to the file' {
                     $expectedErrorMessage = $script:localizedData.ErrorComparingHashes -f $testFileHashMatchesArchiveEntryHashParameters.FilePath, $testArchiveEntryFullName, $testFileHashMatchesArchiveEntryHashParameters.HashAlgorithmName
-                    { $null = Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters } | Should -Throw $expectedErrorMessage
+                    { $null = Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
 
@@ -1923,7 +1923,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw error for failure to retrieve the file hash or archive entry hash' {
                     $expectedErrorMessage = $script:localizedData.ErrorComparingHashes -f $testFileHashMatchesArchiveEntryHashParameters.FilePath, $testArchiveEntryFullName, $testFileHashMatchesArchiveEntryHashParameters.HashAlgorithmName
-                    { $null = Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters } | Should -Throw $expectedErrorMessage
+                    { $null = Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
 
@@ -1999,7 +1999,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters | Should -Be $true
+                    Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters | Should -BeTrue
                 }
             }
 
@@ -2088,7 +2088,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should return false' {
                     $script:timesGetFileHashCalled = 0
-                    Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters | Should -Be $false
+                    Test-FileHashMatchesArchiveEntryHash @testFileHashMatchesArchiveEntryHashParameters | Should -BeFalse
                 }
             }
         }
@@ -2287,7 +2287,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -Be $false
+                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -BeFalse
                 }
             }
 
@@ -2347,7 +2347,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -Be $true
+                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -BeTrue
                 }
             }
 
@@ -2403,7 +2403,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -Be $false
+                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -BeFalse
                 }
             }
 
@@ -2459,7 +2459,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -Be $true
+                    Test-FileMatchesArchiveEntryByChecksum @testFileMatchesArchiveEntryByChecksumParameters | Should -BeTrue
                 }
             }
         }
@@ -2471,11 +2471,11 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should not throw' {
-                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should Not Throw
+                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should -Not -Throw
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should Be $false
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -BeFalse
                 }
             }
 
@@ -2485,11 +2485,11 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should not throw' {
-                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should Not Throw
+                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should -Not -Throw
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should Be $false
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -BeFalse
                 }
             }
 
@@ -2499,11 +2499,11 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should not throw' {
-                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should Not Throw
+                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should -Not -Throw
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should Be $false
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -BeFalse
                 }
             }
 
@@ -2513,11 +2513,11 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should not throw' {
-                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should Not Throw
+                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should -Not -Throw
                 }
 
                 It 'Should return true' {
-                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should Be $true
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -BeTrue
                 }
             }
 
@@ -2527,11 +2527,11 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should not throw' {
-                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should Not Throw
+                    { $null = Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters } | Should -Not -Throw
                 }
 
                 It 'Should return true' {
-                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should Be $true
+                    Test-ArchiveEntryIsDirectory @testArchiveEntryNameIsDirectoryPathParameters | Should -BeTrue
                 }
             }
         }
@@ -2629,7 +2629,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -2715,7 +2715,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -2801,7 +2801,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -2892,7 +2892,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $true
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeTrue
                 }
             }
 
@@ -2974,7 +2974,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -3060,7 +3060,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -3146,7 +3146,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -3232,7 +3232,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $true
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeTrue
                 }
             }
 
@@ -3325,7 +3325,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return false' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $false
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeFalse
                 }
             }
 
@@ -3420,7 +3420,7 @@ Describe 'Archive Unit Tests' {
                 }
 
                 It 'Should return true' {
-                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -Be $true
+                    Test-ArchiveExistsAtDestination @testArchiveExistsAtDestinationParameters | Should -BeTrue
                 }
             }
         }
@@ -3568,7 +3568,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw an error for failed copy from the file stream to the archive entry stream' {
                     $expectedErrorMessage = $script:localizedData.ErrorCopyingFromArchiveToDestination -f $copyArchiveEntryToDestinationParameters.DestinationPath
-                    { Copy-ArchiveEntryToDestination @copyArchiveEntryToDestinationParameters } | Should -Throw $expectedErrorMessage
+                    { Copy-ArchiveEntryToDestination @copyArchiveEntryToDestinationParameters } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
 
@@ -3857,7 +3857,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw an error for attempting to overwrite an existing item without specifying the Force parameter' {
                     $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullName
-                    { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should -Throw $errorMessage
+                    { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should -Throw -ExpectedMessage $errorMessage
                 }
             }
 
@@ -3988,7 +3988,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw an error for attempting to overwrite an existing item without specifying the Force parameter' {
                     $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullName
-                    { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should -Throw $errorMessage
+                    { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should -Throw -ExpectedMessage $errorMessage
                 }
             }
 
@@ -4483,7 +4483,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw an error for attempting to overwrite an existing item without specifying the Force parameter' {
                     $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullName
-                    { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should -Throw $errorMessage
+                    { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should -Throw -ExpectedMessage $errorMessage
                 }
             }
 
@@ -4614,7 +4614,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw an error for attempting to overwrite an existing item without specifying the Force parameter' {
                     $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullName
-                    { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should -Throw $errorMessage
+                    { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should -Throw -ExpectedMessage $errorMessage
                 }
             }
 
@@ -4850,7 +4850,7 @@ Describe 'Archive Unit Tests' {
 
                 It 'Should throw an error for attempting to overwrite an existing item without specifying the Force parameter' {
                     $errorMessage = $script:localizedData.ForceNotSpecifiedToOverwriteItem -f $testItemPathAtDestination, $testArchiveEntryFullName
-                    { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should -Throw $errorMessage
+                    { Expand-ArchiveToDestination @expandArchiveToDestinationParameters } | Should -Throw -ExpectedMessage $errorMessage
                 }
             }
 
@@ -4954,7 +4954,7 @@ Describe 'Archive Unit Tests' {
                         return $fileParameterCorrect -and $archiveEntryParameterCorrect -and $checksumParameterCorrect
                     }
 
-                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -Exactly 1 -Scope 'Context'
+                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -ParameterFilter $testFileMatchesArchiveEntryByChecksumParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should remove the existing item at the desired path of the archive entry at the destination' {
@@ -6459,7 +6459,7 @@ Describe 'Archive Unit Tests' {
                         return $fileParameterCorrect -and $archiveEntryParameterCorrect -and $checksumParameterCorrect
                     }
 
-                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -Exactly 1 -Scope 'Context'
+                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -ParameterFilter $testFileMatchesArchiveEntryByChecksumParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should not attempt to remove an existing file at the desired path of the archive entry at the destination' {
@@ -6566,7 +6566,7 @@ Describe 'Archive Unit Tests' {
                         return $fileParameterCorrect -and $archiveEntryParameterCorrect -and $checksumParameterCorrect
                     }
 
-                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -Exactly 1 -Scope 'Context'
+                    Assert-MockCalled -CommandName 'Test-FileMatchesArchiveEntryByChecksum' -ParameterFilter $testFileMatchesArchiveEntryByChecksumParameterFilter -Exactly 1 -Scope 'Context'
                 }
 
                 It 'Should remove the file at the desired path of the archive entry at the destination' {

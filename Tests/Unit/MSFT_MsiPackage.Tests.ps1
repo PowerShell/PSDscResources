@@ -1,4 +1,4 @@
-﻿$errorActionPreference = 'Stop'
+$errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
 Describe 'MsiPackage Unit Tests' {
@@ -37,12 +37,12 @@ Describe 'MsiPackage Unit Tests' {
         $script:testWrongProductId = 'wrongId'
         $script:testPath = 'file://test.msi'
         $script:destinationPath = Join-Path -Path $script:packageCacheLocation -ChildPath 'C:\'
-        $script:testUriHttp = [Uri] 'http://test.msi'
-        $script:testUriHttps = [Uri] 'https://test.msi'
-        $script:testUriFile = [Uri] 'file://test.msi'
-        $script:testUriNonUnc = [Uri] 'file:///C:/test.msi'
-        $script:testUriQuery = [Uri] 'http://C:/directory/test/test.msi?sv=2017-01-31&spr=https'
-        $script:testUriOnlyFile = [Uri] 'test.msi'
+        $script:testUriHttp = [System.Uri] 'http://test.msi'
+        $script:testUriHttps = [System.Uri] 'https://test.msi'
+        $script:testUriFile = [System.Uri] 'file://test.msi'
+        $script:testUriNonUnc = [System.Uri] 'file:///C:/test.msi'
+        $script:testUriQuery = [System.Uri] 'http://C:/directory/test/test.msi?sv=2017-01-31&spr=https'
+        $script:testUriOnlyFile = [System.Uri] 'test.msi'
 
         $script:mockStream = New-MockObject -Type 'System.IO.FileStream'
         $script:mockWebRequest = New-MockObject -Type 'System.Net.HttpWebRequest'
@@ -123,7 +123,7 @@ Describe 'MsiPackage Unit Tests' {
                                              -ExpectedReturnValue $expectedReturnValue
             }
         }
-           
+
         Describe 'Set-TargetResource' {
             $setTargetResourceParameters = @{
                 ProductId = 'TestProductId'
@@ -138,7 +138,7 @@ Describe 'MsiPackage Unit Tests' {
                 ServerCertificateValidationCallback = 'TestValidationCallback'
                 RunAsCredential = $script:testCredential
             }
-            
+
             Mock -CommandName 'Convert-PathToUri' -MockWith { return $script:testUriNonUnc }
             Mock -CommandName 'Convert-ProductIdToIdentifyingNumber' -MockWith { return $script:testIdentifyingNumber }
             Mock -CommandName 'Assert-PathExtensionValid' -MockWith {}
@@ -146,19 +146,22 @@ Describe 'MsiPackage Unit Tests' {
             Mock -CommandName 'New-PSDrive' -MockWith { return $script:mockPSDrive }
             Mock -CommandName 'Test-Path' -MockWith { return $true }
             Mock -CommandName 'New-Item' -MockWith {}
-            Mock -CommandName 'New-Object' -MockWith { return $script:mockStream } #-ParameterFilter { $TypeName -eq 'System.IO.FileStream' }
+            Mock -CommandName 'New-Object' -MockWith { return $script:mockStream }
             Mock -CommandName 'Get-WebRequestResponse' -MockWith { return $script:mockStream }
             Mock -CommandName 'Copy-ResponseStreamToFileStream' -MockWith {}
             Mock -CommandName 'Close-Stream' -MockWith {}
             Mock -CommandName 'Assert-FileValid' -MockWith {}
             Mock -CommandName 'Get-MsiProductCode' -MockWith { return $script:testIdentifyingNumber }
-            Mock -CommandName 'Start-MsiProcess' -MockWith { return 0 } # returns the exit code
+            Mock -CommandName 'Start-MsiProcess' -MockWith {
+                # Returns the exit code
+                return 0
+            }
             Mock -CommandName 'Remove-PSDrive' -MockWith {}
             Mock -CommandName 'Remove-Item' -MockWith {}
             Mock -CommandName 'Invoke-CimMethod' -MockWith {}
             Mock -CommandName 'Get-ItemProperty' -MockWith { return $null }
             Mock -CommandName 'Get-ProductEntry' -MockWith { return $script:mockProductEntry }
-            
+
             Context 'Uri scheme is non-UNC file and installation succeeds' {
                 $mocksCalled = @(
                     @{ Command = 'Convert-PathToUri'; Times = 1 }
@@ -219,13 +222,13 @@ Describe 'MsiPackage Unit Tests' {
                     @{ Command = 'Assert-PathExtensionValid'; Times = 1 }
                     @{ Command = 'New-LogFile'; Times = 1 }
                     @{ Command = 'New-PSDrive'; Times = 0 }
-                    @{ Command = 'Test-Path'; Times = 2; Custom = 'to the package cache' }
+                    @{ Command = 'Test-Path'; Times = 3; Custom = 'to the package cache' }
                     @{ Command = 'New-Item'; Times = 0; Custom = 'directory for the package cache' }
                     @{ Command = 'New-Object'; Times = 1; Custom = 'file stream to copy the response to' }
                     @{ Command = 'Get-WebRequestResponse'; Times = 1 }
                     @{ Command = 'Copy-ResponseStreamToFileStream'; Times = 1 }
                     @{ Command = 'Close-Stream'; Times = 2 }
-                    @{ Command = 'Test-Path'; Times = 2; Custom = 'to the MSI file' }
+                    @{ Command = 'Test-Path'; Times = 3; Custom = 'to the MSI file' }
                     @{ Command = 'Assert-FileValid'; Times = 1 }
                     @{ Command = 'Get-MsiProductCode'; Times = 1 }
                     @{ Command = 'Start-MsiProcess'; Times = 1 }
@@ -250,13 +253,13 @@ Describe 'MsiPackage Unit Tests' {
                     @{ Command = 'Assert-PathExtensionValid'; Times = 1 }
                     @{ Command = 'New-LogFile'; Times = 1 }
                     @{ Command = 'New-PSDrive'; Times = 0 }
-                    @{ Command = 'Test-Path'; Times = 2; Custom = 'to the package cache' }
+                    @{ Command = 'Test-Path'; Times = 3; Custom = 'to the package cache' }
                     @{ Command = 'New-Item'; Times = 0; Custom = 'directory for the package cache' }
                     @{ Command = 'New-Object'; Times = 1; Custom = 'file stream to copy the response to' }
                     @{ Command = 'Get-WebRequestResponse'; Times = 1 }
                     @{ Command = 'Copy-ResponseStreamToFileStream'; Times = 1 }
                     @{ Command = 'Close-Stream'; Times = 2 }
-                    @{ Command = 'Test-Path'; Times = 2; Custom = 'to the MSI file' }
+                    @{ Command = 'Test-Path'; Times = 3; Custom = 'to the MSI file' }
                     @{ Command = 'Assert-FileValid'; Times = 1 }
                     @{ Command = 'Get-MsiProductCode'; Times = 1 }
                     @{ Command = 'Start-MsiProcess'; Times = 1 }
@@ -349,7 +352,7 @@ Describe 'MsiPackage Unit Tests' {
                                              -ErrorMessage ($script:localizedData.PostValidationError -f $setTargetResourceParameters.Path) `
                                              -ErrorTestName $script:errorMessageTitles.PostValidationError
             }
-            
+
             Mock -CommandName 'Get-MsiProductCode' -MockWith { return $script:testWrongProductId }
 
             Context 'Product code from downloaded MSI package does not match specified ID' {
@@ -462,7 +465,7 @@ Describe 'MsiPackage Unit Tests' {
         Describe 'Assert-PathExtensionValid' {
             Context 'Path is a valid .msi path' {
                 It 'Should not throw' {
-                    { Assert-PathExtensionValid -Path 'testMsiFile.msi' } | Should Not Throw
+                    { Assert-PathExtensionValid -Path 'testMsiFile.msi' } | Should -Not -Throw
                 }
             }
 
@@ -471,14 +474,14 @@ Describe 'MsiPackage Unit Tests' {
                     $invalidPath = 'testMsiFile.exe'
                     $expectedErrorMessage = ($script:localizedData.InvalidBinaryType -f $invalidPath)
 
-                    { Assert-PathExtensionValid -Path $invalidPath } | Should Throw $expectedErrorMessage
+                    { Assert-PathExtensionValid -Path $invalidPath } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
 
                 It 'Should throw an invalid argument exception when an invalid file type is passed in' {
                     $invalidPath = 'testMsiFilemsi'
                     $expectedErrorMessage = ($script:localizedData.InvalidBinaryType -f $invalidPath)
 
-                    { Assert-PathExtensionValid -Path $invalidPath } | Should Throw $expectedErrorMessage
+                    { Assert-PathExtensionValid -Path $invalidPath } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
         }
@@ -487,39 +490,41 @@ Describe 'MsiPackage Unit Tests' {
             Context 'Path has a valid URI scheme' {
                 It 'Should return the expected URI when scheme is a file' {
                     $filePath = (Join-Path -Path $PSScriptRoot -ChildPath 'testMsi.msi')
-                    $expectedReturnValue = [Uri] $filePath
+                    $expectedReturnValue = [System.Uri] $filePath
 
-                    Convert-PathToUri -Path $filePath | Should Be $expectedReturnValue
+                    Convert-PathToUri -Path $filePath | Should -Be $expectedReturnValue
                 }
-                
-                It 'Should return the expected URI when scheme is http' {
-                    $filePath = 'http://localhost:1242/testMsi.msi'
-                    $expectedReturnValue = [Uri] $filePath
 
-                    Convert-PathToUri -Path $filePath | Should Be $expectedReturnValue
+                It 'Should return the expected URI when scheme is http' {
+                    $uriBuilder = [System.UriBuilder]::new('http', 'localhost')
+                    $uriBuilder.Path = 'testMsi.msi'
+                    $filePath = $uriBuilder.Uri.AbsoluteUri
+
+                    Convert-PathToUri -Path $filePath | Should -Be $uriBuilder.Uri
                 }
 
                 It 'Should return the expected URI when scheme is https' {
-                    $filePath = 'https://localhost:1243/testMsi.msi'
-                    $expectedReturnValue = [Uri] $filePath
+                    $uriBuilder = [System.UriBuilder]::new('https', 'localhost')
+                    $uriBuilder.Path = 'testMsi.msi'
+                    $filePath = $uriBuilder.Uri.AbsoluteUri
 
-                    Convert-PathToUri -Path $filePath | Should Be $expectedReturnValue
+                    Convert-PathToUri -Path $filePath | Should -Be $uriBuilder.Uri
                 }
             }
 
             Context 'Invalid path passed in' {
                 It 'Should throw an error when uri scheme is invalid' {
-                    $filePath = 'ht://localhost:1243/testMsi.msi'
+                    $filePath = 'ht://localhost/testMsi.msi'
                     $expectedErrorMessage = ($script:localizedData.InvalidPath -f $filePath)
 
-                    { Convert-PathToUri -Path $filePath } | Should Throw $expectedErrorMessage
+                    { Convert-PathToUri -Path $filePath } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
 
                 It 'Should throw an error when path is not in valid format' {
                     $filePath = 'mri'
                     $expectedErrorMessage = ($script:localizedData.InvalidPath -f $filePath)
 
-                    { Convert-PathToUri -Path $filePath } | Should Throw $expectedErrorMessage
+                    { Convert-PathToUri -Path $filePath } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
         }
@@ -527,18 +532,18 @@ Describe 'MsiPackage Unit Tests' {
         Describe 'Convert-ProductIdToIdentifyingNumber' {
             Context 'Valid Product ID is passed in' {
                 It 'Should return the same value that is passed in when the Product ID is already in the correct format' {
-                    Convert-ProductIdToIdentifyingNumber -ProductId $script:testIdentifyingNumber | Should Be $script:testIdentifyingNumber
+                    Convert-ProductIdToIdentifyingNumber -ProductId $script:testIdentifyingNumber | Should -Be $script:testIdentifyingNumber
                 }
 
                 It 'Should convert a valid poduct ID to the identifying number format' {
-                    Convert-ProductIdToIdentifyingNumber -ProductId $script:testProductId | Should Be $script:testIdentifyingNumber
+                    Convert-ProductIdToIdentifyingNumber -ProductId $script:testProductId | Should -Be $script:testIdentifyingNumber
                 }
             }
 
             Context 'Invalid Product ID is passed in' {
                 It 'Should throw an exception when an invalid product ID is passed in' {
                     $expectedErrorMessage = ($script:localizedData.InvalidIdentifyingNumber -f $script:testWrongProductId)
-                    { Convert-ProductIdToIdentifyingNumber -ProductId $script:testWrongProductId } | Should Throw $expectedErrorMessage
+                    { Convert-ProductIdToIdentifyingNumber -ProductId $script:testWrongProductId } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
         }
@@ -552,7 +557,7 @@ Describe 'MsiPackage Unit Tests' {
 
             Context 'Product entry is found in the expected location' {
                 It 'Should return the expected product entry' {
-                    Get-ProductEntry -IdentifyingNumber $script:testIdentifyingNumber | Should Be $script:mockProductEntry
+                    Get-ProductEntry -IdentifyingNumber $script:testIdentifyingNumber | Should -Be $script:mockProductEntry
                 }
 
                 It 'Should retrieve the item' {
@@ -564,7 +569,7 @@ Describe 'MsiPackage Unit Tests' {
 
             Context 'Product entry is found under Wow6432Node' {
                 It 'Should return the expected product entry' {
-                    Get-ProductEntry -IdentifyingNumber $script:testIdentifyingNumber | Should Be $script:mockProductEntry
+                    Get-ProductEntry -IdentifyingNumber $script:testIdentifyingNumber | Should -Be $script:mockProductEntry
                 }
 
                 It 'Should attempt to retrieve the item twice' {
@@ -576,7 +581,7 @@ Describe 'MsiPackage Unit Tests' {
 
             Context 'Product entry is not found' {
                 It 'Should return $null' {
-                    Get-ProductEntry -IdentifyingNumber $script:testIdentifyingNumber | Should Be $null
+                    Get-ProductEntry -IdentifyingNumber $script:testIdentifyingNumber | Should -Be $null
                 }
 
                 It 'Should attempt to retrieve the item twice' {
@@ -599,31 +604,31 @@ Describe 'MsiPackage Unit Tests' {
                 $getProductEntryInfoResult = Get-ProductEntryInfo -ProductEntry $script:mockProductEntry
 
                 It 'Should return the expected installed date' {
-                     $getProductEntryInfoResult.InstalledOn | Should Be $script:mockProductEntryInfo.InstalledOn
+                     $getProductEntryInfoResult.InstalledOn | Should -Be $script:mockProductEntryInfo.InstalledOn
                 }
 
                 It 'Should return the expected publisher' {
-                     $getProductEntryInfoResult.Publisher | Should Be $script:mockProductEntryInfo.Publisher
+                     $getProductEntryInfoResult.Publisher | Should -Be $script:mockProductEntryInfo.Publisher
                 }
 
                 It 'Should return the expected size' {
-                     $getProductEntryInfoResult.Size | Should Be ($script:mockProductEntryInfo.Size / 1024)
+                     $getProductEntryInfoResult.Size | Should -Be ($script:mockProductEntryInfo.Size / 1024)
                 }
 
                 It 'Should return the expected Version' {
-                     $getProductEntryInfoResult.Version | Should Be $script:mockProductEntryInfo.Version
+                     $getProductEntryInfoResult.Version | Should -Be $script:mockProductEntryInfo.Version
                 }
 
                 It 'Should return the expected package description' {
-                     $getProductEntryInfoResult.PackageDescription | Should Be $script:mockProductEntryInfo.PackageDescription
+                     $getProductEntryInfoResult.PackageDescription | Should -Be $script:mockProductEntryInfo.PackageDescription
                 }
 
                 It 'Should return the expected name' {
-                     $getProductEntryInfoResult.Name | Should Be $script:mockProductEntryInfo.Name
+                     $getProductEntryInfoResult.Name | Should -Be $script:mockProductEntryInfo.Name
                 }
 
                 It 'Should return the expected install source' {
-                     $getProductEntryInfoResult.InstallSource | Should Be $script:mockProductEntryInfo.InstallSource
+                     $getProductEntryInfoResult.InstallSource | Should -Be $script:mockProductEntryInfo.InstallSource
                 }
 
                 It 'Should retrieve 7 product entry values' {
@@ -638,7 +643,7 @@ Describe 'MsiPackage Unit Tests' {
                 $getProductEntryInfoResult = Get-ProductEntryInfo -ProductEntry $script:mockProductEntry
 
                 It 'Should return $null for InstalledOn' {
-                    $getProductEntryInfoResult.InstalledOn | Should Be $null
+                    $getProductEntryInfoResult.InstalledOn | Should -Be $null
                 }
             }
         }
@@ -686,7 +691,7 @@ Describe 'MsiPackage Unit Tests' {
                                        -ErrorTestName $script:errorMessageTitles.CouldNotOpenLog
             }
         }
-        
+
         Describe 'Get-WebRequestResponse' {
             Mock -CommandName 'Get-WebRequest' -MockWith { return $script:mockWebRequest }
             Mock -CommandName 'Get-ScriptBlock' -MockWith { return { Write-Verbose 'Hello World' } }
@@ -700,9 +705,9 @@ Describe 'MsiPackage Unit Tests' {
                 )
 
                 It 'Should return the expected response stream' {
-                    Get-WebRequestResponse -Uri $script:testUriHttp | Should Be $script:mockStream
+                    Get-WebRequestResponse -Uri $script:testUriHttp | Should -Be $script:mockStream
                 }
-                
+
                 Invoke-ExpectedMocksAreCalledTest -MocksCalled $mocksCalled
             }
 
@@ -714,9 +719,9 @@ Describe 'MsiPackage Unit Tests' {
                 )
 
                 It 'Should return the expected response stream' {
-                    Get-WebRequestResponse -Uri $script:testUriHttps | Should Be $script:mockStream
+                    Get-WebRequestResponse -Uri $script:testUriHttps | Should -Be $script:mockStream
                 }
-                
+
                 Invoke-ExpectedMocksAreCalledTest -MocksCalled $mocksCalled
             }
 
@@ -728,7 +733,7 @@ Describe 'MsiPackage Unit Tests' {
                 )
 
                 It 'Should return the expected response stream' {
-                    Get-WebRequestResponse -Uri $script:testUriHttps -ServerCertificateValidationCallback 'TestCallbackFunction' | Should Be $script:mockStream
+                    Get-WebRequestResponse -Uri $script:testUriHttps -ServerCertificateValidationCallback 'TestCallbackFunction' | Should -Be $script:mockStream
                 }
 
                 Invoke-ExpectedMocksAreCalledTest -MocksCalled $mocksCalled
@@ -739,7 +744,7 @@ Describe 'MsiPackage Unit Tests' {
             Context 'Error occurred during while retrieving the response' {
                 It 'Should throw the expected exception' {
                     $expectedErrorMessage = ($script:localizedData.CouldNotGetResponseFromWebRequest -f $script:testUriHttp.Scheme, $script:testUriHttp.OriginalString)
-                    { Get-WebRequestResponse -Uri $script:testUriHttp } | Should Throw $expectedErrorMessage
+                    { Get-WebRequestResponse -Uri $script:testUriHttp } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
         }
@@ -755,7 +760,7 @@ Describe 'MsiPackage Unit Tests' {
                 )
 
                 It 'Should not throw' {
-                    { Assert-FileValid -Path $script:testPath -FileHash 'mockFileHash' } | Should Not Throw
+                    { Assert-FileValid -Path $script:testPath -FileHash 'mockFileHash' } | Should -Not -Throw
                 }
 
                 Invoke-ExpectedMocksAreCalledTest -MocksCalled $mocksCalled
@@ -768,7 +773,7 @@ Describe 'MsiPackage Unit Tests' {
                 )
 
                 It 'Should not throw' {
-                    { Assert-FileValid -Path $script:testPath -FileHash 'mockFileHash' -SignerThumbprint 'mockSignerThumbprint' } | Should Not Throw
+                    { Assert-FileValid -Path $script:testPath -FileHash 'mockFileHash' -SignerThumbprint 'mockSignerThumbprint' } | Should -Not -Throw
                 }
 
                 Invoke-ExpectedMocksAreCalledTest -MocksCalled $mocksCalled
@@ -781,7 +786,7 @@ Describe 'MsiPackage Unit Tests' {
                 )
 
                 It 'Should not throw' {
-                    { Assert-FileValid -Path $script:testPath -SignerSubject 'mockSignerSubject' } | Should Not Throw
+                    { Assert-FileValid -Path $script:testPath -SignerSubject 'mockSignerSubject' } | Should -Not -Throw
                 }
 
                 Invoke-ExpectedMocksAreCalledTest -MocksCalled $mocksCalled
@@ -797,7 +802,7 @@ Describe 'MsiPackage Unit Tests' {
                     { Assert-FileValid -Path $script:testPath -FileHash 'mockFileHash' `
                                                               -SignerThumbprint 'mockSignerThumbprint' `
                                                               -SignerSubject 'mockSignerSubject'
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
 
                 Invoke-ExpectedMocksAreCalledTest -MocksCalled $mocksCalled
@@ -812,7 +817,7 @@ Describe 'MsiPackage Unit Tests' {
                 It 'Should not throw' {
                     { Assert-FileValid -Path $script:testPath -SignerThumbprint 'mockSignerThumbprint' `
                                                               -SignerSubject 'mockSignerSubject'
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
 
                 Invoke-ExpectedMocksAreCalledTest -MocksCalled $mocksCalled
@@ -825,7 +830,7 @@ Describe 'MsiPackage Unit Tests' {
                 )
 
                 It 'Should not throw' {
-                    { Assert-FileValid -Path $script:testPath } | Should Not Throw
+                    { Assert-FileValid -Path $script:testPath } | Should -Not -Throw
                 }
 
                 Invoke-ExpectedMocksAreCalledTest -MocksCalled $mocksCalled
@@ -838,7 +843,7 @@ Describe 'MsiPackage Unit Tests' {
 
             Context 'File hash is valid' {
                 It 'Should not throw when hashes match' {
-                    { Assert-FileHashValid -Path $script:testPath -Hash $mockHash.Hash -Algorithm 'SHA256' } | Should Not Throw
+                    { Assert-FileHashValid -Path $script:testPath -Hash $mockHash.Hash -Algorithm 'SHA256' } | Should -Not -Throw
                 }
 
                 It 'Should fetch the file hash' {
@@ -851,7 +856,7 @@ Describe 'MsiPackage Unit Tests' {
                 $expectedErrorMessage = ($script:localizedData.InvalidFileHash -f $script:testPath, $badHash, 'SHA256')
 
                 It 'Should throw when hashes do not match' {
-                    { Assert-FileHashValid -Path $script:testPath -Hash $badHash -Algorithm 'SHA256' } | Should Throw $expectedErrorMessage
+                    { Assert-FileHashValid -Path $script:testPath -Hash $badHash -Algorithm 'SHA256' } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
         }
@@ -859,7 +864,7 @@ Describe 'MsiPackage Unit Tests' {
         Describe 'Assert-FileSignatureValid' {
             $mockThumbprint = 'mockThumbprint'
             $mockSubject = 'mockSubject'
-            $mockSignature = @{ 
+            $mockSignature = @{
                 Status = [System.Management.Automation.SignatureStatus]::Valid
                 SignerCertificate = @{ Thumbprint = $mockThumbprint; Subject = $mockSubject }
             }
@@ -868,25 +873,25 @@ Describe 'MsiPackage Unit Tests' {
 
             Context 'File signature status, thumbprint and subject are valid' {
                 It 'Should not throw' {
-                    { Assert-FileSignatureValid -Path $script:testPath -Thumbprint $mockThumbprint -Subject $mockSubject } | Should Not Throw
+                    { Assert-FileSignatureValid -Path $script:testPath -Thumbprint $mockThumbprint -Subject $mockSubject } | Should -Not -Throw
                 }
             }
 
             Context 'File signature status and thumbprint are valid and Subject not passed in' {
                 It 'Should not throw' {
-                    { Assert-FileSignatureValid -Path $script:testPath -Thumbprint $mockThumbprint } | Should Not Throw
+                    { Assert-FileSignatureValid -Path $script:testPath -Thumbprint $mockThumbprint } | Should -Not -Throw
                 }
             }
 
             Context 'File signature status and subject are valid and Thumbprint not passed in' {
                 It 'Should not throw' {
-                    { Assert-FileSignatureValid -Path $script:testPath -Subject $mockSubject } | Should Not Throw
+                    { Assert-FileSignatureValid -Path $script:testPath -Subject $mockSubject } | Should -Not -Throw
                 }
             }
 
             Context 'Only Path is passed in' {
                 It 'Should not throw' {
-                    { Assert-FileSignatureValid -Path $script:testPath } | Should Not Throw
+                    { Assert-FileSignatureValid -Path $script:testPath } | Should -Not -Throw
                 }
             }
 
@@ -895,7 +900,7 @@ Describe 'MsiPackage Unit Tests' {
                 $expectedErrorMessage = ($script:localizedData.WrongSignerSubject -f $script:testPath, $badSubject)
 
                 It 'Should throw expected error message' {
-                    { Assert-FileSignatureValid -Path $script:testPath -Thumbprint $mockThumbprint -Subject $badSubject } | Should Throw $expectedErrorMessage
+                    { Assert-FileSignatureValid -Path $script:testPath -Thumbprint $mockThumbprint -Subject $badSubject } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
 
@@ -904,7 +909,7 @@ Describe 'MsiPackage Unit Tests' {
                 $expectedErrorMessage = ($script:localizedData.WrongSignerThumbprint -f $script:testPath, $badThumbprint)
 
                 It 'Should throw expected error message' {
-                    { Assert-FileSignatureValid -Path $script:testPath -Thumbprint $badThumbprint -Subject $mockSubject } | Should Throw $expectedErrorMessage
+                    { Assert-FileSignatureValid -Path $script:testPath -Thumbprint $badThumbprint -Subject $mockSubject } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
 
@@ -913,7 +918,7 @@ Describe 'MsiPackage Unit Tests' {
                 $expectedErrorMessage = ($script:localizedData.InvalidFileSignature -f $script:testPath, $mockSignature.Status)
 
                 It 'Should throw expected error message' {
-                    { Assert-FileSignatureValid -Path $script:testPath -Thumbprint $mockThumbprint -Subject $mockSubject } | Should Throw $expectedErrorMessage
+                    { Assert-FileSignatureValid -Path $script:testPath -Thumbprint $mockThumbprint -Subject $mockSubject } | Should -Throw -ExpectedMessage $expectedErrorMessage
                 }
             }
         }

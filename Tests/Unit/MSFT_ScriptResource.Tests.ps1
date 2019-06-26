@@ -32,7 +32,7 @@ try
 
                 It 'Should throw an error for malformed get script' {
                     $errorMessage = $script:localizedData.GetScriptDidNotReturnHashtable
-                    { $null = Get-TargetResource @getTargetResourceParameters } | Should Throw $errorMessage
+                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Throw -ExpectedMessage $errorMessage
                 }
             }
 
@@ -47,7 +47,7 @@ try
 
                 It 'Should throw an error for malformed get script' {
                     $errorMessage = $script:localizedData.GetScriptDidNotReturnHashtable
-                    { $null = Get-TargetResource @getTargetResourceParameters } | Should Throw $errorMessage
+                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Throw -ExpectedMessage $errorMessage
                 }
             }
 
@@ -65,7 +65,7 @@ try
                 }
 
                 It 'Should throw error from get script' {
-                    { $null = Get-TargetResource @getTargetResourceParameters } | Should Throw $testErrorRecord
+                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Throw -ExpectedMessage $testErrorRecord
                 }
             }
 
@@ -78,13 +78,13 @@ try
                     TestScript = 'NotUsed'
                     SetScript = 'NotUsed'
                 }
-                
+
                 It 'Should not throw' {
-                    { $null = Get-TargetResource @getTargetResourceParameters } | Should Not Throw
+                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should use script execution helper to run script' {
-                    $expectedScriptBlock = [ScriptBlock]::Create($getTargetResourceParameters.GetScript)
+                    $expectedScriptBlock = [System.Management.Automation.ScriptBlock]::Create($getTargetResourceParameters.GetScript)
 
                     $null = Get-TargetResource @getTargetResourceParameters
 
@@ -95,15 +95,15 @@ try
 
                     Assert-MockCalled -CommandName 'Invoke-Script' -ParameterFilter $invokeScriptParameterFilter -Times 1 -Scope 'It'
                 }
-                
+
                 It 'Should return a hashtable' {
                     $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
-                    $getTargetResourceResult -is [Hashtable] | Should Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return the output from the specified get script' {
                     $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
-                    Compare-Object -ReferenceObject $testScriptResult -DifferenceObject $getTargetResourceResult | Should Be $null
+                    Compare-Object -ReferenceObject $testScriptResult -DifferenceObject $getTargetResourceResult | Should -Be $null
                 }
             }
 
@@ -114,34 +114,34 @@ try
                     SetScript = 'NotUsed'
                     Credential = $script:testCredenital
                 }
-                
+
                 It 'Should not throw' {
-                    { $null = Get-TargetResource @getTargetResourceParameters } | Should Not Throw
+                    { $null = Get-TargetResource @getTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should use script execution helper to run script with the specified Credential' {
-                    $expectedScriptBlock = [ScriptBlock]::Create($getTargetResourceParameters.GetScript)
+                    $expectedScriptBlock = [System.Management.Automation.ScriptBlock]::Create($getTargetResourceParameters.GetScript)
 
                     $null = Get-TargetResource @getTargetResourceParameters
 
                     $invokeScriptParameterFilter = {
                         $scriptBlockParameterCorrect = $null -eq (Compare-Object -ReferenceObject $expectedScriptBlock.Ast -DifferenceObject $ScriptBlock.Ast)
                         $credentialParameterCorrect = $null -eq (Compare-Object -ReferenceObject $getTargetResourceParameters.Credential -DifferenceObject $Credential)
-                        
-                        return $scriptBlockParameterCorrect -and $credentialParameterCorrect 
+
+                        return $scriptBlockParameterCorrect -and $credentialParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Invoke-Script' -ParameterFilter $invokeScriptParameterFilter -Times 1 -Scope 'It'
                 }
-                
+
                 It 'Should return a hashtable' {
                     $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
-                    $getTargetResourceResult -is [Hashtable] | Should Be $true
+                    $getTargetResourceResult -is [System.Collections.Hashtable] | Should -BeTrue
                 }
 
                 It 'Should return the output from the specified get script' {
                     $getTargetResourceResult = Get-TargetResource @getTargetResourceParameters
-                    Compare-Object -ReferenceObject $testScriptResult -DifferenceObject $getTargetResourceResult | Should Be $null
+                    Compare-Object -ReferenceObject $testScriptResult -DifferenceObject $getTargetResourceResult | Should -Be $null
                 }
             }
         }
@@ -157,11 +157,11 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should use script execution helper to run script' {
-                    $expectedScriptBlock = [ScriptBlock]::Create($setTargetResourceParameters.SetScript)
+                    $expectedScriptBlock = [System.Management.Automation.ScriptBlock]::Create($setTargetResourceParameters.SetScript)
 
                     Set-TargetResource @setTargetResourceParameters
 
@@ -183,19 +183,19 @@ try
                 }
 
                 It 'Should not throw' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Not Throw
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should use script execution helper to run script with specified Credential' {
-                    $expectedScriptBlock = [ScriptBlock]::Create($setTargetResourceParameters.SetScript)
+                    $expectedScriptBlock = [System.Management.Automation.ScriptBlock]::Create($setTargetResourceParameters.SetScript)
 
                     Set-TargetResource @setTargetResourceParameters
 
                     $invokeScriptParameterFilter = {
                         $scriptBlockParameterCorrect = $null -eq (Compare-Object -ReferenceObject $expectedScriptBlock.Ast -DifferenceObject $ScriptBlock.Ast)
                         $credentialParameterCorrect = $null -eq (Compare-Object -ReferenceObject $setTargetResourceParameters.Credential -DifferenceObject $Credential)
-                        
-                        return $scriptBlockParameterCorrect -and $credentialParameterCorrect 
+
+                        return $scriptBlockParameterCorrect -and $credentialParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Invoke-Script' -ParameterFilter $invokeScriptParameterFilter -Times 1 -Scope 'It'
@@ -216,7 +216,7 @@ try
                 }
 
                 It 'Should throw error from set script' {
-                    { Set-TargetResource @setTargetResourceParameters } | Should Throw $testErrorRecord
+                    { Set-TargetResource @setTargetResourceParameters } | Should -Throw -ExpectedMessage $testErrorRecord
                 }
             }
         }
@@ -233,7 +233,7 @@ try
 
                 It 'Should throw an error for malformed test script' {
                     $errorMessage = $script:localizedData.TestScriptDidNotReturnBoolean
-                    { $null = Test-TargetResource @testTargetResourceParameters } | Should Throw $errorMessage
+                    { $null = Test-TargetResource @testTargetResourceParameters } | Should -Throw -ExpectedMessage $errorMessage
                 }
             }
 
@@ -251,7 +251,7 @@ try
                 }
 
                 It 'Should throw error from test script' {
-                    { $null = Test-TargetResource @testTargetResourceParameters } | Should Throw $testErrorRecord
+                    { $null = Test-TargetResource @testTargetResourceParameters } | Should -Throw -ExpectedMessage $testErrorRecord
                 }
             }
 
@@ -266,11 +266,11 @@ try
                 }
 
                 It 'Should not throw' {
-                    { $null = Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                    { $null = Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should use script execution helper to run script' {
-                    $expectedScriptBlock = [ScriptBlock]::Create($testTargetResourceParameters.TestScript)
+                    $expectedScriptBlock = [System.Management.Automation.ScriptBlock]::Create($testTargetResourceParameters.TestScript)
 
                     $null = Test-TargetResource @testTargetResourceParameters
 
@@ -281,10 +281,10 @@ try
 
                     Assert-MockCalled -CommandName 'Invoke-Script' -ParameterFilter $invokeScriptParameterFilter -Times 1 -Scope 'It'
                 }
-                
+
                 It 'Should return the expected boolean' {
                     $testTargetResourceResult = Test-TargetResource @testTargetResourceParameters
-                    $testTargetResourceResult | Should Be $expectedBoolean
+                    $testTargetResourceResult | Should -Be $expectedBoolean
                 }
             }
 
@@ -297,27 +297,27 @@ try
                 }
 
                 It 'Should not throw' {
-                    { $null = Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                    { $null = Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should use script execution helper to run script with specified Credential' {
-                    $expectedScriptBlock = [ScriptBlock]::Create($testTargetResourceParameters.TestScript)
+                    $expectedScriptBlock = [System.Management.Automation.ScriptBlock]::Create($testTargetResourceParameters.TestScript)
 
                     $null = Test-TargetResource @testTargetResourceParameters
 
                     $invokeScriptParameterFilter = {
                         $scriptBlockParameterCorrect = $null -eq (Compare-Object -ReferenceObject $expectedScriptBlock.Ast -DifferenceObject $ScriptBlock.Ast)
                         $credentialParameterCorrect = $null -eq (Compare-Object -ReferenceObject $testTargetResourceParameters.Credential -DifferenceObject $Credential)
-                        
-                        return $scriptBlockParameterCorrect -and $credentialParameterCorrect 
+
+                        return $scriptBlockParameterCorrect -and $credentialParameterCorrect
                     }
 
                     Assert-MockCalled -CommandName 'Invoke-Script' -ParameterFilter $invokeScriptParameterFilter -Times 1 -Scope 'It'
                 }
-                
+
                 It 'Should return the expected boolean' {
                     $testTargetResourceResult = Test-TargetResource @testTargetResourceParameters
-                    $testTargetResourceResult | Should Be $expectedBoolean
+                    $testTargetResourceResult | Should -Be $expectedBoolean
                 }
             }
 
@@ -332,11 +332,11 @@ try
                 }
 
                 It 'Should not throw' {
-                    { $null = Test-TargetResource @testTargetResourceParameters } | Should Not Throw
+                    { $null = Test-TargetResource @testTargetResourceParameters } | Should -Not -Throw
                 }
 
                 It 'Should use script execution helper to run script' {
-                    $expectedScriptBlock = [ScriptBlock]::Create($testTargetResourceParameters.TestScript)
+                    $expectedScriptBlock = [System.Management.Automation.ScriptBlock]::Create($testTargetResourceParameters.TestScript)
 
                     $null = Test-TargetResource @testTargetResourceParameters
 
@@ -347,10 +347,10 @@ try
 
                     Assert-MockCalled -CommandName 'Invoke-Script' -ParameterFilter $invokeScriptParameterFilter -Times 1 -Scope 'It'
                 }
-                
+
                 It 'Should return the expected boolean' {
                     $testTargetResourceResult = Test-TargetResource @testTargetResourceParameters
-                    $testTargetResourceResult | Should Be $expectedBoolean
+                    $testTargetResourceResult | Should -Be $expectedBoolean
                 }
             }
 
@@ -365,7 +365,7 @@ try
 
                 It 'Should throw an error for malformed test script' {
                     $errorMessage = $script:localizedData.TestScriptDidNotReturnBoolean
-                    { $null = Test-TargetResource @testTargetResourceParameters } | Should Throw $errorMessage
+                    { $null = Test-TargetResource @testTargetResourceParameters } | Should -Throw -ExpectedMessage $errorMessage
                 }
             }
         }
@@ -381,22 +381,22 @@ try
                 }
 
                 It 'Should not throw' {
-                    { $null = Invoke-Script @scriptExecutionHelperParameters } | Should Not Throw
+                    { $null = Invoke-Script @scriptExecutionHelperParameters } | Should -Not -Throw
                 }
 
                 It 'Should return an error record' {
                     $scriptExecutionHelperResult = Invoke-Script @scriptExecutionHelperParameters
-                    $scriptExecutionHelperResult -is [System.Management.Automation.ErrorRecord] | Should Be $true
+                    $scriptExecutionHelperResult -is [System.Management.Automation.ErrorRecord] | Should -BeTrue
                 }
 
                 It 'Should return an error record' {
                     $scriptExecutionHelperResult = Invoke-Script @scriptExecutionHelperParameters
-                    $scriptExecutionHelperResult -is [System.Management.Automation.ErrorRecord] | Should Be $true
+                    $scriptExecutionHelperResult -is [System.Management.Automation.ErrorRecord] | Should -BeTrue
                 }
 
                 It 'Should return error with expected message from script' {
                     $scriptExecutionHelperResult = Invoke-Script @scriptExecutionHelperParameters
-                    $scriptExecutionHelperResult.Exception.Message | Should Be $testErrorMessage
+                    $scriptExecutionHelperResult.Exception.Message | Should -Be $testErrorMessage
                 }
             }
 
@@ -407,7 +407,7 @@ try
                 }
 
                 It 'Should not throw' {
-                    { $null = Invoke-Script @scriptExecutionHelperParameters } | Should Not Throw
+                    { $null = Invoke-Script @scriptExecutionHelperParameters } | Should -Not -Throw
                 }
 
                 It 'Should run script through Invoke-Command using the specified Credential' {
@@ -425,7 +425,7 @@ try
 
                 It 'Should return nothing' {
                     $scriptExecutionHelperResult = Invoke-Script @scriptExecutionHelperParameters
-                    $scriptExecutionHelperResult | Should Be $null
+                    $scriptExecutionHelperResult | Should -Be $null
                 }
             }
 
@@ -443,8 +443,8 @@ try
 
                 It 'Should return result of script' {
                     $scriptExecutionHelperResult = Invoke-Script @scriptExecutionHelperParameters
-                    $scriptExecutionHelperResult | Should Be $testScriptResult
-                } 
+                    $scriptExecutionHelperResult | Should -Be $testScriptResult
+                }
             }
         }
     }

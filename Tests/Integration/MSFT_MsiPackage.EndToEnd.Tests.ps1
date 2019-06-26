@@ -1,4 +1,4 @@
-﻿<#
+<#
     Please note that some of these tests depend on each other.
     They must be run in the order given - if one test fails, subsequent tests may
     also fail.
@@ -43,7 +43,7 @@ Describe 'MsiPackage End to End Tests' {
 
         <#
             This log file is used to log messages from the mock server which is important for debugging since
-            most of the work of the mock server is done within a separate process. 
+            most of the work of the mock server is done within a separate process.
         #>
         $script:logFile = Join-Path -Path $PSScriptRoot -ChildPath 'PackageTestLogFile.txt'
         $script:environmentInIncorrectStateErrorMessage = 'The current environment is not in the expected state for this test - either something was setup incorrectly on your machine or a previous test failed - results after this may be invalid.'
@@ -54,6 +54,9 @@ Describe 'MsiPackage End to End Tests' {
         $script:packageId = '{deadbeef-80c6-41e6-a1b9-8bdb8a05027f}'
 
         $null = New-TestMsi -DestinationPath $script:msiLocation
+
+        $script:testHttpPort = Get-UnusedTcpPort
+        $script:testHttpsPort = Get-UnusedTcpPort -ExcludePorts @($script:testHttpPort)
 
         # Clear the log file
         'Beginning integration tests' > $script:logFile
@@ -85,8 +88,8 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return True from Test-TargetResource with the same parameters before configuration' {
-            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-            $testTargetResourceInitialResult | Should Be $true
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should -BeTrue
 
             if ($testTargetResourceInitialResult -ne $true)
             {
@@ -100,23 +103,23 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Package should not exist on the machine before configuration is run' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
         }
 
         It 'Should compile and run configuration' {
-            { 
+            {
                 . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
                 & $configurationName -OutputPath $TestDrive @msiPackageParameters
                 Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should -BeTrue
         }
 
         It 'Package should not exist on the machine' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
         }
     }
 
@@ -130,8 +133,8 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-            $testTargetResourceInitialResult | Should Be $false
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should -BeFalse
 
             if ($testTargetResourceInitialResult -ne $false)
             {
@@ -145,23 +148,23 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Package should not exist on the machine before configuration is run' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
         }
 
         It 'Should compile and run configuration' {
-            { 
+            {
                 . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
                 & $configurationName -OutputPath $TestDrive @msiPackageParameters
                 Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should -BeTrue
         }
 
         It 'Package should exist on the machine' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
         }
     }
 
@@ -175,8 +178,8 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return True from Test-TargetResource with the same parameters before configuration' {
-            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-            $testTargetResourceInitialResult | Should Be $true
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should -BeTrue
 
             if ($testTargetResourceInitialResult -ne $true)
             {
@@ -190,23 +193,23 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Package should exist on the machine before configuration is run' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
         }
 
         It 'Should compile and run configuration' {
-            { 
+            {
                 . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
                 & $configurationName -OutputPath $TestDrive @msiPackageParameters
                 Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should -BeTrue
         }
 
         It 'Package should exist on the machine' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
         }
     }
 
@@ -220,8 +223,8 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-            $testTargetResourceInitialResult | Should Be $false
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should -BeFalse
 
             if ($testTargetResourceInitialResult -ne $false)
             {
@@ -235,23 +238,23 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Package should exist on the machine before configuration is run' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
         }
 
         It 'Should compile and run configuration' {
-            { 
+            {
                 . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
                 & $configurationName -OutputPath $TestDrive @msiPackageParameters
                 Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should -BeTrue
         }
 
         It 'Package should not exist on the machine' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
         }
     }
 
@@ -273,8 +276,8 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-            $testTargetResourceInitialResult | Should Be $false
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should -BeFalse
 
             if ($testTargetResourceInitialResult -ne $false)
             {
@@ -288,27 +291,27 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Package should not exist on the machine before configuration is run' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
         }
 
         It 'Should compile and run configuration' {
-            { 
+            {
                 . $script:configurationFilePathLogPath -ConfigurationName $configurationName
                 & $configurationName -OutputPath $TestDrive @msiPackageParameters
                 Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should -BeTrue
         }
 
         It 'Should have created the log file' {
-            Test-Path -Path $logPath | Should Be $true
+            Test-Path -Path $logPath | Should -BeTrue
         }
 
         It 'Package should exist on the machine' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
         }
     }
 
@@ -330,8 +333,8 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-            $testTargetResourceInitialResult | Should Be $false
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should -BeFalse
 
             if ($testTargetResourceInitialResult -ne $false)
             {
@@ -345,35 +348,36 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Package should exist on the machine before configuration is run' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
         }
 
         It 'Should compile and run configuration' {
-            { 
+            {
                 . $script:configurationFilePathLogPath -ConfigurationName $configurationName
                 & $configurationName -OutputPath $TestDrive @msiPackageParameters
                 Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-            } | Should Not Throw
+            } | Should -Not -Throw
         }
 
         It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should -BeTrue
         }
 
         It 'Should have created the log file' {
-            Test-Path -Path $logPath | Should Be $true
+            Test-Path -Path $logPath | Should -BeTrue
         }
 
         It 'Package should not exist on the machine' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
-        } 
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
+        }
     }
 
     Context 'Install package from HTTP Url' {
         $configurationName = 'UninstallExistingMsiPackageFromHttp'
 
-        $baseUrl = 'http://localhost:1242/'
-        $msiUrl = "$baseUrl" + 'package.msi'
+        $uriBuilder = [System.UriBuilder]::new('http', 'localhost', $script:testHttpPort)
+        $uriBuilder.Path = 'package.msi'
+        $msiUrl = $uriBuilder.Uri.AbsoluteUri
 
         $fileServerStarted = $null
         $job = $null
@@ -385,8 +389,8 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-            $testTargetResourceInitialResult | Should Be $false
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should -BeFalse
 
             if ($testTargetResourceInitialResult -ne $false)
             {
@@ -400,23 +404,26 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Package should not exist on the machine before configuration is run' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
         }
 
         try
         {
-            $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $false
+            # Make sure no existing HTTP(S) test servers are running
+            Stop-EveryTestServerInstance
+
+            $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $false -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
             $fileServerStarted = $serverResult.FileServerStarted
-            $job = $serverResult.Job              
+            $job = $serverResult.Job
 
             $fileServerStarted.WaitOne(30000)
 
             It 'Should compile and run configuration' {
-                { 
+                {
                     . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @msiPackageParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
+                } | Should -Not -Throw
             }
         }
         finally
@@ -429,19 +436,20 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return True from Test-TargetResource with the same parameters after configuration' {
-            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should -BeTrue
         }
 
         It 'Package should exist on the machine' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
         }
     }
 
     Context 'Uninstall Msi package from HTTP Url' {
         $configurationName = 'InstallMsiPackageFromHttp'
 
-        $baseUrl = 'http://localhost:1242/'
-        $msiUrl = "$baseUrl" + 'package.msi'
+        $uriBuilder = [System.UriBuilder]::new('http', 'localhost', $script:testHttpPort)
+        $uriBuilder.Path = 'package.msi'
+        $msiUrl = $uriBuilder.Uri.AbsoluteUri
 
         $fileServerStarted = $null
         $job = $null
@@ -453,8 +461,8 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-            $testTargetResourceInitialResult | Should Be $false
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should -BeFalse
 
             if ($testTargetResourceInitialResult -ne $false)
             {
@@ -468,23 +476,26 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Package should exist on the machine before configuration is run' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
         }
-        
+
         try
         {
-            $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $false
+            # Make sure no existing HTTP(S) test servers are running
+            Stop-EveryTestServerInstance
+
+            $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $false -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
             $fileServerStarted = $serverResult.FileServerStarted
             $job = $serverResult.Job
 
             $fileServerStarted.WaitOne(30000)
 
             It 'Should compile and run configuration' {
-                { 
+                {
                     . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @msiPackageParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
+                } | Should -Not -Throw
             }
         }
         finally
@@ -497,19 +508,20 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should -BeTrue
         }
 
         It 'Package should not exist on the machine' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
         }
     }
 
     Context 'Install Msi package from HTTPS Url' {
         $configurationName = 'InstallMsiPackageFromHttpS'
 
-        $baseUrl = 'https://localhost:1243/'
-        $msiUrl = "$baseUrl" + 'package.msi'
+        $uriBuilder = [System.UriBuilder]::new('https', 'localhost', $script:testHttpsPort)
+        $uriBuilder.Path = 'package.msi'
+        $msiUrl = $uriBuilder.Uri.AbsoluteUri
 
         $fileServerStarted = $null
         $job = $null
@@ -521,8 +533,8 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-            $testTargetResourceInitialResult | Should Be $false
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should -BeFalse
 
             if ($testTargetResourceInitialResult -ne $false)
             {
@@ -536,23 +548,26 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Package should not exist on the machine before configuration is run' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
         }
-        
+
         try
         {
-            $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true
+            # Make sure no existing HTTP(S) test servers are running
+            Stop-EveryTestServerInstance
+
+            $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
             $fileServerStarted = $serverResult.FileServerStarted
             $job = $serverResult.Job
 
             $fileServerStarted.WaitOne(30000)
 
             It 'Should compile and run configuration' {
-                { 
+                {
                     . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @msiPackageParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
+                } | Should -Not -Throw
             }
         }
         finally
@@ -565,19 +580,20 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should -BeTrue
         }
 
         It 'Package should exist on the machine' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
         }
     }
-    
+
     Context 'Uninstall Msi package from HTTPS Url' {
         $configurationName = 'UninstallMsiPackageFromHttps'
 
-        $baseUrl = 'https://localhost:1243/'
-        $msiUrl = "$baseUrl" + 'package.msi'
+        $uriBuilder = [System.UriBuilder]::new('https', 'localhost', $script:testHttpsPort)
+        $uriBuilder.Path = 'package.msi'
+        $msiUrl = $uriBuilder.Uri.AbsoluteUri
 
         $fileServerStarted = $null
         $job = $null
@@ -589,8 +605,8 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return False from Test-TargetResource with the same parameters before configuration' {
-            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters 
-            $testTargetResourceInitialResult | Should Be $false
+            $testTargetResourceInitialResult = MSFT_MsiPackage\Test-TargetResource @msiPackageParameters
+            $testTargetResourceInitialResult | Should -BeFalse
 
             if ($testTargetResourceInitialResult -ne $false)
             {
@@ -604,23 +620,26 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Package should exist on the machine before configuration is run' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $true
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeTrue
         }
 
         try
         {
-            $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true
+            # Make sure no existing HTTP(S) test servers are running
+            Stop-EveryTestServerInstance
+
+            $serverResult = Start-Server -FilePath $script:msiLocation -LogPath $script:logFile -Https $true -HttpPort $script:testHttpPort -HttpsPort $script:testHttpsPort
             $fileServerStarted = $serverResult.FileServerStarted
             $job = $serverResult.Job
 
             $fileServerStarted.WaitOne(30000)
 
             It 'Should compile and run configuration' {
-                { 
+                {
                     . $script:configurationFilePathNoOptionalParameters -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive @msiPackageParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
+                } | Should -Not -Throw
             }
         }
         finally
@@ -633,11 +652,11 @@ Describe 'MsiPackage End to End Tests' {
         }
 
         It 'Should return true from Test-TargetResource with the same parameters after configuration' {
-            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should Be $true
+            MSFT_MsiPackage\Test-TargetResource @msiPackageParameters | Should -BeTrue
         }
 
         It 'Package should not exist on the machine' {
-            Test-PackageInstalledById -ProductId $script:packageId | Should Be $false
+            Test-PackageInstalledById -ProductId $script:packageId | Should -BeFalse
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 param ()
 
 $errorActionPreference = 'Stop'
@@ -17,7 +17,7 @@ InModuleScope 'ResourceSetHelper' {
                 Name = 'Name'
                 CommonStringParameter1 = 'CommonParameter1'
             }
-        
+
             $keyParameterName = 'Name'
 
             $commonParameterString = New-ResourceSetCommonParameterString -KeyParameterName $keyParameterName -Parameters $parameters
@@ -27,12 +27,12 @@ InModuleScope 'ResourceSetHelper' {
         It 'Should return string containing one variable reference for one credential common parameter' {
             $testUserName = 'testUserName'
             $secureTestPassword = ConvertTo-SecureString -String 'testPassword' -AsPlainText -Force
-            
+
             $parameters = @{
                 Name = 'Name'
                 CommonCredentialParameter1 = New-Object -TypeName 'PSCredential' -ArgumentList @( $testUsername, $secureTestPassword )
             }
-        
+
             $keyParameterName = 'Name'
 
             $commonParameterString = New-ResourceSetCommonParameterString -KeyParameterName $keyParameterName -Parameters $parameters
@@ -51,10 +51,10 @@ InModuleScope 'ResourceSetHelper' {
             $keyParameterName = 'Name'
 
             $commonParameterString = New-ResourceSetCommonParameterString -KeyParameterName $keyParameterName -Parameters $parameters
-            $commonParameterString.Contains("CommonStringParameter1 = `"CommonParameter1`"`r`n") | Should -Be $true
-            $commonParameterString.Contains("CommonStringParameter2 = `"CommonParameter2`"`r`n") | Should -Be $true
-            $commonParameterString.Contains("CommonIntParameter1 = `$CommonIntParameter1`r`n") | Should -Be $true
-            $commonParameterString.Contains("CommonIntParameter2 = `$CommonIntParameter2`r`n") | Should -Be $true
+            $commonParameterString.Contains("CommonStringParameter1 = `"CommonParameter1`"`r`n") | Should -BeTrue
+            $commonParameterString.Contains("CommonStringParameter2 = `"CommonParameter2`"`r`n") | Should -BeTrue
+            $commonParameterString.Contains("CommonIntParameter1 = `$CommonIntParameter1`r`n") | Should -BeTrue
+            $commonParameterString.Contains("CommonIntParameter2 = `$CommonIntParameter2`r`n") | Should -BeTrue
         }
     }
 
@@ -100,15 +100,15 @@ InModuleScope 'ResourceSetHelper' {
                 CommonParameter2 = 'CommonParameterValue2'
             }
         }
-        
+
         $newResourceSetConfigurationScriptBlock = New-ResourceSetConfigurationScriptBlock @newResourceSetConfigurationParams
 
         It 'Should return a ScriptBlock' {
-            $newResourceSetConfigurationScriptBlock -is [ScriptBlock] | Should -Be $true
+            $newResourceSetConfigurationScriptBlock -is [System.Management.Automation.ScriptBlock] | Should -BeTrue
         }
 
         It 'Should return ScriptBlock of string returned from New-ResourceSetConfigurationString' {
-            $newResourceSetConfigurationScriptBlock | Should -Match ([ScriptBlock]::Create($configurationString))
+            $newResourceSetConfigurationScriptBlock | Should -Match ([System.Management.Automation.ScriptBlock]::Create($configurationString))
         }
 
         It 'Should call New-ResourceSetConfigurationString with the correct ModuleName' {

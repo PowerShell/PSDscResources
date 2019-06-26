@@ -1,5 +1,7 @@
-﻿$errorActionPreference = 'Stop'
+$errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
+
+$testJobPrefix = 'MsiPackageTestJob'
 
 <#
     .SYNOPSIS
@@ -10,11 +12,11 @@ Set-StrictMode -Version 'Latest'
 #>
 function Test-PackageInstalledById
 {
-    [OutputType([Boolean])]
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param
     (
-        [String]
+        [System.String]
         $ProductId
     )
 
@@ -23,7 +25,7 @@ function Test-PackageInstalledById
 
     $productEntry = $null
 
-    if (-not [String]::IsNullOrEmpty($ProductId))
+    if (-not [System.String]::IsNullOrEmpty($ProductId))
     {
         $productEntryKeyLocation = Join-Path -Path $uninstallRegistryKey -ChildPath $ProductId
         $productEntry = Get-Item -Path $productEntryKeyLocation -ErrorAction 'SilentlyContinue'
@@ -55,26 +57,42 @@ function Test-PackageInstalledById
 
     .PARAMETER Https
         Indicates whether the server should use Https. If True then the file server will use Https
-        and listen on port 'https://localhost:1243'. Otherwise the file server will use Http and
-        listen on port 'http://localhost:1242'
+        and listen on port 'https://localhost:HttpsPort'. Otherwise the file server will use Http and
+        listen on port 'http://localhost:HttpPort'
         Default value is False (Http).
+
+    .PARAMETER HttpPort
+        Specifies the TCP port to register an Http based HttpListener on.
+
+    .PARAMETER HttspPort
+        Specifies the TCP port to register an Https based HttpListener on.
 #>
 function Start-Server
 {
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $FilePath,
 
-        [String]
+        [System.String]
         $LogPath = (Join-Path -Path $PSScriptRoot -ChildPath 'PackageTestLogFile.txt'),
 
         [System.Boolean]
-        $Https = $false
+        $Https = $false,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateScript({$_ -gt 0})]
+        [System.UInt16]
+        $HttpPort,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateScript({$_ -gt 0})]
+        [System.UInt16]
+        $HttpsPort
     )
 
     # Create an event object to let the client know when the server is ready to begin receiving requests.
@@ -82,7 +100,7 @@ function Start-Server
                                     'HttpIntegrationTest.FileServerStarted')
     $null = $fileServerStarted.Reset()
 
-    <# 
+    <#
         The server is run on a separate process so that it can receive requests
         while the tests continue to run. It takes in the same parameterss that are passed
         in to this function. All helper functions that the server uses have to be
@@ -90,7 +108,7 @@ function Start-Server
     #>
     $server =
     {
-        param($FilePath, $LogPath, $Https)
+        param($FilePath, $LogPath, $Https, $HttpPort, $HttpsPort)
 
         <#
             .SYNOPSIS
@@ -101,6 +119,9 @@ function Start-Server
 
             .PARAMETER Https
                 Indicates whether https was used and if so, removes the SSL binding.
+
+            .PARAMETER HttspPort
+                Specifies the TCP port to de-register an Https based HttpListener from.
         #>
         function Stop-Listener
         {
@@ -109,16 +130,21 @@ function Start-Server
             (
                 [Parameter(Mandatory = $true)]
                 [System.Net.HttpListener]
-                $HttpListener, 
+                $HttpListener,
 
                 [Parameter(Mandatory = $true)]
                 [System.Boolean]
-                $Https
+                $Https,
+
+                [Parameter(Mandatory = $true)]
+                [ValidateScript({$_ -gt 0})]
+                [System.UInt16]
+                $HttpsPort
             )
 
             Write-Log -LogFile $LogPath -Message 'Finished listening for requests. Shutting down HTTP server.'
-            
-            $ipPort = '0.0.0.0:1243'
+
+            $ipPort = "0.0.0.0:$HttpsPort"
 
             if ($null -eq $HttpListener)
             {
@@ -159,16 +185,25 @@ function Start-Server
         <#
             .SYNOPSIS
                 Creates and registers an SSL certificate for Https connections.
+
+            .PARAMETER HttspPort
+                Specifies the TCP port to register an Https based HttpListener on.
         #>
         function Register-Ssl
         {
             [CmdletBinding()]
-            param()
+            param
+            (
+                [Parameter(Mandatory = $true)]
+                [ValidateScript({$_ -gt 0})]
+                [System.UInt16]
+                $HttpsPort
+            )
 
             # Create certificate
             $certificate = New-SelfSignedCertificate -CertStoreLocation 'Cert:\LocalMachine\My' -DnsName localhost
             Write-Log -LogFile $LogPath -Message 'Created certificate'
-            
+
             $hash = $certificate.Thumbprint
             $certPassword = ConvertTo-SecureString -String 'password12345' -AsPlainText -Force
             $tempPath = 'C:\certForTesting'
@@ -176,11 +211,11 @@ function Start-Server
             $null = Export-PfxCertificate -Cert $certificate -FilePath $tempPath -Password $certPassword
             $null = Import-PfxCertificate -CertStoreLocation 'Cert:\LocalMachine\Root' -FilePath 'C:\certForTesting' -Password $certPassword
             Remove-Item -Path $tempPath
-            
+
             Write-Log -LogFile $LogPath -Message 'Finished importing certificate into root. About to bind it to port.'
-             
+
             # Use net shell command to directly bind certificate to designated testing port
-            $null = netsh http add sslcert ipport=0.0.0.0:1243 certhash=$hash appid='{833f13c2-319a-4799-9d1a-5b267a0c3593}' clientcertnegotiation=enable
+            $null = netsh http add sslcert ipport=0.0.0.0:$HttpsPort certhash=$hash appid='{833f13c2-319a-4799-9d1a-5b267a0c3593}' clientcertnegotiation=enable
         }
 
         <#
@@ -197,39 +232,39 @@ function Start-Server
             (
                 [Parameter(Mandatory = $true)]
                 [ValidateNotNullOrEmpty()]
-                [ScriptBlock]
+                [System.Management.Automation.ScriptBlock]
                 $Callback
             )
 
             # Add the CallbackEventBridge type if it's not already defined
-            if (-not ('CallbackEventBridge' -as [Type]))
+            if (-not ('CallbackEventBridge' -as [System.Type]))
             {
-                Add-Type @' 
-                    using System; 
- 
-                    public sealed class CallbackEventBridge { 
-                        public event AsyncCallback CallbackComplete = delegate { }; 
- 
-                        private CallbackEventBridge() {} 
- 
+                Add-Type @'
+                    using System;
+
+                    public sealed class CallbackEventBridge {
+                        public event AsyncCallback CallbackComplete = delegate { };
+
+                        private CallbackEventBridge() {}
+
                         private void CallbackInternal(IAsyncResult result)
-                        { 
-                            CallbackComplete(result); 
-                        } 
- 
+                        {
+                            CallbackComplete(result);
+                        }
+
                         public AsyncCallback Callback
-                        { 
-                            get { return new AsyncCallback(CallbackInternal); } 
-                        } 
- 
+                        {
+                            get { return new AsyncCallback(CallbackInternal); }
+                        }
+
                         public static CallbackEventBridge Create()
-                        { 
-                            return new CallbackEventBridge(); 
-                        } 
-                    } 
+                        {
+                            return new CallbackEventBridge();
+                        }
+                    }
 '@
             }
-    
+
             $bridge = [CallbackEventBridge]::Create()
             Register-ObjectEvent -InputObject $bridge -EventName 'CallbackComplete' -Action $Callback -MessageData $args > $null
             $bridge.Callback
@@ -249,7 +284,7 @@ function Start-Server
 
             .PARAMETER ScriptBlock
                 The code to execute.
-                
+
         #>
         function Invoke-ConsoleCommand
         {
@@ -257,15 +292,15 @@ function Start-Server
             param
             (
                 [Parameter(Mandatory = $true)]
-                [String]
+                [System.String]
                 $Target,
 
                 [Parameter(Mandatory = $true)]
-                [String]
+                [System.String]
                 $Action,
 
                 [Parameter(Mandatory = $true)]
-                [ScriptBlock]
+                [System.Management.Automation.ScriptBlock]
                 $ScriptBlock
             )
 
@@ -277,7 +312,7 @@ function Start-Server
                 $message = ('Failed action ''{0}'' on target ''{1}'' (exit code {2}): {3}' -f $Action,$Target,$LASTEXITCODE,$output)
                 Write-Error -Message $message
                 Write-Log -LogFile $LogPath -Message "Error from Invoke-ConsoleCommand: $message"
-            } 
+            }
             else
             {
                 $nonNullOutput = $output | Where-Object { $_ -ne $null }
@@ -302,14 +337,14 @@ function Start-Server
             param
             (
                 [Parameter(Mandatory = $true)]
-                [String]
+                [System.String]
                 $LogFile,
 
                 [Parameter(Mandatory = $true)]
-                [String]
+                [System.String]
                 $Message
             )
-            
+
             $Message >> $LogFile
         }
 
@@ -332,11 +367,11 @@ function Start-Server
             # Set up the listener
             if ($Https)
             {
-                $HttpListener.Prefixes.Add([Uri]'https://localhost:1243')
-            
+                $HttpListener.Prefixes.Add([Uri] "https://localhost:$HttpsPort")
+
                 try
                 {
-                    Register-SSL
+                    Register-SSL -HttpsPort $HttpsPort
                 }
                 catch
                 {
@@ -349,7 +384,7 @@ function Start-Server
             }
             else
             {
-                $HttpListener.Prefixes.Add([Uri]'http://localhost:1242')
+                $HttpListener.Prefixes.Add([Uri] "http://localhost:$HttpPort")
             }
 
             Write-Log -LogFile $LogPath -Message 'Finished listener setup - about to start listener'
@@ -374,7 +409,7 @@ function Start-Server
 
                 .PARAMETER Result
                     th IAsyncResult containing the listener object and path to the MSI file.
-                    
+
             #>
             $requestListener =
             {
@@ -388,7 +423,7 @@ function Start-Server
                 Write-Log -LogFile $LogPath -Message 'Starting request listener'
 
                 $asyncState = $Result.AsyncState
-                [System.Net.HttpListener]$listener = $asyncState.Listener
+                [System.Net.HttpListener] $listener = $asyncState.Listener
                 $filepath = $asyncState.FilePath
 
                 Write-Log -LogFile $LogPath -Message (ConvertTo-Json $asyncState)
@@ -405,7 +440,7 @@ function Start-Server
                     $numBytes = $fileInfo.Length
                     $fileStream = New-Object -TypeName 'System.IO.FileStream' -ArgumentList @( $filePath, 'Open' )
                     $binaryReader = New-Object -TypeName 'System.IO.BinaryReader' -ArgumentList @( $fileStream )
-                    [Byte[]] $buf = $binaryReader.ReadBytes($numBytes)
+                    [System.Byte[]] $buf = $binaryReader.ReadBytes($numBytes)
                     $fileStream.Close()
 
                     Write-Log -LogFile $LogPath -Message 'Buffer prepared for response'
@@ -450,8 +485,22 @@ function Start-Server
         catch
         {
             $errorMessage = "There were problems setting up the HTTP(s) listener. Error: $_"
+
             Write-Log -LogFile $LogPath -Message $errorMessage
-            throw $errorMessage
+
+            'Error Record Info' >> $LogPath
+            $_ | ConvertTo-Xml -As String >> $LogPath
+
+            'Exception Info' >> $LogPath
+            $_.Exception | ConvertTo-Xml -As String >> $LogPath
+
+            'Running Process Info' >> $LogPath
+            Get-Process | Format-List | Out-String >> $LogPath
+
+            'Open TCP Connections Info' >> $LogPath
+            Get-NetTCPConnection | Format-List | Out-String >> $LogPath
+
+            throw $_
         }
         finally
         {
@@ -459,19 +508,39 @@ function Start-Server
             {
                 $fileServerStarted.Dispose()
             }
-            
+
             Write-Log -LogFile $LogPath -Message 'Stopping the Server'
-            Stop-Listener -HttpListener $HttpListener -Https $Https
+            Stop-Listener -HttpListener $HttpListener -Https $Https -HttpsPort $HttpsPort
         }
     }
 
-    $job = Start-Job -ScriptBlock $server -ArgumentList @( $FilePath, $LogPath, $Https )
+    if ($Https)
+    {
+        $jobName = $testJobPrefix + 'Https'
+    }
+    else
+    {
+        $jobName = $testJobPrefix + 'Http'
+    }
+
+    $job = Start-Job -ScriptBlock $server -Name $jobName -ArgumentList @( $FilePath, $LogPath, $Https, $HttpPort, $HttpsPort )
+
+    # Verify that the job is receivable and does not contain an exception. If it does, re-throw it.
+    try
+    {
+        $null = $job | Receive-Job
+    }
+    catch
+    {
+        Write-Error -Message 'Failed to setup HTTP(S) listener for MsiPackage Tests'
+        throw $_
+    }
 
     <#
-        Return the event object so that client knows when it can start sending requests and 
+        Return the event object so that client knows when it can start sending requests and
         the job object so that the client can stop the job once it is done sending requests.
     #>
-    return @{ 
+    return @{
         FileServerStarted = $fileServerStarted
         Job = $job
     }
@@ -501,7 +570,7 @@ function Stop-Server
         $FileServerStarted,
 
         [System.Management.Automation.Job]
-        $Job  
+        $Job
     )
 
     if ($null -ne $FileServerStarted)
@@ -518,6 +587,20 @@ function Stop-Server
 
 <#
     .SYNOPSIS
+        Removes any jobs associated with HTTP(S) servers that were created
+        for MsiPackage tests.
+#>
+function Stop-EveryTestServerInstance
+{
+    [CmdletBinding()]
+    param ()
+
+    Get-Job -Name "$($testJobPrefix)*" | Stop-Job
+    Get-Job -Name "$($testJobPrefix)*" | Remove-Job
+}
+
+<#
+    .SYNOPSIS
         Creates a new MSI package for testing.
 
     .PARAMETER DestinationPath
@@ -526,11 +609,11 @@ function Stop-Server
 function New-TestMsi
 {
     [CmdletBinding()]
-    param    
+    param
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $DestinationPath
     )
 
@@ -1061,4 +1144,5 @@ Export-ModuleMember -Function `
     New-TestMsi, `
     Start-Server, `
     Stop-Server, `
-    Test-PackageInstalledById
+    Test-PackageInstalledById, `
+    Stop-EveryTestServerInstance

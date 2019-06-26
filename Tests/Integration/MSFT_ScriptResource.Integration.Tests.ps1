@@ -1,4 +1,4 @@
-﻿$errorActionPreference = 'Stop'
+$errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
 if ($PSVersionTable.PSVersion -lt [Version] '5.1')
@@ -58,15 +58,15 @@ Describe 'Script Integration Tests' {
         # Cannot use $TestDrive here because script is run outside of Pester
         $resourceParameters = @{
             FilePath = $script:testFilePath
-            FileContent = 'Test file content' 
+            FileContent = 'Test file content'
         }
 
         It 'Should have removed test file before the configuration' {
-            Test-Path -Path $resourceParameters.FilePath | Should Be $false
+            Test-Path -Path $resourceParameters.FilePath | Should -BeFalse
         }
 
         It 'Should compile and apply the MOF without throwing' {
-            { 
+            {
                 . $script:configurationNoCredentialFilePath -ConfigurationName $configurationName
                 & $configurationName -OutputPath $TestDrive @resourceParameters
                 Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
@@ -74,7 +74,7 @@ Describe 'Script Integration Tests' {
         }
 
         It 'Should have created the test file' {
-            Test-Path -Path $resourceParameters.FilePath | Should Be $true
+            Test-Path -Path $resourceParameters.FilePath | Should -BeTrue
         }
 
         It 'Should have set file content correctly' {
@@ -91,7 +91,7 @@ Describe 'Script Integration Tests' {
             }
 
             $configurationName = 'TestScriptWithCredential'
-            
+
             # Cannot use $TestDrive here because script is run outside of Pester
             $resourceParameters = @{
                 FilePath = $script:testFilePath
@@ -100,7 +100,7 @@ Describe 'Script Integration Tests' {
             }
 
             It 'Should have removed test file before config runs' {
-                Test-Path -Path $resourceParameters.FilePath | Should Be $false
+                Test-Path -Path $resourceParameters.FilePath | Should -BeFalse
             }
 
             $configData = @{
@@ -114,19 +114,19 @@ Describe 'Script Integration Tests' {
             }
 
             It 'Should compile and apply the MOF without throwing' {
-                { 
+                {
                     . $script:configurationWithCredentialFilePath -ConfigurationName $configurationName
                     & $configurationName -OutputPath $TestDrive -ConfigurationData $configData @resourceParameters
                     Start-DscConfiguration -Path $TestDrive -ErrorAction 'Stop' -Wait -Force
-                } | Should Not Throw
+                } | Should -Not -Throw
             }
 
             It 'Should have created the test file' {
-                Test-Path -Path $resourceParameters.FilePath | Should Be $true
+                Test-Path -Path $resourceParameters.FilePath | Should -BeTrue
             }
 
             It 'Should have set file content correctly' {
-                Get-Content -Path $resourceParameters.FilePath -Raw | Should Be "$($resourceParameters.FileContent)`r`n"
+                Get-Content -Path $resourceParameters.FilePath -Raw | Should -Be "$($resourceParameters.FileContent)`r`n"
             }
         }
     }

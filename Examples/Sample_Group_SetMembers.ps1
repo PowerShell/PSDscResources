@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
         If the group named GroupName1 does not exist, creates a group named GroupName1 and adds the
         users with the usernames Username1 and Username2 to the group.

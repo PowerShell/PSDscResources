@@ -26,32 +26,32 @@ $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_WindowsFeature'
         If the specified role or feature does not contain any subfeatures then
         IncludeAllSubFeature will be set to $false. If the specified feature contains one
         or more subfeatures then IncludeAllSubFeature will be set to $true only if all the
-        subfeatures are installed. Otherwise, IncludeAllSubFeature will be set to $false. 
+        subfeatures are installed. Otherwise, IncludeAllSubFeature will be set to $false.
 #>
 function Get-TargetResource
 {
     [CmdletBinding()]
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     param
     (
        [Parameter(Mandatory = $true)]
        [ValidateNotNullOrEmpty()]
-       [String]
+       [System.String]
        $Name,
-       
+
        [Parameter()]
        [ValidateNotNullOrEmpty()]
        [System.Management.Automation.PSCredential]
        [System.Management.Automation.Credential()]
        $Credential
     )
- 
+
     Write-Verbose -Message ($script:localizedData.GetTargetResourceStartMessage -f $Name)
-    
-    Import-ServerManager 
-    
+
+    Import-ServerManager
+
     Write-Verbose -Message ($script:localizedData.QueryFeature -f $Name)
-    
+
     $isWinServer2008R2SP1 = Test-IsWinServer2008R2SP1
     if ($isWinServer2008R2SP1 -and $PSBoundParameters.ContainsKey('Credential'))
     {
@@ -63,11 +63,11 @@ function Get-TargetResource
     {
         $feature = Get-WindowsFeature @PSBoundParameters
     }
-    
-    Assert-SingleFeatureExists -Feature $feature -Name $Name
-    
+
+    Assert-SingleInstanceOfFeature -Feature $feature -Name $Name
+
     $includeAllSubFeature = $true
-    
+
     if ($feature.SubFeatures.Count -eq 0)
     {
         $includeAllSubFeature = $false
@@ -82,7 +82,7 @@ function Get-TargetResource
 
             if ($PSBoundParameters.ContainsKey('Credential'))
             {
-               $getWindowsFeatureParameters['Credential'] = $Credential 
+               $getWindowsFeatureParameters['Credential'] = $Credential
             }
 
             if ($isWinServer2008R2SP1 -and $PSBoundParameters.ContainsKey('Credential'))
@@ -100,9 +100,9 @@ function Get-TargetResource
             {
                 $subFeature = Get-WindowsFeature @getWindowsFeatureParameters
             }
-    
-            Assert-SingleFeatureExists -Feature $subFeature -Name $currentSubFeatureName
-    
+
+            Assert-SingleInstanceOfFeature -Feature $subFeature -Name $currentSubFeatureName
+
             if (-not $subFeature.Installed)
             {
                 $includeAllSubFeature = $false
@@ -121,7 +121,7 @@ function Get-TargetResource
     }
 
     Write-Verbose -Message ($script:localizedData.GetTargetResourceEndMessage -f $Name)
-    
+
     # Add all feature properties to the hash table
     return @{
         Name = $Name
@@ -134,7 +134,7 @@ function Get-TargetResource
 <#
     .SYNOPSIS
         Installs or uninstalls the role or feature with the given name on the target machine
-        with the option of installing or uninstalling all subfeatures as well. 
+        with the option of installing or uninstalling all subfeatures as well.
 
     .PARAMETER Name
         The name of the role or feature to install or uninstall.
@@ -166,16 +166,16 @@ function Set-TargetResource
     (
        [Parameter(Mandatory = $true)]
        [ValidateNotNullOrEmpty()]
-       [String]
+       [System.String]
        $Name,
 
        [Parameter()]
        [ValidateSet('Present', 'Absent')]
-       [String]
+       [System.String]
        $Ensure = 'Present',
 
        [Parameter()]
-       [Boolean]
+       [System.Boolean]
        $IncludeAllSubFeature = $false,
 
        [Parameter()]
@@ -186,7 +186,7 @@ function Set-TargetResource
 
        [Parameter()]
        [ValidateNotNullOrEmpty()]
-       [String]
+       [System.String]
        $LogPath
     )
 
@@ -205,7 +205,7 @@ function Set-TargetResource
 
         if ($PSBoundParameters.ContainsKey('LogPath'))
         {
-           $addWindowsFeatureParameters['LogPath'] = $LogPath 
+           $addWindowsFeatureParameters['LogPath'] = $LogPath
         }
 
         Write-Verbose -Message ($script:localizedData.InstallFeature -f $Name)
@@ -225,7 +225,7 @@ function Set-TargetResource
         {
             if ($PSBoundParameters.ContainsKey('Credential'))
             {
-               $addWindowsFeatureParameters['Credential'] = $Credential 
+               $addWindowsFeatureParameters['Credential'] = $Credential
             }
 
             $feature = Add-WindowsFeature @addWindowsFeatureParameters
@@ -256,7 +256,7 @@ function Set-TargetResource
 
         if ($PSBoundParameters.ContainsKey('LogPath'))
         {
-           $removeWindowsFeatureParameters['LogPath'] = $LogPath 
+           $removeWindowsFeatureParameters['LogPath'] = $LogPath
         }
 
         Write-Verbose -Message ($script:localizedData.UninstallFeature -f $Name)
@@ -276,7 +276,7 @@ function Set-TargetResource
         {
             if ($PSBoundParameters.ContainsKey('Credential'))
             {
-               $addWindowsFeatureParameters['Credential'] = $Credential 
+               $addWindowsFeatureParameters['Credential'] = $Credential
             }
 
             $feature = Remove-WindowsFeature @removeWindowsFeatureParameters
@@ -304,7 +304,7 @@ function Set-TargetResource
 
 <#
     .SYNOPSIS
-        Tests if the role or feature with the given name is in the desired state. 
+        Tests if the role or feature with the given name is in the desired state.
 
     .PARAMETER Name
         The name of the role or feature to test the state of.
@@ -315,11 +315,11 @@ function Set-TargetResource
         By default this is set to Present.
 
     .PARAMETER IncludeAllSubFeature
-        Specifies whether or not the installation state of all subfeatures should be tested with 
+        Specifies whether or not the installation state of all subfeatures should be tested with
         the specified role or feature. Default is false.
-        -If this property is set to true and Ensure is set to Present, 
+        -If this property is set to true and Ensure is set to Present,
             each subfeature will be tested to ensure it is installed.
-        -If this property is set to true and Ensure is set to Absent, 
+        -If this property is set to true and Ensure is set to Absent,
             each subfeature will be tested to ensure it is uninstalled.
         -If this property is false, subfeatures will not be tested.
 
@@ -340,16 +340,16 @@ function Test-TargetResource
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $Name,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [String]
+        [System.String]
         $Ensure = 'Present',
 
         [Parameter()]
-        [Boolean]
+        [System.Boolean]
         $IncludeAllSubFeature = $false,
 
         [Parameter()]
@@ -360,15 +360,15 @@ function Test-TargetResource
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [System.String]
         $LogPath
 
     )
 
     Write-Verbose -Message ($script:localizedData.TestTargetResourceStartMessage -f $Name)
-    
+
     Import-ServerManager
-    
+
     $testTargetResourceResult = $false
 
     $getWindowsFeatureParameters = @{
@@ -377,11 +377,11 @@ function Test-TargetResource
 
     if ($PSBoundParameters.ContainsKey('Credential'))
     {
-       $getWindowsFeatureParameters['Credential'] = $Credential 
+       $getWindowsFeatureParameters['Credential'] = $Credential
     }
-    
+
     Write-Verbose -Message ($script:localizedData.QueryFeature -f $Name)
-    
+
     $isWinServer2008R2SP1 = Test-IsWinServer2008R2SP1
     if ($isWinServer2008R2SP1 -and $PSBoundParameters.ContainsKey('Credential'))
     {
@@ -398,22 +398,22 @@ function Test-TargetResource
     {
         $feature = Get-WindowsFeature @getWindowsFeatureParameters
     }
-    
-    Assert-SingleFeatureExists -Feature $feature -Name $Name
-    
+
+    Assert-SingleInstanceOfFeature -Feature $feature -Name $Name
+
     # Check if the feature is in the requested Ensure state.
     if (($Ensure -eq 'Present' -and $feature.Installed -eq $true) -or `
         ($Ensure -eq 'Absent' -and $feature.Installed -eq $false))
     {
         $testTargetResourceResult = $true
-    
+
         if ($IncludeAllSubFeature)
         {
             # Check if each subfeature is in the requested state.
             foreach ($currentSubFeatureName in $feature.SubFeatures)
             {
                 $getWindowsFeatureParameters['Name'] = $currentSubFeatureName
-    
+
                 if ($isWinServer2008R2SP1 -and $PSBoundParameters.ContainsKey('Credential'))
                 {
                     <#
@@ -429,15 +429,15 @@ function Test-TargetResource
                 {
                     $subFeature = Get-WindowsFeature @getWindowsFeatureParameters
                 }
-                
-                Assert-SingleFeatureExists -Feature $subFeature -Name $currentSubFeatureName
-    
+
+                Assert-SingleInstanceOfFeature -Feature $subFeature -Name $currentSubFeatureName
+
                 if (-not $subFeature.Installed -and $Ensure -eq 'Present')
                 {
                     $testTargetResourceResult = $false
                     break
                 }
-    
+
                 if ($subFeature.Installed -and $Ensure -eq 'Absent')
                 {
                     $testTargetResourceResult = $false
@@ -451,9 +451,9 @@ function Test-TargetResource
         # Ensure is not in the correct state
         $testTargetResourceResult = $false
     }
-    
+
     Write-Verbose -Message ($script:localizedData.TestTargetResourceEndMessage -f $Name)
-    
+
     return $testTargetResourceResult
 }
 
@@ -467,19 +467,19 @@ function Test-TargetResource
 
     .PARAMETER Name
         The name of the role or feature to include in any error messages that are thrown.
-        (Not used to assert validity of the feature).    
+        (Not used to assert validity of the feature).
 #>
-function Assert-SingleFeatureExists
+function Assert-SingleInstanceOfFeature
 {
     [CmdletBinding()]
     param
     (
         [Parameter()]
-        [PSObject]
+        [System.Management.Automation.PSObject]
         $Feature,
 
         [Parameter()]
-        [String]
+        [System.String]
         $Name
     )
 
@@ -501,7 +501,7 @@ function Assert-SingleFeatureExists
 #>
 function Import-ServerManager
 {
-    param 
+    param
     ()
 
     <#
@@ -552,7 +552,7 @@ function Import-ServerManager
 <#
     .SYNOPSIS
         Tests if the machine is a Windows Server 2008 R2 SP1 machine.
-    
+
     .NOTES
         Since Assert-PrequisitesValid ensures that ServerManager is available on the machine,
         this function only checks the OS version.

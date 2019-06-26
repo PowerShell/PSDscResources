@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
         If the groups named GroupName1 and Administrators do not exist, creates the groups named
         GroupName1 and Administrators and adds the users with the usernames Username1 and Username2
