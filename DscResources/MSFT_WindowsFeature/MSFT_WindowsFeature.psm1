@@ -144,6 +144,10 @@ function Get-TargetResource
         or uninstalled ('Absent').
         By default this is set to Present.
 
+    .PARAMETER Source
+        Specifies a path to additional feature source files if necessary for the installation
+        of the stated roles or features.
+
     .PARAMETER IncludeAllSubFeature
         Specifies whether or not all subfeatures should be installed or uninstalled with
         the specified role or feature. Default is false.
@@ -323,6 +327,11 @@ function Set-TargetResource
         Specifies whether the role or feature should be installed ('Present')
         or uninstalled ('Absent').
         By default this is set to Present.
+
+    .PARAMETER Source
+        Specifies a path to additional feature source files if necessary for the installation
+        of the stated roles or features.
+        Not used in Test-TargetResource.
 
     .PARAMETER IncludeAllSubFeature
         Specifies whether or not the installation state of all subfeatures should be tested with
