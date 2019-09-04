@@ -6,7 +6,7 @@ $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
 
 Import-Module -Name (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) `
-                               -ChildPath 'CommonResourceHelper.psm1')
+        -ChildPath 'CommonResourceHelper.psm1')
 
 # Localized messages for verbose and error messages in this resource
 $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_WindowsFeature'
@@ -34,16 +34,16 @@ function Get-TargetResource
     [OutputType([System.Collections.Hashtable])]
     param
     (
-       [Parameter(Mandatory = $true)]
-       [ValidateNotNullOrEmpty()]
-       [System.String]
-       $Name,
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [System.String]
+        $Name,
 
-       [Parameter()]
-       [ValidateNotNullOrEmpty()]
-       [System.Management.Automation.PSCredential]
-       [System.Management.Automation.Credential()]
-       $Credential
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential
     )
 
     Write-Verbose -Message ($script:localizedData.GetTargetResourceStartMessage -f $Name)
@@ -56,8 +56,8 @@ function Get-TargetResource
     if ($isWinServer2008R2SP1 -and $PSBoundParameters.ContainsKey('Credential'))
     {
         $feature = Invoke-Command -ScriptBlock { Get-WindowsFeature -Name $Name } `
-                                  -ComputerName . `
-                                  -Credential $Credential `
+            -ComputerName . `
+            -Credential $Credential
     }
     else
     {
@@ -82,7 +82,7 @@ function Get-TargetResource
 
             if ($PSBoundParameters.ContainsKey('Credential'))
             {
-               $getWindowsFeatureParameters['Credential'] = $Credential
+                $getWindowsFeatureParameters['Credential'] = $Credential
             }
 
             if ($isWinServer2008R2SP1 -and $PSBoundParameters.ContainsKey('Credential'))
@@ -93,8 +93,8 @@ function Get-TargetResource
                     attribute on this server.
                 #>
                 $subFeature = Invoke-Command -ScriptBlock { Get-WindowsFeature -Name $currentSubFeatureName } `
-                                             -ComputerName . `
-                                             -Credential $Credential `
+                    -ComputerName . `
+                    -Credential $Credential
             }
             else
             {
@@ -124,9 +124,9 @@ function Get-TargetResource
 
     # Add all feature properties to the hash table
     return @{
-        Name = $Name
-        DisplayName = $feature.DisplayName
-        Ensure = $ensureResult
+        Name                 = $Name
+        DisplayName          = $feature.DisplayName
+        Ensure               = $ensureResult
         IncludeAllSubFeature = $includeAllSubFeature
     }
 }
@@ -164,30 +164,35 @@ function Set-TargetResource
     [CmdletBinding()]
     param
     (
-       [Parameter(Mandatory = $true)]
-       [ValidateNotNullOrEmpty()]
-       [System.String]
-       $Name,
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [System.String]
+        $Name,
 
-       [Parameter()]
-       [ValidateSet('Present', 'Absent')]
-       [System.String]
-       $Ensure = 'Present',
+        [Parameter()]
+        [ValidateSet('Present', 'Absent')]
+        [System.String]
+        $Ensure = 'Present',
 
-       [Parameter()]
-       [System.Boolean]
-       $IncludeAllSubFeature = $false,
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [System.String]
+        $Source,
 
-       [Parameter()]
-       [ValidateNotNullOrEmpty()]
-       [System.Management.Automation.PSCredential]
-       [System.Management.Automation.Credential()]
-       $Credential,
+        [Parameter()]
+        [System.Boolean]
+        $IncludeAllSubFeature = $false,
 
-       [Parameter()]
-       [ValidateNotNullOrEmpty()]
-       [System.String]
-       $LogPath
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential,
+
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [System.String]
+        $LogPath
     )
 
     Write-Verbose -Message ($script:localizedData.SetTargetResourceStartMessage -f $Name)
@@ -199,16 +204,21 @@ function Set-TargetResource
     if ($Ensure -eq 'Present')
     {
         $addWindowsFeatureParameters = @{
-            Name = $Name
+            Name                 = $Name
             IncludeAllSubFeature = $IncludeAllSubFeature
         }
 
         if ($PSBoundParameters.ContainsKey('LogPath'))
         {
-           $addWindowsFeatureParameters['LogPath'] = $LogPath
+            $addWindowsFeatureParameters['LogPath'] = $LogPath
         }
 
         Write-Verbose -Message ($script:localizedData.InstallFeature -f $Name)
+
+        if (($isWinServer2008R2SP1 -eq $false) -and $PSBoundParameters.ContainsKey('Source'))
+        {
+            $addWindowsFeatureParameters['Source'] = $Source
+        }
 
         if ($isWinServer2008R2SP1 -and $PSBoundParameters.ContainsKey('Credential'))
         {
@@ -218,14 +228,14 @@ function Set-TargetResource
                 attribute on this server.
             #>
             $feature = Invoke-Command -ScriptBlock { Add-WindowsFeature @addWindowsFeatureParameters } `
-                                      -ComputerName . `
-                                      -Credential $Credential
+                -ComputerName . `
+                -Credential $Credential
         }
         else
         {
             if ($PSBoundParameters.ContainsKey('Credential'))
             {
-               $addWindowsFeatureParameters['Credential'] = $Credential
+                $addWindowsFeatureParameters['Credential'] = $Credential
             }
 
             $feature = Add-WindowsFeature @addWindowsFeatureParameters
@@ -256,7 +266,7 @@ function Set-TargetResource
 
         if ($PSBoundParameters.ContainsKey('LogPath'))
         {
-           $removeWindowsFeatureParameters['LogPath'] = $LogPath
+            $removeWindowsFeatureParameters['LogPath'] = $LogPath
         }
 
         Write-Verbose -Message ($script:localizedData.UninstallFeature -f $Name)
@@ -269,14 +279,14 @@ function Set-TargetResource
                 attribute on this server.
             #>
             $feature = Invoke-Command -ScriptBlock { Remove-WindowsFeature @removeWindowsFeatureParameters } `
-                                      -ComputerName . `
-                                      -Credential $Credential
+                -ComputerName . `
+                -Credential $Credential
         }
         else
         {
             if ($PSBoundParameters.ContainsKey('Credential'))
             {
-               $addWindowsFeatureParameters['Credential'] = $Credential
+                $addWindowsFeatureParameters['Credential'] = $Credential
             }
 
             $feature = Remove-WindowsFeature @removeWindowsFeatureParameters
@@ -349,6 +359,11 @@ function Test-TargetResource
         $Ensure = 'Present',
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [System.String]
+        $Source,
+
+        [Parameter()]
         [System.Boolean]
         $IncludeAllSubFeature = $false,
 
@@ -377,7 +392,7 @@ function Test-TargetResource
 
     if ($PSBoundParameters.ContainsKey('Credential'))
     {
-       $getWindowsFeatureParameters['Credential'] = $Credential
+        $getWindowsFeatureParameters['Credential'] = $Credential
     }
 
     Write-Verbose -Message ($script:localizedData.QueryFeature -f $Name)
@@ -391,8 +406,8 @@ function Test-TargetResource
             attribute on this server.
         #>
         $feature = Invoke-Command -ScriptBlock { Get-WindowsFeature -Name $Name } `
-                                  -ComputerName . `
-                                  -Credential $Credential
+            -ComputerName . `
+            -Credential $Credential
     }
     else
     {
@@ -422,8 +437,8 @@ function Test-TargetResource
                         attribute on this server.
                     #>
                     $subFeature = Invoke-Command -ScriptBlock { Get-WindowsFeature -Name $currentSubFeatureName } `
-                                                 -ComputerName . `
-                                                 -Credential $Credential
+                        -ComputerName . `
+                        -Credential $Credential
                 }
                 else
                 {
@@ -514,7 +529,7 @@ function Import-ServerManager
 
     # Check if this operating system needs an update to the ServerManager cmdlets
     if ($operatingSystem.Version.StartsWith('6.1.') -and `
-        $serverCoreOSCodes -contains $operatingSystem.OperatingSystemSKU)
+            $serverCoreOSCodes -contains $operatingSystem.OperatingSystemSKU)
     {
         Write-Verbose -Message $script:localizedData.EnableServerManagerPSHCmdletsFeature
 
