@@ -2201,7 +2201,7 @@ function Test-IsLocalMachine
         $Scope
     )
 
-    $localMachineScopes = @( '.', $env:computerName, 'localhost', '127.0.0.1', 'NT Authority', 'NT Service', 'BuiltIn' )
+    $localMachineScopes = @( '.', $env:computerName, 'localhost', '127.0.0.1', 'NT Authority', 'NT Service', 'BuiltIn', 'IIS APPPOOL' )
 
     if ($localMachineScopes -icontains $Scope)
     {
