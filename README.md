@@ -403,6 +403,7 @@ This resource **is not supported** on Nano Server.
 * **[String] Ensure** _(Write)_: Specifies whether the feature should be installed (Present) or uninstalled (Absent) { *Present* | Absent }.
 * **[Boolean] IncludeAllSubFeature** _(Write)_: Specifies whether or not all subfeatures should be installed with the specified role or feature. The default value is false.
 * **[String] LogPath** _(Write)_: Indicates the path to a log file to log the operation.
+* **[String] Source** _(Write)_: Indicates the location of the source file to use for installation, if necessary.
 
 #### Read-Only Properties from Get-TargetResource
 
