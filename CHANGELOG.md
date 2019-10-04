@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.12.0.0
+
 * Ports style fixes that were recently made in xPSDesiredStateConfiguration
   on test related files.
 * Ports most of the style upgrades from xPSDesiredStateConfiguration that have
