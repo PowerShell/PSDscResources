@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-moduleVersion = '2.11.0.0'
+moduleVersion = '2.12.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -101,7 +101,33 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Fix Custom DSC Resource Kit PSSA Rule Failures
+        ReleaseNotes = '* Ports style fixes that were recently made in xPSDesiredStateConfiguration
+  on test related files.
+* Ports most of the style upgrades from xPSDesiredStateConfiguration that have
+  been made in files in the DscResources folder.
+* Ports fixes for the following issues:
+  [Issue 505](https://github.com/PowerShell/xPSDesiredStateConfiguration/issues/505)
+  [Issue 590](https://github.com/PowerShell/xPSDesiredStateConfiguration/issues/590)
+  Changes to test helper Enter-DscResourceTestEnvironment so that it only
+  updates DSCResource.Tests when it is longer than 120 minutes since
+  it was last pulled. This is to improve performance of test execution
+  and reduce the likelihood of connectivity issues caused by inability to
+  pull DSCResource.Tests.
+* Fixes issue where MsiPackage Integration tests fail if the test HttpListener
+  fails to start. Moves the test HttpListener objects to dynamically assigned,
+  higher numbered ports to avoid conflicts with other services, and also checks
+  to ensure that the ports are available before using them. Adds checks to
+  ensure that no outstanding HTTP server jobs are running before attempting to
+  setup a new one. Also adds additional instrumentation to make it easier to
+  troubleshoot issues with the test HttpListener objects in the future.
+  Specifically fixes
+  [Issue 142](https://github.com/PowerShell/PSDscResources/issues/142)
+* Improved speed of Test-IsNanoServer function
+* Remove the Byte Order Mark (BOM) from all affected files
+* Opt-in to "Validate Module Files" and "Validate Script Files" common meta-tests
+* Opt-in to "Common Tests - Relative Path Length" common meta-test
+* Fix README markdownlint validation failures
+* Move change log from README.md to CHANGELOG.md
 
 '
 
@@ -116,6 +142,7 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
 
 
 
