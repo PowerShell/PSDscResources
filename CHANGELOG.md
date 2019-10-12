@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+* Opt-in to common test to validate markdown.
+* Opt-in to common test to validate example files.
+
 ## 2.12.0.0
 
 * Ports style fixes that were recently made in xPSDesiredStateConfiguration
