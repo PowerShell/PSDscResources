@@ -236,7 +236,7 @@ None
 * [Install the MSI file with the given ID at the given Path](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_MsiPackage_InstallPackageFromFile.ps1)
 * [Uninstall the MSI file with the given ID at the given Path](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_MsiPackage_UninstallPackageFromFile.ps1)
 * [Install the MSI file with the given ID at the given HTTP URL](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_MsiPackage_InstallPackageFromHttp.ps1)
-* [Uninstall the MSI file with the given ID at the given HTTPS URL](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_MsiPackage_UnstallPackageFromHttps.ps1)
+* [Uninstall the MSI file with the given ID at the given HTTPS URL](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_MsiPackage_UninstallPackageFromHttps.ps1)
 
 ### Registry
 

@@ -3,7 +3,9 @@
 ## Unreleased
 
 * Opt-in to common test to validate markdown.
-* Opt-in to common test to validate example files.
+* Opt-in to common test to validate custom script analyzer rules.
+* Opt-in to common test to validate relative path length.
+* Correct spelling in sample filename `Sample_MsiPackage_UninstallPackageFromHttps`.
 
 ## 2.12.0.0
 
