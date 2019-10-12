@@ -46,7 +46,7 @@ Import-Module -Name $script:resourceSetHelperFilePath
         at this path will be overwritten. This property cannot be specified at the same time
         as Credential when running the processes as a local user.
 #>
-Configuration ProcessSet
+configuration ProcessSet
 {
     [CmdletBinding()]
     param

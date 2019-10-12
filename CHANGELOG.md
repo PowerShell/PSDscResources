@@ -2,9 +2,14 @@
 
 ## Unreleased
 
-* Opt-in to common test to validate markdown.
-* Opt-in to common test to validate custom script analyzer rules.
-* Opt-in to common test to validate relative path length.
+* Opt-in to the following Meta tests:
+  * Common Tests - Custom Script Analyzer Rules.
+  * Common Tests - Flagged Script Analyzer Rules.
+  * Common Tests - New Error-Level Script Analyzer Rules.
+  * Common Tests - Relative Path Length.
+  * Common Tests - Required Script Analyzer Rules.
+  * Common Tests - Validate Markdown Links.
+  * Common Tests - Validate Markdown Files.
 * Correct spelling in sample filename `Sample_MsiPackage_UninstallPackageFromHttps`.
 
 ## 2.12.0.0

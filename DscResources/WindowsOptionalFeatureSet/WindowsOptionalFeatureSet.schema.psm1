@@ -36,7 +36,7 @@ Import-Module -Name $script:resourceSetHelperFilePath
     .PARAMETER LogLevel
         The level of detail to include in the log.
 #>
-Configuration WindowsOptionalFeatureSet
+configuration WindowsOptionalFeatureSet
 {
     [CmdletBinding()]
     param

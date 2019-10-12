@@ -32,7 +32,7 @@ Import-Module -Name $script:resourceSetHelperFilePath
     .PARAMETER Credential
         The credential to resolve all groups and user accounts.
 #>
-Configuration GroupSet
+configuration GroupSet
 {
     [CmdletBinding()]
     param

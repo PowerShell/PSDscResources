@@ -46,7 +46,7 @@ Import-Module -Name $script:resourceSetHelperFilePath
         right. The user account specified by this property must have access to the service
         executable paths in order to start the services.
 #>
-Configuration ServiceSet
+configuration ServiceSet
 {
     [CmdletBinding()]
     param
