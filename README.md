@@ -521,7 +521,7 @@ None
 
 #### Examples
 
-* [Install a cab file with the given name from the given path](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsPackageCab.ps1)
+* [Install a cab file with the given name from the given path](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_WindowsPackageCab.ps1)
 
 ### WindowsProcess
 
@@ -553,10 +553,10 @@ None
 
 #### Examples
 
-* [Start a process](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsProcess_Start.ps1)
-* [Stop a process](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsProcess_Stop.ps1)
-* [Start a process under a user](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsProcess_StartUnderUser.ps1)
-* [Stop a process under a user](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_WindowsProcess_StopUnderUser.ps1)
+* [Start a process](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_WindowsProcess_Start.ps1)
+* [Stop a process](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_WindowsProcess_Stop.ps1)
+* [Start a process under a user](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_WindowsProcess_StartUnderUser.ps1)
+* [Stop a process under a user](https://github.com/PowerShell/PSDscResources/blob/dev/Examples/Sample_WindowsProcess_StopUnderUser.ps1)
 
 ### ProcessSet
 
@@ -590,5 +590,5 @@ The following parameters will be the same for each process in the set:
 
 #### Examples
 
-* [Start multiple processes](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_ProcessSet_Start.ps1)
-* [Stop multiple processes](https://github.com/PowerShell/PSDesResources/blob/master/Examples/Sample_ProcessSet_Stop.ps1)
+* [Start multiple processes](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_ProcessSet_Start.ps1)
+* [Stop multiple processes](https://github.com/PowerShell/PSDscResources/blob/master/Examples/Sample_ProcessSet_Stop.ps1)
