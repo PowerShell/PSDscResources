@@ -1,6 +1,7 @@
 # PSDscResources
 
 PSDscResources is the new home of the in-box resources from PSDesiredStateConfiguration.
+The resources in this module are maintained and supported by Microsoft.
 
 These resources are a combination of those in the in-box PSDesiredStateConfiguration module as well as community contributions from our experimental [xPSDesiredStateConfiguration](https://github.com/PowerShell/xPSDesiredStateConfiguration) module on GitHub.
 These resources have also recently been updated to meet the DSC Resource Kit [High Quality Resource Module (HQRM) guidelines](https://github.com/PowerShell/DscResources/blob/master/HighQualityModuleGuidelines.md).
