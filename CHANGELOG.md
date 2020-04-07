@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+* WindowsFeature
+    * Added Source parameter to support installation of windows feature which
+      need additional feature files. The specified path must be accessible by
+      the target computer.
+
 ## 2.12.0.0
 
 * Ports style fixes that were recently made in xPSDesiredStateConfiguration
