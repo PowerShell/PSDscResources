@@ -1,16 +1,22 @@
-Configuration UserExample
+Configuration Sample_User_CreateUser
 {
-    param (
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullorEmpty()]
         [System.Management.Automation.PSCredential]
-        $PasswordCredential
+        $Credential
     )
 
     Import-DscResource -ModuleName PSDscResources
 
-    User UserExample
+    Node localhost
     {
-        Ensure = 'Present'  # To ensure the user account does not exist, set Ensure to "Absent"
-        UserName = 'SomeUserName'
-        Password = $PasswordCredential # This needs to be a credential object
+        User UserExample
+        {
+            Ensure   = 'Present'  # To ensure the user account does not exist, set Ensure to "Absent"
+            UserName = 'SomeUserName'
+            Password = $Credential # This needs to be a credential object
+        }
     }
 }
