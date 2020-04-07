@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+* Group
+  * Group members in the "IIS APPPOOL" scope should now be resolved without an error.
+
 ## 2.12.0.0
 
 * Ports style fixes that were recently made in xPSDesiredStateConfiguration

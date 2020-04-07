@@ -362,7 +362,7 @@ function Get-TargetResourceOnFullSKU
         $Credential
     )
 
-    $principalContextCache = @{}
+    $principalContextCache = @{ }
     $disposables = New-Object -TypeName 'System.Collections.ArrayList'
 
     try
@@ -383,10 +383,10 @@ function Get-TargetResourceOnFullSKU
                 -Credential $Credential -Disposables $disposables
 
             return @{
-                GroupName = $group.Name
-                Ensure = 'Present'
+                GroupName   = $group.Name
+                Ensure      = 'Present'
                 Description = $group.Description
-                Members = $members
+                Members     = $members
             }
         }
         else
@@ -394,7 +394,7 @@ function Get-TargetResourceOnFullSKU
             # The group was not found.
             return @{
                 GroupName = $GroupName
-                Ensure = 'Absent'
+                Ensure    = 'Absent'
             }
         }
     }
@@ -442,7 +442,7 @@ function Get-TargetResourceOnNanoServer
             # The group was not found.
             return @{
                 GroupName = $GroupName
-                Ensure = 'Absent'
+                Ensure    = 'Absent'
             }
         }
 
@@ -453,10 +453,10 @@ function Get-TargetResourceOnNanoServer
     $members = Get-MembersOnNanoServer -Group $group
 
     return @{
-        GroupName = $group.Name
-        Ensure = 'Present'
+        GroupName   = $group.Name
+        Ensure      = 'Present'
         Description = $group.Description
-        Members = $members
+        Members     = $members
     }
 }
 
@@ -551,7 +551,7 @@ function Set-TargetResourceOnFullSKU
         $Credential
     )
 
-    $principalContextCache = @{}
+    $principalContextCache = @{ }
     $disposables = New-Object -TypeName 'System.Collections.ArrayList'
 
     try
@@ -633,10 +633,10 @@ function Set-TargetResourceOnFullSKU
                     if ($groupOriginallyExists)
                     {
                         $actualMembersAsPrincipals = @( Get-MembersAsPrincipalsList `
-                            -Group $group `
-                            -PrincipalContextCache $principalContextCache `
-                            -Disposables $disposables `
-                            -Credential $Credential
+                                -Group $group `
+                                -PrincipalContextCache $principalContextCache `
+                                -Disposables $disposables `
+                                -Credential $Credential
                         )
                     }
 
@@ -652,10 +652,10 @@ function Set-TargetResourceOnFullSKU
 
                         # Resolve the names to actual principal objects.
                         $membersAsPrincipals = @( ConvertTo-UniquePrincipalsList `
-                            -MemberNames $uniqueMembers `
-                            -PrincipalContextCache $principalContextCache `
-                            -Disposables $disposables `
-                            -Credential $Credential )
+                                -MemberNames $uniqueMembers `
+                                -PrincipalContextCache $principalContextCache `
+                                -Disposables $disposables `
+                                -Credential $Credential )
 
                         if ($null -ne $actualMembersAsPrincipals -and $actualMembersAsPrincipals.Count -gt 0)
                         {
@@ -670,20 +670,20 @@ function Set-TargetResourceOnFullSKU
 
                             foreach ($actualMemberAsPrincipal in $actualMembersAsPrincipals)
                             {
-                                    if ($membersAsPrincipals -notcontains $actualMemberAsPrincipal)
-                                    {
-                                        Remove-GroupMember -Group $group -MemberAsPrincipal $actualMemberAsPrincipal
-                                        $saveChanges = $true
-                                    }
+                                if ($membersAsPrincipals -notcontains $actualMemberAsPrincipal)
+                                {
+                                    Remove-GroupMember -Group $group -MemberAsPrincipal $actualMemberAsPrincipal
+                                    $saveChanges = $true
                                 }
+                            }
                         }
                         else
                         {
                             # Set the members of the group
                             foreach ($memberAsPrincipal in $membersAsPrincipals)
                             {
-                                    Add-GroupMember -Group $group -MemberAsPrincipal $memberAsPrincipal
-                                }
+                                Add-GroupMember -Group $group -MemberAsPrincipal $memberAsPrincipal
+                            }
 
                             $saveChanges = $true
                         }
@@ -698,10 +698,10 @@ function Set-TargetResourceOnFullSKU
                     if ($groupOriginallyExists)
                     {
                         $actualMembersAsPrincipals = @( Get-MembersAsPrincipalsList `
-                            -Group $group `
-                            -PrincipalContextCache $principalContextCache `
-                            -Disposables $disposables `
-                            -Credential $Credential
+                                -Group $group `
+                                -PrincipalContextCache $principalContextCache `
+                                -Disposables $disposables `
+                                -Credential $Credential
                         )
                     }
 
@@ -716,10 +716,10 @@ function Set-TargetResourceOnFullSKU
                     {
                         # Resolve the names to actual principal objects.
                         $membersToIncludeAsPrincipals = @( ConvertTo-UniquePrincipalsList `
-                            -MemberNames $uniqueMembersToInclude `
-                            -PrincipalContextCache $principalContextCache `
-                            -Disposables $disposables `
-                            -Credential $Credential
+                                -MemberNames $uniqueMembersToInclude `
+                                -PrincipalContextCache $principalContextCache `
+                                -Disposables $disposables `
+                                -Credential $Credential
                         )
                     }
 
@@ -734,10 +734,10 @@ function Set-TargetResourceOnFullSKU
                     {
                         # Resolve the names to actual principal objects.
                         $membersToExcludeAsPrincipals = @( ConvertTo-UniquePrincipalsList `
-                            -MemberNames $uniqueMembersToExclude `
-                            -PrincipalContextCache $principalContextCache `
-                            -Disposables $disposables `
-                            -Credential $Credential
+                                -MemberNames $uniqueMembersToExclude `
+                                -PrincipalContextCache $principalContextCache `
+                                -Disposables $disposables `
+                                -Credential $Credential
                         )
                     }
 
@@ -751,7 +751,7 @@ function Set-TargetResourceOnFullSKU
                         {
                             New-InvalidArgumentException -ArgumentName 'MembersToInclude and MembersToExclude' `
                                 -Message ($script:localizedData.IncludeAndExcludeConflict -f $includedPrincipal.SamAccountName,
-                                    'MembersToInclude', 'MembersToExclude')
+                                'MembersToInclude', 'MembersToExclude')
                         }
 
                         if ($actualMembersAsPrincipals -notcontains $includedPrincipal)
@@ -930,16 +930,16 @@ function Set-TargetResourceOnNanoServer
     if ($Ensure -eq 'Present')
     {
         $whatIfShouldProcess =
-            if ($groupOriginallyExists)
-            {
-                $PSCmdlet.ShouldProcess(($script:localizedData.GroupWithName -f $GroupName),
-                    $script:localizedData.SetOperation)
-            }
-            else
-            {
-                $PSCmdlet.ShouldProcess(($script:localizedData.GroupWithName -f $GroupName),
-                    $script:localizedData.AddOperation)
-            }
+        if ($groupOriginallyExists)
+        {
+            $PSCmdlet.ShouldProcess(($script:localizedData.GroupWithName -f $GroupName),
+                $script:localizedData.SetOperation)
+        }
+        else
+        {
+            $PSCmdlet.ShouldProcess(($script:localizedData.GroupWithName -f $GroupName),
+                $script:localizedData.AddOperation)
+        }
 
         if ($whatIfShouldProcess)
         {
@@ -1003,13 +1003,13 @@ function Set-TargetResourceOnNanoServer
                 #>
                 foreach ($includedMember in $uniqueMembersToInclude)
                 {
-                    foreach($excludedMember in $uniqueMembersToExclude)
+                    foreach ($excludedMember in $uniqueMembersToExclude)
                     {
                         if ($includedMember -eq $excludedMember)
                         {
                             New-InvalidArgumentException -ArgumentName 'MembersToInclude and MembersToExclude' `
                                 -Message ($script:localizedData.IncludeAndExcludeConflict -f $includedMember, 'MembersToInclude',
-                                    'MembersToExclude')
+                                'MembersToExclude')
                         }
                     }
                 }
@@ -1022,7 +1022,7 @@ function Set-TargetResourceOnNanoServer
                     }
                 }
 
-                foreach($excludedMember in $uniqueMembersToExclude)
+                foreach ($excludedMember in $uniqueMembersToExclude)
                 {
                     if ($groupMembers -contains $excludedMember)
                     {
@@ -1147,7 +1147,7 @@ function Test-TargetResourceOnFullSKU
         $Credential
     )
 
-    $principalContextCache = @{}
+    $principalContextCache = @{ }
     $disposables = New-Object -TypeName 'System.Collections.ArrayList'
 
     try
@@ -1193,10 +1193,10 @@ function Test-TargetResourceOnFullSKU
             }
 
             $actualMembersAsPrincipals = @( Get-MembersAsPrincipalsList `
-                -Group $group `
-                -PrincipalContextCache $principalContextCache `
-                -Disposables $disposables `
-                -Credential $Credential
+                    -Group $group `
+                    -PrincipalContextCache $principalContextCache `
+                    -Disposables $disposables `
+                    -Credential $Credential
             )
 
             $uniqueMembers = $Members | Select-Object -Unique
@@ -1214,10 +1214,10 @@ function Test-TargetResourceOnFullSKU
 
                 # Resolve the names to actual principal objects.
                 $expectedMembersAsPrincipals = @( ConvertTo-UniquePrincipalsList `
-                    -MemberNames $uniqueMembers `
-                    -PrincipalContextCache $principalContextCache `
-                    -Disposables $disposables `
-                    -Credential $Credential
+                        -MemberNames $uniqueMembers `
+                        -PrincipalContextCache $principalContextCache `
+                        -Disposables $disposables `
+                        -Credential $Credential
                 )
 
                 if ($expectedMembersAsPrincipals.Count -ne $actualMembersAsPrincipals.Count)
@@ -1242,10 +1242,10 @@ function Test-TargetResourceOnFullSKU
         elseif ($PSBoundParameters.ContainsKey('MembersToInclude') -or $PSBoundParameters.ContainsKey('MembersToExclude'))
         {
             $actualMembersAsPrincipals = @( Get-MembersAsPrincipalsList `
-                -Group $group `
-                -PrincipalContextCache $principalContextCache `
-                -Disposables $disposables `
-                -Credential $Credential
+                    -Group $group `
+                    -PrincipalContextCache $principalContextCache `
+                    -Disposables $disposables `
+                    -Credential $Credential
             )
 
             $membersToIncludeAsPrincipals = $null
@@ -1259,10 +1259,10 @@ function Test-TargetResourceOnFullSKU
             {
                 # Resolve the names to actual principal objects.
                 $membersToIncludeAsPrincipals = @( ConvertTo-UniquePrincipalsList `
-                    -MemberNames $uniqueMembersToInclude `
-                    -PrincipalContextCache $principalContextCache `
-                    -Disposables $disposables `
-                    -Credential $Credential
+                        -MemberNames $uniqueMembersToInclude `
+                        -PrincipalContextCache $principalContextCache `
+                        -Disposables $disposables `
+                        -Credential $Credential
                 )
             }
 
@@ -1277,10 +1277,10 @@ function Test-TargetResourceOnFullSKU
             {
                 # Resolve the names to actual principal objects.
                 $membersToExcludeAsPrincipals = @( ConvertTo-UniquePrincipalsList `
-                    -MemberNames $uniqueMembersToExclude `
-                    -PrincipalContextCache $principalContextCache `
-                    -Disposables $disposables `
-                    -Credential $Credential
+                        -MemberNames $uniqueMembersToExclude `
+                        -PrincipalContextCache $principalContextCache `
+                        -Disposables $disposables `
+                        -Credential $Credential
                 )
             }
 
@@ -1294,7 +1294,7 @@ function Test-TargetResourceOnFullSKU
                 {
                     New-InvalidArgumentException -ArgumentName 'MembersToInclude and MembersToExclude' `
                         -Message ($script:localizedData.IncludeAndExcludeConflict -f $includedPrincipal.SamAccountName,
-                            'MembersToInclude', 'MembersToExclude')
+                        'MembersToInclude', 'MembersToExclude')
                 }
 
                 if ($actualMembersAsPrincipals -notcontains $includedPrincipal)
@@ -1496,13 +1496,13 @@ function Test-TargetResourceOnNanoServer
         #>
         foreach ($includedMember in $uniqueMembersToInclude)
         {
-            foreach($excludedMember in $uniqueMembersToExclude)
+            foreach ($excludedMember in $uniqueMembersToExclude)
             {
                 if ($includedMember -eq $excludedMember)
                 {
                     New-InvalidArgumentException -ArgumentName 'MembersToInclude and MembersToExclude' `
                         -Message ($script:localizedData.IncludeAndExcludeConflict -f $includedMember, 'MembersToInclude',
-                            'MembersToExclude')
+                        'MembersToExclude')
                 }
             }
         }
@@ -1515,7 +1515,7 @@ function Test-TargetResourceOnNanoServer
             }
         }
 
-        foreach($excludedMember in $uniqueMembersToExclude)
+        foreach ($excludedMember in $uniqueMembersToExclude)
         {
             if ($groupMembers -contains $excludedMember)
             {
@@ -1561,7 +1561,7 @@ function Get-MembersOnNanoServer
         }
         else
         {
-            Write-Verbose -Message ($script:localizedData.MemberIsNotALocalUser -f $groupMember.Name,$groupMember.PrincipalSource)
+            Write-Verbose -Message ($script:localizedData.MemberIsNotALocalUser -f $groupMember.Name, $groupMember.PrincipalSource)
             $domainMemberName = $groupMember.Name
             $null = $memberNames.Add($domainMemberName)
         }
@@ -1619,10 +1619,10 @@ function Get-MembersOnFullSKU
     $members = New-Object -TypeName 'System.Collections.ArrayList'
 
     $membersAsPrincipals = @( Get-MembersAsPrincipalsList `
-        -Group $Group `
-        -PrincipalContextCache $PrincipalContextCache `
-        -Disposables $Disposables `
-        -Credential $Credential
+            -Group $Group `
+            -PrincipalContextCache $PrincipalContextCache `
+            -Disposables $Disposables `
+            -Credential $Credential
     )
 
     foreach ($memberAsPrincipal in $membersAsPrincipals)
@@ -2162,7 +2162,7 @@ function Get-PrincipalContext
 
         $principalContext = New-Object -TypeName 'System.DirectoryServices.AccountManagement.PrincipalContext' `
             -ArgumentList @( [System.DirectoryServices.AccountManagement.ContextType]::Domain, $Scope,
-                $principalContextName, $Credential.GetNetworkCredential().Password )
+            $principalContextName, $Credential.GetNetworkCredential().Password )
 
         # Cache the PrincipalContext for this scope for subsequent calls.
         $null = $PrincipalContextCache.Add($Scope, $principalContext)
@@ -2201,7 +2201,7 @@ function Test-IsLocalMachine
         $Scope
     )
 
-    $localMachineScopes = @( '.', $env:computerName, 'localhost', '127.0.0.1', 'NT Authority', 'NT Service', 'BuiltIn' )
+    $localMachineScopes = @( '.', $env:computerName, 'localhost', '127.0.0.1', 'NT Authority', 'NT Service', 'BuiltIn', 'IIS APPPOOL' )
 
     if ($localMachineScopes -icontains $Scope)
     {
