@@ -317,6 +317,10 @@ try
                         $propertiesAsStrings.Contains("Name = Object $objectNumber, Value = Value $objectNumber, Path = Path $objectNumber") | Should -BeTrue
                     }
                 }
+
+                It 'Should return an empty array and not a null object when input is empty' {
+                    $propertiesAsStrings = (Convert-CustomPropertyArrayToStringArray -CustomProperties @()) -is [String[]] | Should -BeTrue
+                }
             }
         }
     }
