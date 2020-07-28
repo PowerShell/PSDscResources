@@ -319,7 +319,7 @@ try
                 }
 
                 It 'Should return an empty array and not a null object when input is empty' {
-                    $propertiesAsStrings = (Convert-CustomPropertyArrayToStringArray -CustomProperties @()) -is [String[]] | Should -BeTrue
+                    (Convert-CustomPropertyArrayToStringArray -CustomProperties @()) -is [String[]] | Should -BeTrue
                 }
             }
         }
