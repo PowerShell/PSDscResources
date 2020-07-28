@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+* Proposed fix for WindowsOptionalFeature DSC Resource GET method when the OptionalFeature has no Custom Properties.
+  [Issue #191](https://github.com/PowerShell/PSDscResources/issues/191)
+
 ## 2.12.0.0
 
 * Ports style fixes that were recently made in xPSDesiredStateConfiguration

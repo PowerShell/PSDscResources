@@ -330,7 +330,7 @@ function Convert-CustomPropertyArrayToStringArray
         }
     }
 
-    return $propertiesAsStrings
+    Write-Output $propertiesAsStrings -NoEnumerate
 }
 
 <#
