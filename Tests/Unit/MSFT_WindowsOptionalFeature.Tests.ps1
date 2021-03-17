@@ -318,7 +318,7 @@ try
                     }
                 }
 
-                It 'Should return an empty array and not a null object when input is empty' {
+                It 'Should return an empty array and not a null object when input is an empty array' {
                     (Convert-CustomPropertyArrayToStringArray -CustomProperties @()) -is [String[]] | Should -BeTrue
                 }
             }
