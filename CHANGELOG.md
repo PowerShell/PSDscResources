@@ -1,6 +1,10 @@
 # Change log for PsDscResources
 
 ## Unreleased
+* Group
+  * Workaround added for the [Issue #82](https://github.com/PowerShell/PSDscResources/issues/82)
+    The resource could fail with the
+    'Exception calling "Add" with "1" argument(s): "The network path was not found."'
 
 ## 2.12.0.0
 
