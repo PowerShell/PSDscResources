@@ -2487,7 +2487,11 @@ function Clear-GroupMember
 <#
     .SYNOPSIS
         Adds the specified member to the specified group.
-        This is a wrapper function for testing purposes.
+
+        There is an issue reported at https://github.com/PowerShell/PSDscResources/issues/82
+        If local group already has members from trusted forests/domains, the Add method fails
+        The exact reason of the failure is unknown at the moment and as a workaround try-catch
+        block is used to fallback to ADSI WinNT provider.
 
     .PARAMETER Group
         The group to add the member to.
@@ -2511,7 +2515,18 @@ function Add-GroupMember
         $MemberAsPrincipal
     )
 
-    $Group.Members.Add($MemberAsPrincipal)
+    try
+    {
+        $Group.Members.Add($MemberAsPrincipal)
+    }
+    catch
+    {
+        Write-Verbose -Message $script:localizedData.PrincipalCollectionAddMethodException
+        Write-Verbose -Message $_.ToString()
+        Write-Verbose -Message $script:localizedData.WinNTProviderFallback
+        [ADSI] $adsiGroup = ("WinNT://$env:COMPUTERNAME/$($Group.Name),group")
+        $adsiGroup.Add("WinNT://$($MemberAsPrincipal.Sid)")
+    }
 }
 
 <#
