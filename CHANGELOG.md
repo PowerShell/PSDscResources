@@ -5,6 +5,8 @@
   * Workaround added for the [Issue #82](https://github.com/PowerShell/PSDscResources/issues/82)
     The resource could fail with the
     'Exception calling "Add" with "1" argument(s): "The network path was not found."'
+    The workaround is to catch the exception and try to use another programmatic method
+    to update group members.
 
 ## 2.12.0.0
 

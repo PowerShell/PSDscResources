@@ -2488,6 +2488,7 @@ function Clear-GroupMember
     .SYNOPSIS
         Adds the specified member to the specified group.
 
+    .NOTES
         There is an issue reported at https://github.com/PowerShell/PSDscResources/issues/82
         If local group already has members from trusted forests/domains, the Add method fails
         The exact reason of the failure is unknown at the moment and as a workaround try-catch
