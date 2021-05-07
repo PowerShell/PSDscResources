@@ -2522,8 +2522,8 @@ function Add-GroupMember
     }
     catch
     {
-        Write-Verbose -Message $script:localizedData.PrincipalCollectionAddMethodException
-        Write-Verbose -Message $_.ToString()
+        Write-Warning -Message $script:localizedData.PrincipalCollectionAddMethodException
+        Write-Warning -Message $_.ToString()
         Write-Verbose -Message $script:localizedData.WinNTProviderFallback
         [ADSI] $adsiGroup = ("WinNT://$env:COMPUTERNAME/$($Group.Name),group")
         $adsiGroup.Add("WinNT://$($MemberAsPrincipal.Sid)")
