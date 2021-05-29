@@ -353,6 +353,7 @@ function Get-TargetResourceOnFullSKU
 #>
 function Set-TargetResourceOnFullSKU
 {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSShouldProcess', '')]
     [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
@@ -1125,7 +1126,7 @@ function Test-TargetResourceOnNanoServer
 
     if ($PSBoundParameters.ContainsKey('Password'))
     {
-        if(-not (Test-CredentialsValidOnNanoServer -UserName $UserName -Password $Password.Password))
+        if (-not (Test-CredentialsValidOnNanoServer -UserName $UserName -Password $Password.Password))
         {
             # The Password property does not match
             Write-Verbose -Message ($script:localizedData.PasswordPropertyMismatch -f 'Password')
