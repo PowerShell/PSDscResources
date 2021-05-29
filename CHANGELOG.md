@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-* Fixed CI pipeline by limiting Pester module version to 4.10.1.
+* Fixed CI pipeline by limiting Pester module version to 4.10.1 - [Issue #199](https://github.com/PowerShell/PSDscResources/issues/199)
+* Correct build badge for `dev` branch.
 
 ## 2.12.0.0
 
