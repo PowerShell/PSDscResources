@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Fixed CI pipeline by limiting Pester module version to 4.10.1.
+
 ## 2.12.0.0
 
 * Ports style fixes that were recently made in xPSDesiredStateConfiguration
