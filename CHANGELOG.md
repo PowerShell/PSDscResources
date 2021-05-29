@@ -4,6 +4,14 @@
 
 * Fixed CI pipeline by limiting Pester module version to 4.10.1 - [Issue #199](https://github.com/PowerShell/PSDscResources/issues/199)
 * Correct build badge for `dev` branch.
+* Opt-in to the following Meta tests:
+  * Common Tests - Custom Script Analyzer Rules.
+  * Common Tests - Flagged Script Analyzer Rules.
+  * Common Tests - New Error-Level Script Analyzer Rules.
+  * Common Tests - Relative Path Length.
+  * Common Tests - Required Script Analyzer Rules.
+  * Common Tests - Validate Markdown Links.
+  * Common Tests - Validate Markdown Files.
 
 ## 2.12.0.0
 

@@ -329,10 +329,12 @@ function Set-TargetResource
         missing on some client SKUs (worked on both Server and Client Skus in Windows 10).
     #>
     $serverFeatureData = Invoke-CimMethod -Name 'GetServerFeature' `
-                                          -Namespace 'root\microsoft\windows\servermanager' `
-                                          -Class 'MSFT_ServerManagerTasks' `
-                                          -Arguments @{ BatchSize = 256 } `
-                                          -ErrorAction 'Ignore'
+        -Namespace 'root\microsoft\windows\servermanager' `
+        -Class 'MSFT_ServerManagerTasks' `
+        -Arguments @{
+            BatchSize = 256
+        } `
+        -ErrorAction 'Ignore'
 
     $registryData = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager' -Name 'PendingFileRenameOperations' -ErrorAction 'Ignore'
 
