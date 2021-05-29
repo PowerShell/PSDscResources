@@ -1,7 +1,8 @@
 # Suppress Global Vars PSSA Error because $global:DSCMachineStatus must be allowed
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
-param()
+
+param ()
 
 $errorActionPreference = 'Stop'
 Set-StrictMode -Version 'Latest'
