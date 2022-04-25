@@ -54,7 +54,7 @@ Configuration ScriptExample {
                 }
 
                 return @{
-                    Result = Get-Content -Path $fileContent
+                    Result = Get-Content -Path $using:filePath
                 }
             }
         }
